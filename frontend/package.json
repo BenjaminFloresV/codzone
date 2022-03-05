@@ -1,0 +1,20 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "main": "sass/mystyles.scss",
+  "devDependencies": {
+    "bulma": "^0.9.3",
+    "node-sass": "^7.0.1"
+  },
+  "scripts": {
+    "css-build": "node-sass --omit-source-map-url sass/mystyles.scss css/mystyles.css",
+    "css-watch": "npm run css-build -- --watch",
+    "start": "npm run css-watch"
+  },
+  "author": "Benjamin Flores",
+  "license": "MIT",
+  "description": "",
+  "dependencies": {
+    "bulma-calendar": "^6.1.16"
+  }
+}

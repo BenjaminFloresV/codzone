@@ -1,0 +1,288 @@
+$small: 550px;
+$medium: 900px;
+
+#navigation {
+
+  @media screen and ( max-width: $small ) {
+    width: 100% !important;
+  }
+
+  @media screen and ( min-width: $medium ) {
+    width: 50vw !important;
+  }
+
+}
+
+
+@media screen and ( max-width: 1350px ){
+  .news {
+    float: right;
+    width: 40%;
+  }
+
+  .tutorials {
+    float: right;
+    clear: right;
+    width: 40%;
+  }
+
+  .new-posts {
+    width: 60%;
+  }
+
+  .custom-column {
+    width: 95%;
+    margin: auto auto 10px;
+  }
+}
+
+@media screen and ( max-width: 1200px ){
+
+  .is-flex-direction-column-widescreen {
+    flex-direction: column;
+  }
+
+}
+
+
+@media screen and ( max-width: 770px ){
+
+  .main-home {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .custom-title-h2 {
+    font-size: 29px;
+  }
+
+  .custom-span {
+    font-size: 18px;
+  }
+
+
+
+  .custom-column {
+    width: 100%
+  }
+
+  .bottom-banner {
+    background: rgba( 0, 0, 0, 0.7 );
+  }
+
+  .mid-column {
+    margin: auto auto 10px !important;
+  }
+
+  #content {
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1.25em !important;
+
+  }
+
+  .news {
+    width: 90%;
+    float: none;
+    order: 1;
+    align-self: center;
+    padding: 1.25em;
+    margin-bottom: 0.75em;
+  }
+
+  .tutorials {
+
+    border-radius: 10px;
+    width: 90%;
+    float: none;
+    clear: none;
+    order: 2;
+    align-self: center;
+    padding: 1.25em;
+
+  }
+
+  .new-posts {
+    width: 90%;
+    float: none;
+    clear: none;
+    order: 3;
+    align-self: center;
+    border: none;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .article {
+    width: 100%;
+  }
+
+  .search-content-container {
+    width: 90%;
+  }
+
+  .search-results {
+    width: 90%;
+    padding: 1.25em;
+  }
+
+
+}
+
+
+@media screen and ( max-width: 570px ){
+  #search-nav {
+    flex-direction: column;
+    height: 220px;
+  }
+
+  #search-button {
+    margin-top: 0.75em;
+    order: 3;
+  }
+
+
+  .search-box {
+    order: 2;
+    width: 100%;
+    align-self: center;
+  }
+
+  .search-box i {
+    margin-left: 0.75em;
+  }
+
+  #close-search {
+    align-self: flex-end !important;
+    margin-right: 0.75em;
+    order: 1;
+  }
+
+  #burguer {
+    margin-left: 1.25em !important;
+  }
+
+  #open-nav i {
+    font-size: 40px !important;
+  }
+
+  .burguer-text {
+    display: none;
+  }
+
+  #latest-posts {
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+  }
+
+  .custom-column {
+    width: 100% !important;
+  }
+
+  .main-home {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  #home{
+    padding: 0 !important;
+  }
+
+  #posts {
+    width: 100% !important;
+  }
+
+  #news {
+    width: 100%;
+    padding: 0.75em !important;
+    margin-bottom: 0.75em;
+  }
+
+  #tutorials {
+    width: 100%;
+    padding: 0.75em !important;
+  }
+
+  .home-list {
+    padding-left: 0.75em;
+    padding-right: 0.75em;
+  }
+
+  .search-content {
+    top: 250px;
+  }
+  .search-title {
+    font-size: 32px;
+  }
+
+  #search-container {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .search-content-container {
+    width: 100%;
+  }
+}
+
+
+@media screen and ( max-width: 380px ){
+  #youtube-logo {
+    display: none;
+  }
+
+  #search {
+    padding: 0 !important;
+    justify-content: center !important;
+  }
+
+  .search-box input {
+    font-size: 17px;
+  }
+
+  #close-search {
+    margin-bottom: 0.75em;
+  }
+
+  .search-results {
+    width: 100%;
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .search-category {
+    bottom: -15px;
+  }
+
+  #close-search {
+    margin-bottom: 0;
+    margin-right: 10px;
+  }
+
+}
+
+/* COMMON CLASSES */
+
+@media screen and ( max-width: 769px ) {
+
+  .flex-direction-column-mobile {
+    flex-direction: column !important;
+  }
+
+  .breadcrumb-list {
+    font-size: 0.8em !important;
+  }
+
+
+
+}
+
+
+@import "media-queries/Loadout/all-loadouts-media";
+@import "media-queries/Loadout/loadout-game-media";
+@import "media-queries/Loadout/loadout-media";
+
+
+
+

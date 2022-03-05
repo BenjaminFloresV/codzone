@@ -1,0 +1,219 @@
+<?php
+/* @var $allData */
+setlocale(LC_ALL, 'es');
+?>
+
+
+        <!---------- HOME PAGE -------->
+        <div id="home" class="container p-5 main-background-color">
+            <div id="latest-posts" class="columns is-flex-direction-row p-3 mb-2 rounded-corners">
+                <div class="column is-relative is-flex custom-column is-flex-direction-column">
+                    <a class="custom-column__img-link" href="/juegos/1/call-of-duty/">
+                        <figure class="image is-100-height">
+                            <img class="object-fit" src="/uploads/images/loadout/<?=$allData['gameName']?>/<?=$allData['image']?>">
+                        </figure>
+                    </a>
+                    <div class="bottom-banner p-3 is-flex justify-self-start is-flex-direction-column is-align-items-self-start">
+                        <a href="https://www.facebook.com" id="post-category" class="category custom-category ml-2 mt-1" >CoD <?=$allData['shortName']?></a>
+                        <a href="#">
+                            <div id="title" class="post-title custom-title mt-2 ml-2 mr-2">
+                                <h2 class="title custom-title-h2"><?=$allData['title']?></h2>
+                            </div>
+                            <div class="post-upload-info is-flex is-justify-content-start ml-2 mr-2 mt-2 is-flex-direction-column-widescreen">
+                                <span class="has-text-white custom-span"><i class="fa-solid fa-clock"></i> <?=strftime( "%d de %B %Y" , $allData['creationDate'])?></span>
+                                <span class="ml-2 has-text-white custom-span"><i class="fa-solid fa-circle i-font-size"></i> SudoKiss</span>
+                            </div>
+                        </a>
+                    </div>
+
+                </div>
+                <div class="column  is-relative is-flex custom-column mid-column">
+                    <a class="custom-column__img-link" href="http://localhost:7882">
+                        <figure class="image is-100-height">
+                            <img class="object-fit" src="/uploads/images/company/arma.png">
+                        </figure>
+                    </a>
+                    <div class="bottom-banner p-3 is-flex justify-self-start is-flex-direction-column is-align-items-self-start">
+                        <a href="https://www.facebook.com" id="post-category" class="category custom-category ml-2 mt-1" >CoD Vanguard</a>
+                        <div id="title" class="post-title custom-title mt-2 ml-2 mr-2">
+                            <h2 class="title custom-title-h2">Qué hacer si tu HDD o SSD no aparece en la BIOS de tu placa base</h2>
+                        </div>
+                        <div class="post-upload-info is-flex is-justify-content-start ml-2 mr-2 mt-2 is-flex-direction-column-widescreen">
+                            <span class="has-text-white custom-span"><i class="fa-solid fa-clock"></i></span>
+                            <span class="ml-2 has-text-white custom-span"><i class="fa-solid fa-circle i-font-size"></i> SudoKiss</span>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="column is-relative is-flex custom-column">
+                    <a class="custom-column__img-link" href="http://localhost:7882">
+                        <figure class="image is-100-height">
+                            <img class="object-fit" src="/uploads/images/company/xd.png">
+                        </figure>
+                    </a>
+                    <div class="bottom-banner p-3 is-flex justify-self-start is-flex-direction-column is-align-items-self-start">
+                        <a href="https://www.facebook.com" id="post-category" class="category custom-category ml-2 mt-1" >CoD Vanguard</a>
+                        <div id="title" class="post-title custom-title mt-2 ml-2 mr-2">
+                            <h2 class="title custom-title-h2">Qué hacer si tu HDD o SSD no aparece en la BIOS de tu placa base</h2>
+                        </div>
+                        <div class="post-upload-info is-flex is-justify-content-start ml-2 mr-2 mt-2 is-flex-direction-column-widescreen">
+                            <span class="has-text-white custom-span"><i class="fa-solid fa-clock"></i> 18 de Septiembre 2022</span>
+                            <span class="ml-2 has-text-white custom-span"><i class="fa-solid fa-circle i-font-size"></i> SudoKiss</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!---- CONTENT - NEWS, POSTS, TUTORIALS ----->
+            <div id="content" class="is-fullwidth is-block rounded-corners overflow-hidden has-background-white">
+                <div id="news" class="news is-inline-block has-background-white p-3">
+                    <h2 class="title">Noticias</h2>
+                    <div class="is-relative is-flex custom-column">
+                        <a class="custom-column__img-link" href="http://localhost:7882">
+                            <figure class="image is-100-height">
+                                <img class="object-fit" src="/uploads/images/company/xd.png">
+                            </figure>
+                        </a>
+                        <div class="bottom-banner p-3 is-flex justify-self-start is-flex-direction-column is-align-items-self-start">
+                            <a href="https://www.facebook.com" id="post-category" class="category custom-category ml-2 mt-1" >CoD Vanguard</a>
+                            <div id="title" class="post-title custom-title mt-2 ml-2 mr-2">
+                                <h2 class="title custom-title-h2">Qué hacer si tu HDD o SSD no aparece en la BIOS de tu placa base</h2>
+                            </div>
+                            <div class="post-upload-info is-flex is-justify-content-start ml-2 mr-2 mt-2 is-flex-direction-column-widescreen">
+                                <span class="has-text-white custom-span"><i class="fa-solid fa-clock"></i> 18 de Septiembre 2022</span>
+                                <span class="ml-2 has-text-white custom-span"><i class="fa-solid fa-circle i-font-size"></i> SudoKiss</span>
+                            </div>
+                        </div>
+                    </div>
+                    <ul class="home-list">
+                        <li><a href="">Link</a></li>
+                        <li><a href="">Link</a></li>
+                        <li><a href="">Link</a></li>
+                        <li><a href="">Link</a></li>
+                    </ul>
+                </div>
+
+                <div id="posts" class="new-posts has-background-white is-inline-block p-3">
+                    <div id="posts-container" class="is-flex is-flex-direction-column is-justify-content-center">
+                        <article class="article is-flex is-flex-direction-column has-background-white p-2 mb-3 mt-3">
+                            <div id="post-image" class="is-flex is-relative">
+                                <a href="http://localhost:7882">
+                                    <figure class="image pt-2 pl-2 pr-2">
+                                        <img src="/uploads/images/company/arma.png">
+                                    </figure>
+                                </a>
+                                <a href="https://www.facebook.com" id="post-category" class="category" >CoD Vanguard</a>
+                            </div>
+                            <a href="https://www.facebook.com" class="pl-2 pr-2">
+                                <div id="title" class="post-title">
+                                    <h2 class="title post-title-h2">Mejor clase para la M13 </h2>
+                                </div>
+                                <div class="post-upload-info">
+                                    <span><i class="fa-solid fa-clock"></i> 18 de Septiembre 2022</span>
+                                    <span class="ml-2"><i class="fa-solid fa-circle i-font-size"></i> SudoKiss</span>
+                                </div>
+                                <div style="display: block" class="posts-description">
+                                    <p class="is-text posts-description">
+                                        Hola como estas esta es una prueba
+                                        esta es otra pureba dfjsdalkfjdsalkfj
+                                        quiafdsfasdf
+                                    </p>
+                                </div>
+                            </a>
+                            <div class="read-more">
+                                <a href="" class="pb-2 pl-2 pr-2">Leer más <<<</a>
+                            </div>
+                        </article>
+                        <article class="article is-flex is-flex-direction-column has-background-white p-2 mb-3 mt-3">
+                            <div id="post-image" class="is-flex is-relative">
+                                <a href="http://localhost:7882">
+                                    <figure class="image pt-2 pl-2 pr-2">
+                                        <img src="/uploads/images/company/arma.png">
+                                    </figure>
+                                </a>
+                                <a href="https://www.facebook.com" id="post-category" class="category" >CoD Vanguard</a>
+                            </div>
+                            <a href="https://www.facebook.com" class="pl-2 pr-2">
+                                <div id="title" class="post-title">
+                                    <h2 class="title post-title-h2">Mejor clase para la M13 </h2>
+                                </div>
+                                <div class="post-upload-info">
+                                    <span><i class="fa-solid fa-clock"></i> 18 de Septiembre 2022</span>
+                                    <span class="ml-2"><i class="fa-solid fa-circle i-font-size"></i> SudoKiss</span>
+                                </div>
+                                <div style="display: block" class="posts-description">
+                                    <p class="is-text posts-description">
+                                        Hola como estas esta es una prueba
+                                        esta es otra pureba dfjsdalkfjdsalkfj
+                                        quiafdsfasdf
+                                    </p>
+                                </div>
+                            </a>
+                            <div class="read-more">
+                                <a href="" class="pb-2 pl-2 pr-2">Leer más <<<</a>
+                            </div>
+                        </article>
+                        <article class="article is-flex is-flex-direction-column has-background-white p-2 mb-3 mt-3">
+                            <div id="post-image" class="is-flex is-relative">
+                                <a href="http://localhost:7882">
+                                    <figure class="image pt-2 pl-2 pr-2">
+                                        <img src="/uploads/images/company/arma.png">
+                                    </figure>
+                                </a>
+                                <a href="https://www.facebook.com" id="post-category" class="category" >CoD Vanguard</a>
+                            </div>
+                            <a href="https://www.facebook.com" class="pl-2 pr-2">
+                                <div id="title" class="post-title">
+                                    <h2 class="title post-title-h2">Mejor clase para la M13 </h2>
+                                </div>
+                                <div class="post-upload-info">
+                                    <span><i class="fa-solid fa-clock"></i> 18 de Septiembre 2022</span>
+                                    <span class="ml-2"><i class="fa-solid fa-circle i-font-size"></i> SudoKiss</span>
+                                </div>
+                                <div style="display: block" class="posts-description">
+                                    <p class="is-text posts-description">
+                                        Hola como estas esta es una prueba
+                                        esta es otra pureba dfjsdalkfjdsalkfj
+                                        quiafdsfasdf
+                                    </p>
+                                </div>
+                            </a>
+                            <div class="read-more">
+                                <a href="" class="pb-2 pl-2 pr-2">Leer más <<<</a>
+                            </div>
+                        </article>
+
+
+                    </div>
+                </div>
+
+                <!---- TUTORIALS --->
+                <div id="tutorials" class="tutorials is-inline-block p-3" >
+                    <h2 class="title">Tutoriales</h2>
+                    <div class="is-relative is-flex custom-column">
+                        <a class="custom-column__img-link" href="http://localhost:7882">
+                            <figure class="image is-100-height">
+                                <img class="object-fit" src="/uploads/images/company/xd.png">
+                            </figure>
+                        </a>
+                        <div class="bottom-banner p-3 is-flex justify-self-start is-flex-direction-column is-align-items-self-start">
+                            <a href="https://www.facebook.com" id="post-category" class="category custom-category ml-2 mt-1" >CoD Vanguard</a>
+                            <div id="title" class="post-title custom-title mt-2 ml-2 mr-2">
+                                <h2 class="title custom-title-h2">Qué hacer si tu HDD o SSD no aparece en la BIOS de tu placa base</h2>
+                            </div>
+                            <div class="post-upload-info is-flex is-justify-content-start ml-2 mr-2 mt-2 is-flex-direction-column-widescreen">
+                                <span class="has-text-white custom-span"><i class="fa-solid fa-clock"></i> 18 de Septiembre 2022</span>
+                                <span class="ml-2 has-text-white custom-span"><i class="fa-solid fa-circle i-font-size"></i> SudoKiss</span>
+                            </div>
+                        </div>
+                    </div>
+                    <ul class="home-list">
+                        <li><a href="">Link</a></li>
+                        <li><a href="">Link</a></li>
+                        <li><a href="">Link</a></li>
+                        <li><a href="">Link</a></li>
+                    </ul>
+                </div>
+                <div class="is-clearfix"></div>
+            </div>
+        </div>

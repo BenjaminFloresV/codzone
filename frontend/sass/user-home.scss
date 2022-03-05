@@ -1,0 +1,57 @@
+#latest-posts {
+  width: 100%;
+  margin: auto;
+  background-color: #ffffff;
+}
+
+.news {
+  background:#946c00;
+  height: auto;
+  width: 26%;
+  float: left;
+}
+
+.new-posts {
+  min-height: 240px;
+  width: 48%;
+  float: left;
+  border-right: 1px solid #eae7e7;
+  border-left: 1px solid #eae7e7;
+
+}
+
+.tutorials {
+  background-color: #FFF6E0;
+  height: auto;
+  width: 26%;
+
+}
+
+.home-list li {
+  position: relative;
+  border-bottom: 1px solid #777777;
+  @extend .p-1;
+}
+
+.home-list li:last-child {
+  border-bottom: none;
+}
+
+.home-list li>a {
+  display: inline-block;
+  @extend .p-1;
+  @extend .pl-2;
+  word-break: break-all;
+}
+
+.home-list li::before {
+  display: inline-block;
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  content: '';
+  background-color: #40423f;
+  border-radius: 10px;
+  line-height: 5px;
+  top: 19px;
+}

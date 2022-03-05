@@ -1,0 +1,18 @@
+{
+    "require": {
+        "composer/composer": "^2.2",
+        "psr/log": "*",
+        "monolog/monolog": "^2.3",
+      "ext-pdo": "*",
+      "ext-json": "*",
+        "pecee/simple-router": "4.3.7.2",
+        "ourcodeworld/php-pngquant": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "CMS\\":"src/"
+        }
+    }
+
+
+}

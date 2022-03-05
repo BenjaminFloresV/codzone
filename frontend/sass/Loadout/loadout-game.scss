@@ -1,0 +1,17 @@
+.weapon-cat-card {
+  cursor: pointer;
+}
+
+.weapon-list-item {
+  cursor: pointer;
+  padding: 0.75em 0.75em;
+  background-color: #333333;
+  border-top: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+  transition: background-color 0.4s;
+  @extend .p-5;
+}
+
+.weapon-list-item:hover {
+  background-color: #abab32;
+}

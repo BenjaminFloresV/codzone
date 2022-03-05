@@ -1,0 +1,32 @@
+@media screen and ( max-width: 1379px ) {
+
+  .section-padding {
+    padding-right: 0;
+    padding-left: 0;
+  }
+}
+
+@media screen and ( max-width: 769px ) {
+
+  #loadout-content {
+    width: 100%;
+  }
+
+  #other-loadouts {
+    width: 100%;
+  }
+
+  .loadout-headers {
+    padding-right: 0.75em !important;
+    padding-left: 0.75em !important;
+  }
+
+  .loadout-image img {
+    width: 100% !important;
+  }
+
+  #loadout-container {
+    padding-left: 0 !important;
+  }
+
+}

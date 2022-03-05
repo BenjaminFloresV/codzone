@@ -1,0 +1,46 @@
+<?php
+/* @var array $allData*/
+/* @var array $crumbs */
+/* @var string $finalUri */
+?>
+
+<section class="section pt-0 loadouts-container">
+    <div class="container has-background-white p-6 all-loadouts-container">
+        <h1 class="title is-size-1 has-text-centered">Clases Call of Duty</h1>
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+            <ul class="breadcrumb-list">
+                <?php $counter = 0 ?>
+                <?php foreach ( $crumbs as $crumb ): ?>
+                    <?php if( ( $counter + 1 ) == count($crumbs) ): ?>
+                        <li class="is-active"><a href="#" aria-current="page"><?=$crumb['word']?></a></li>
+                    <?php else: ?>
+                        <li><a href="<?=$crumb['url']?>"><?=$crumb['word']?></a></li>
+                    <?php endif; $counter++ ?>
+                <?php endforeach; ?>
+
+            </ul>
+        </nav>
+        <p class="is-text is-size-3 is-size-4-mobile">Bienvenido a <strong>CoD Zone</strong>, en esta sección tienes una lista de todos los Call of Duty que tenemos ingresados en nuestra plataforma, busca la clase que necesitas y sé feliz :)</p>
+        <div class="columns is-multiline mt-4">
+            <?php foreach ( $allData as $game ): ?>
+                <a href="<?=BASE_URL.$finalUri.'/'.$game['gameUri']?>" class="column is-4 is-half-1050 weapon-category-item js-modal-trigger" data-target="modal-js-example">
+                    <div class="card weapon-cat-card">
+                        <figure class="image">
+                            <img class="p-5 game-img" src="/uploads/images/game/<?=$game['image']?>?<?=time()?>" alt="image">
+                        </figure>
+                        <header class="card-header">
+                            <p class="card-header-title">
+                                <?=$game['name']?>
+                            </p>
+                            <button class="card-header-icon pr-5" aria-label="more options">
+                              <span class="icon is-size-3">
+                                <i class="fa-solid fa-gamepad"></i>
+                              </span>
+                            </button>
+                        </header>
+                    </div>
+                </a>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</section>

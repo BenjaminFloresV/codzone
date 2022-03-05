@@ -1,0 +1,83 @@
+<?php
+/*  @var array $allData */
+/* @var string $finalUri */
+/* @var array $wpCats */
+/* @var array $objectData */
+/* @var array $crumbs */
+
+
+?>
+
+
+<section class="section pt-0 loadout-game">
+    <div class="container has-background-white p-6 loadout-game-container">
+        <div id="modal-js-example" class="modal">
+            <div class="modal-background"></div>
+
+            <div class="modal-content">
+                <div class="box">
+                    <div id="loadout-items" class="columns has-text-centered row-border-white weapon-list is-multiline">
+                        <?php foreach ($allData as $data): ?>
+                            <a wpcatid="<?=$data['wpcategory_id']?>" href="<?=$finalUri?>/<?=$data['loadout_id']?>/<?=$data['title']?>" class="column weapon-list-item is-block is-4">
+                                <h4 class="title has-text-white"><?=$data['weaponName']?></h4>
+                                <div>
+                                    <figure class="image">
+                                        <img src="/uploads/images/weapon/<?=$data['gameName']?>/<?=$data['weaponImage']?>">
+                                    </figure>
+                                </div>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+
+            <button class="modal-close is-large" aria-label="close"></button>
+        </div>
+        <h1 class="title has-text-centered is-size-1">Clases para <?=$objectData['short_name']?></h1>
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+            <ul class="breadcrumb-list">
+                <?php $counter = 0 ?>
+                <?php foreach ( $crumbs as $crumb ): ?>
+                    <?php if( ( $counter + 1 ) == count($crumbs) ): ?>
+                    <li class="is-active"><a href="#" aria-current="page"><?=$crumb['word']?></a></li>
+                    <?php else: ?>
+                    <li><a href="<?=$crumb['url']?>"><?=$crumb['word']?></a></li>
+                    <?php endif; $counter++ ?>
+                <?php endforeach; ?>
+
+            </ul>
+        </nav>
+        <p class="is-text is-size-3 is-size-4-mobile mb-6">
+            ¿Estás buscando alguna clase para <?=$allData[0]['gameName']?>? No te preocupes, has llegado al lugar indicado, en esta sección
+            podrás encontrar la clase que necesitas sin duda alguna! <i class="fa-solid fa-face-smile-wink has-text-main-color"></i>
+        </p>
+        <div class="weapons-category-cards-container">
+            <h2 class="title">Lista de Armas por Categoría</h2>
+            <div class="columns is-multiline">
+                <?php foreach ($wpCats as $wpCat): ?>
+                <div wpcatid="<?=$wpCat['wpcategory_id']?>" class="column is-4 weapon-category-item js-modal-trigger" data-target="modal-js-example">
+                    <div class="card weapon-cat-card">
+                        <figure class="image">
+                            <img class="p-5" src="/uploads/images/weapon_category/<?=$wpCat['image']?>?<?=time()?>" alt="image" >
+                        </figure>
+                        <header class="card-header">
+                            <p class="card-header-title">
+                                <?=$wpCat['name']?>
+                            </p>
+                            <button class="card-header-icon" aria-label="more options">
+                          <span class="icon">
+                            <i class="fa-solid fa-circle-chevron-up"></i>
+                          </span>
+                            </button>
+                        </header>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<script src="/js/game-view-modals" ></script>
+<script src="/js/game-loadout-items"></script>

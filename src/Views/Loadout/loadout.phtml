@@ -1,0 +1,100 @@
+<?php
+/* @var array $objectData */
+/* @var array $crumbs */
+setlocale(LC_ALL, 'es');
+?>
+
+
+<section class="section pt-0 section-padding">
+    <div id="loadout-container" class="container pl-4 pt-6 pr-0 has-background-white pb-6">
+        <?php
+        /*
+        echo '<pre>';
+        var_dump($objectData);
+        echo '</pre>';
+        */
+        ?>
+
+        <div class="content is-flex flex-direction-column-mobile">
+            <div id="loadout-content" class="is-flex is-flex-direction-column">
+                <div class="is-flex is-flex-direction-column loadout-headers">
+                    <nav class="breadcrumb" aria-label="breadcrumbs">
+                        <ul class="breadcrumb-list">
+                            <?php $counter = 0 ?>
+                            <?php foreach ( $crumbs as $crumb ): ?>
+                                <?php if( ( $counter + 1 ) == count($crumbs) ): ?>
+                                    <li class="is-active"><a href="#" aria-current="page"><?=$crumb['word']?></a></li>
+                                <?php else: ?>
+                                    <li><a href="<?=$crumb['url']?>"><?=$crumb['word']?></a></li>
+                                <?php endif; $counter++ ?>
+                            <?php endforeach; ?>
+                        </ul>
+                    </nav>
+                    <h1 class="title is-size-1 is-size-3-mobile has-text-main-color mt-0"><?=$objectData['title']?></h1>
+                    <span class="is-size-5 is-size-6-mobile mb-3 has-text-grey-darker">Publicado el <?php echo strftime( "%d de %B, %Y" , $objectData['creationDate'])?> - Actualizado el <?php echo strftime( "%d de %B, %Y" , $objectData['dateUpdate'])?></span>
+                </div>
+
+                <figure class="mr-auto ml-auto loadout-image">
+                    <img src="/uploads/images/loadout/<?=$objectData['gameName']?>/<?=$objectData['image']?>" class="" alt="<?=$objectData['weaponName']?>">
+                </figure>
+                <div class="is-flex is-flex-direction-column loadout-headers">
+
+                    <p class="is-size-4"><?=$objectData['description'][0]['partOne']?></p>
+                    <h2 class="title">Accesorios</h2>
+                    <ul class="is-size-4">
+                        <?php foreach ( $objectData['attachments'] as $attachment ): ?>
+                            <li> <strong class="is-block" ><?=$attachment['partOne']?></strong><span class="is-block pt-2 pb-2" ><?=$attachment['partTwo']?></span></li>
+                        <?php endforeach; ?>
+                    </ul>
+                    <h2 class="">Ventajas Recomendadas</h2>
+                    <ul class="is-size-4">
+                        <?php foreach ( $objectData['perks'] as $perk ): ?>
+                            <li> <strong class="is-block" ><?=$perk['partOne']?></strong><span class="is-block pt-2 pb-2" ><?=$perk['partTwo']?></span></li>
+                        <?php endforeach; ?>
+                    </ul>
+                    <p class="is-size-4"><?=$objectData['description'][0]['partTwo']?></p>
+                    <?php //$objectData['description']?>
+
+                </div>
+            </div>
+            <div id="other-loadouts">
+                <div class="has-background-extra-info is-flex is-flex-direction-column p-3 mt-3">
+                    <h3 class="title mt-1"><span class="is-text mr-5 is-size-4">Te puede interesar...</span><i class="fa-solid fa-angle-right"></i></h3>
+                    <div class="is-flex is-flex-direction-column">
+                        <div class="is-flex mb-2">
+                            <figure class="image m-0 other-loadouts-img">
+                                <img class="object-fit" src="/uploads/images/weapon/Call of Duty Modern Warfare/M13.png" alt="m16" >
+                            </figure>
+                            <h4 class="is-inline-block title is-size-6 ml-2 is-align-self-center has-text-weight-light">
+                                <a href="">Mejor clase para la m16 multijugador</a>
+                            </h4>
+                        </div>
+
+                    </div>
+                    <div class="is-flex is-flex-direction-column">
+                        <div class="is-flex mb-2">
+                            <figure class="image m-0 other-loadouts-img">
+                                <img class="object-fit" src="/uploads/images/weapon/Call of Duty Modern Warfare/M13.png" alt="m16" >
+                            </figure>
+                            <h4 class="is-inline-block title is-size-6 ml-2 is-align-self-center has-text-weight-light">
+                                <a href="">Mejor clase para la m16 multijugador</a>
+                            </h4>
+                        </div>
+
+                    </div>
+                    <div class="is-flex is-flex-direction-column">
+                        <div class="is-flex mb-2">
+                            <figure class="image m-0 other-loadouts-img">
+                                <img class="object-fit" src="/uploads/images/weapon/Call of Duty Modern Warfare/M13.png" alt="m16" >
+                            </figure>
+                            <h4 class="is-inline-block title is-size-6 ml-2 is-align-self-center has-text-weight-light">
+                                <a href="">Mejor clase para la m16 multijugador</a>
+                            </h4>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
