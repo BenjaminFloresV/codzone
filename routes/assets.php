@@ -43,5 +43,27 @@ SimpleRouter::get('/js/game-loadout-items', function (){
     include __DIR__ . '/../assets/js/game-loadout-items.php';
 });
 
+SimpleRouter::get('/js/news-image-input', function (){
+    include __DIR__ . '/../assets/js/news-image-input.php';
+});
+
+SimpleRouter::get('/js/news-img-checkbox', function (){
+    include __DIR__ . '/../assets/js/news-img-checkbox.php';
+});
+
+SimpleRouter::get('/js/main-scroll', function (){
+    include __DIR__ . '/../assets/js/main-scroll.php';
+});
+
+
+SimpleRouter::get('/js/key-script', function(){
+    include __DIR__ . '/../assets/js/key-script.php';
+});
+
+SimpleRouter::get('/js/search', function(){
+    include __DIR__ . '/../assets/js/search/search.php';
+});
+
+
 
 

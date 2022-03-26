@@ -6584,7 +6584,7 @@ a.has-text-danger-dark:hover, a.has-text-danger-dark:focus {
 .pb-2 {
   padding-bottom: 0.5rem !important; }
 
-.pl-2, .home-list li > a {
+.pl-2 {
   padding-left: 0.5rem !important; }
 
 .px-2 {
@@ -6624,13 +6624,13 @@ a.has-text-danger-dark:hover, a.has-text-danger-dark:focus {
 .pt-4 {
   padding-top: 1rem !important; }
 
-.pr-4 {
+.pr-4, .home-list li > a {
   padding-right: 1rem !important; }
 
 .pb-4 {
   padding-bottom: 1rem !important; }
 
-.pl-4 {
+.pl-4, .home-list li > a {
   padding-left: 1rem !important; }
 
 .px-4 {
@@ -7914,6 +7914,9 @@ html, body {
 .is-100-height {
   height: 100% !important; }
 
+.is-100-width {
+  width: 100% !important; }
+
 .is-100-vwidth {
   width: 100vw !important;
   box-sizing: border-box; }
@@ -7921,6 +7924,9 @@ html, body {
 .is-100-vheight {
   height: 100vh !important;
   box-sizing: border-box; }
+
+.min-height-100v {
+  min-height: 100vh !important; }
 
 .is-30-width {
   width: 30% !important; }
@@ -8029,7 +8035,7 @@ html, body {
   background: #b5b5b5; }
 
 #main {
-  margin-top: 70px; }
+  margin-top: 30px; }
 
 .i-font-size {
   font-size: 7px; }
@@ -8047,6 +8053,11 @@ html, body {
   padding: 3px 13px 3px 13px;
   transition-property: background-color, color;
   transition-duration: .4s; }
+
+.category.right {
+  left: auto;
+  background-color: #ffffff;
+  right: 25px; }
 
 .category:hover {
   background-color: #333333;
@@ -8159,6 +8170,9 @@ html, body {
 .order-4 {
   order: 4; }
 
+.order-5 {
+  order: 5; }
+
 #latest-posts {
   width: 100%;
   margin: auto;
@@ -8251,6 +8265,14 @@ html, body {
   width: 100%;
   margin: auto; }
 
+.news-category-link {
+  background-color: #0a0a0a;
+  padding: 5px;
+  color: #ffffff; }
+
+.news-category-link:hover {
+  color: #abab32; }
+
 .weapon-cat-card {
   cursor: pointer; }
 
@@ -8308,11 +8330,21 @@ html, body {
     width: 95%;
     margin: auto auto 10px; } }
 
+@media screen and (max-width: 1379px) {
+  .section-padding {
+    padding-right: 0 !important;
+    padding-left: 0 !important; } }
+
 @media screen and (max-width: 1200px) {
   .is-flex-direction-column-widescreen {
     flex-direction: column; } }
 
 @media screen and (max-width: 770px) {
+  .container-padding {
+    padding-left: 0.75em !important;
+    padding-right: 0.75em !important; }
+  #main {
+    margin-top: 0; }
   .main-home {
     padding-left: 0 !important;
     padding-right: 0 !important; }
@@ -8366,7 +8398,9 @@ html, body {
 @media screen and (max-width: 570px) {
   #search-nav {
     flex-direction: column;
-    height: 220px; }
+    height: 200px; }
+  #search-input {
+    font-size: 22px; }
   #search-button {
     margin-top: 0.75em;
     order: 3; }
@@ -8443,7 +8477,7 @@ html, body {
   .flex-direction-column-mobile {
     flex-direction: column !important; }
   .breadcrumb-list {
-    font-size: 0.8em !important; } }
+    font-size: 1.2em !important; } }
 
 @media screen and (min-width: 769px) and (max-width: 1050px) {
   .is-half-1050 {
@@ -8464,11 +8498,6 @@ html, body {
   .loadout-game-container {
     padding-left: 1em !important;
     padding-right: 1em !important; } }
-
-@media screen and (max-width: 1379px) {
-  .section-padding {
-    padding-right: 0;
-    padding-left: 0; } }
 
 @media screen and (max-width: 769px) {
   #loadout-content {

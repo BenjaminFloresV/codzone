@@ -1,0 +1,72 @@
+<?php
+/* @var array $allData*/
+/* @var array $crumbs */
+/* @var string $finalUri */
+/* @var array $catsData */
+
+?>
+
+<section class="section pt-0 section-padding">
+    <div class="container has-background-white p-6 min-height-100v container-padding">
+        <h1 class="title is-size-1 has-text-centered">Sección de Noticias</h1>
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+            <ul class="breadcrumb-list">
+                <?php $counter = 0 ?>
+                <?php foreach ( $crumbs as $crumb ): ?>
+                    <?php if( ( $counter + 1 ) == count($crumbs) ): ?>
+                        <li class="is-active is-size-4"><a href="#" aria-current="page"><?=$crumb['word']?></a></li>
+                    <?php else: ?>
+                        <li class="is-size-4"><a href="<?=$crumb['url']?>"><?=$crumb['word']?></a></li>
+                    <?php endif; $counter++ ?>
+                <?php endforeach; ?>
+
+            </ul>
+        </nav>
+
+        <div class="columns is-justify-content-center">
+            <div class="column order-1">
+                <h3 class="title">Categorías</h3>
+                <?php foreach ($catsData as $category) : ?>
+                    <a class="is-link is-inline-block ml-1 mr-1 mb-1 news-category-link" href="/tutoriales<?='/'.$category['lowerName']?>"><span class="is-size-5"><?=$category['name']?></span></a>
+                <?php endforeach; ?>
+            </div>
+            <div class="is-flex column is-flex-direction-column is-justify-content-start is-two-thirds">
+                <h2 class="title">Últimos Tutoriales</h2>
+                <?php foreach ( $allData as $article ): ?>
+                    <article class="article is-flex is-flex-direction-column has-background-white p-2 mb-6 mt-3">
+                        <div id="post-image" class="is-flex is-relative">
+                            <a class="is-100-width" href="/tutoriales/<?=$article['lowerCatName']?>/<?=$article['tutorial_id']?>/<?=$article['uriTitle']?>">
+                                <figure class="image pt-2 pl-2 pr-2">
+                                    <img src="/uploads/images/tutorial/<?=$article['categoryName']?>/<?=$article['titleImage']?>">
+                                </figure>
+                            </a>
+                            <a href="/tutoriales/<?=$article['lowerCatName']?>" id="post-category" class="category" ><?=$article['categoryName']?></a>
+                        </div>
+                        <a href="/tutoriales/<?=$article['lowerCatName']?>/<?=$article['tutorial_id']?>/<?=$article['uriTitle']?>" class="pl-2 pr-2">
+                            <div id="title" class="post-title">
+                                <h2 class="title post-title-h2"><?=$article['title']?></h2>
+                            </div>
+                            <div class="post-upload-info">
+                                <span><i class="fa-solid fa-clock"></i>    <?=strftime( "%d de %B %Y" , $allData['creationDate'])?></span>
+                                <span class="ml-2"><i class="fa-solid fa-circle i-font-size"></i> SudoKiss</span>
+                            </div>
+                            <div style="display: block" class="posts-description">
+                                <p class="is-text posts-description">
+                                    <?=substr($article['description'], 0, 100)?>...
+                                </p>
+                            </div>
+                        </a>
+                        <div class="read-more">
+                            <a href="/tutoriales/<?=$article['lowerCatName']?>/<?=$article['tutorial_id']?>/<?=$article['uriTitle']?>" class="pb-2 pl-2 pr-2">Leer más <<<</a>
+                        </div>
+                    </article>
+
+                <?php endforeach; ?>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+<script type="text/javascript" src="/js/scroll-listener"></script>

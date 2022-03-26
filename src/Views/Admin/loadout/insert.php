@@ -94,23 +94,23 @@ $weapons = $selects['Weapon'];
 
 
             <div class="field">
-                <label class="label">Descripción -> Formato: DESCRIPCION INICIO, DESCRIPCION FINAL</label>
+                <label class="label">Descripción -> Formato: DESCRIPCION INICIO_ DESCRIPCION FINAL</label>
                 <div class="control">
-                    <textarea class="textarea height-270px" name="description" placeholder="Descripcion de la clase" >DESCRIPCION DE INICIO, DESCRIPCION FINAL</textarea>
+                    <textarea class="textarea height-270px" name="description" placeholder="Descripcion de la clase" >DESCRIPCION DE INICIO_ DESCRIPCION FINAL</textarea>
                 </div>
             </div>
 
             <div class="field">
-                <label class="label">Accesorios --> Formato: ACCESORIO_DESCRIPCION (Separados por coma )</label>
+                <label class="label">Accesorios --> Formato: ACCESORIO_DESCRIPCION/ ...</label>
                 <div class="control">
-                    <textarea class="textarea height-270px" name="attachments" placeholder="Descripcion de los accesorios" >ACCESORIO-DESCRIPCION, ...</textarea>
+                    <textarea class="textarea height-270px" name="attachments" placeholder="Descripcion de los accesorios" >ACCESORIO_DESCRIPCION/ ...</textarea>
                 </div>
             </div>
 
             <div class="field">
-                <label class="label">Ventajas --> Formato: VENTAJA_DESCRIPCION (Separados por coma )</label>
+                <label class="label">Ventajas --> Formato: VENTAJA_DESCRIPCION/ ...</label>
                 <div class="control">
-                    <textarea class="textarea height-270px" name="perks" placeholder="Descripcion de las ventajas" >VENTAJA-DESCRIPCION, ...</textarea>
+                    <textarea class="textarea height-270px" name="perks" placeholder="Descripcion de las ventajas" >VENTAJA_DESCRIPCION/ ...</textarea>
                 </div>
             </div>
 

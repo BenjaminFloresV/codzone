@@ -66,6 +66,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     });
 
+    let deleteNewsButtons = document.querySelectorAll(".delete-news");
+
+    deleteNewsButtons.forEach( function ( deleteNewsButton ){
+        let tdName = deleteNewsButton.parentElement.parentElement;
+        document.getElementById('replaceName').innerText = tdName.children[2].textContent;
+        document.getElementById("del-anchor").href = `/admin/eliminar/noticia/${tdName.children[0].textContent}/${tdName.children[1].textContent}`;
+
+    });
+
+    let deleteNewsCatButtons = document.querySelectorAll(".delete-news-cat");
+
+    deleteNewsCatButtons.forEach(function( deleteNewsCatButton ){
+        let tdName = deleteNewsCatButton.parentElement.parentElement;
+        document.getElementById('replaceName').innerText = tdName.children[1].textContent;
+        document.getElementById("del-anchor").href = `/admin/eliminar/categoria-noticia/${tdName.children[0].textContent}`;
+    });
+
+
+    let deleteTutorialsButtons = document.querySelectorAll(".delete-tutorial");
+
+    deleteTutorialsButtons.forEach(function( deleteTutorialButton ){
+        let tdName = deleteTutorialButton.parentElement.parentElement;
+        document.getElementById('replaceName').innerText = tdName.children[3].textContent;
+        document.getElementById("del-anchor").href = `/admin/eliminar/tutorial/${tdName.children[0].textContent}/${tdName.children[1].textContent}`;
+    });
+
 
     // Functions to open and close a modal
     function openModal($el) {

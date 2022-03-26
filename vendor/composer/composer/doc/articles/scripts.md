@@ -336,7 +336,7 @@ resolve to whatever php process is currently being used:
 {
     "scripts": {
         "test": [
-            "@php script.php",
+            "@php search.php",
             "phpunit"
         ]
     }

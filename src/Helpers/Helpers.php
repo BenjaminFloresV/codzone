@@ -2,10 +2,8 @@
 
 namespace CMS\Helpers;
 
-use CMS\Models\DeveloperCompany;
-use CMS\Models\Game;
 use JetBrains\PhpStorm\NoReturn;
-use ourcodeworld\PNGQuant\PNGQuant;
+
 
 class Helpers
 {
@@ -40,7 +38,7 @@ class Helpers
         exit();
     }
 
-    public static  function deleteImage( string $imgName, string $directory, bool $hasSubDirectory = false, string $subDirectory = ''): bool
+    public static  function deleteImage( $imgName, string $directory, bool $hasSubDirectory = false, string $subDirectory = ''): bool
     {
         $log = NewLogger::newLogger('DELETEIMG_HELPERS', 'FirePHPHandler');
         $log->Info('Trying to delete the image');
@@ -50,7 +48,23 @@ class Helpers
             }else {
                 $path = "../public/uploads/images/$directory/";
             }
-            return unlink($path.$imgName);
+
+            if( is_array( $imgName ) ){
+
+                $result = false;
+
+                foreach ( $imgName as $key=>$image ){
+                    if ( strlen($image) !=0 && is_numeric( $key )){
+                       $result = unlink($path.$image);
+                    }
+                }
+
+                return $result;
+
+            }else {
+                return unlink($path.$imgName);
+            }
+
 
         } catch (\Exception $exception){
             $log->error('Could not deleted the image.', array('exception' => $exception));
@@ -192,29 +206,39 @@ class Helpers
         return $value;
     }
 
-    public static function retrieveObjectData(string $action, object $object, $id = '', $join = false ): string|array
+    public static function retrieveObjectData(string $action, object $object, $id = '', $join = false, $getObjectCategories = false )
     {
+        if ($action == 'read') {
 
-        if($action == 'read'){
+            if( $getObjectCategories ){
+
+                return $object::getAllCategories();
+            }
 
             $allData = $object::getAll($join);
-            if( empty($allData) ){
+            if (empty($allData)) {
                 $allData = $object::getAll();
             }
 
             return $allData;
 
-        } elseif ($action == 'update'){
+        } elseif ($action == 'update') {
 
-            $editId = $id;
-            return $object::getById($editId, true);
+            if( $getObjectCategories ){
+                return $object::getCategoryById($id);
+            }else {
+                return $object::getById($id, true);
+            }
+
+
 
         } else {
             return 'xd';
         }
+
     }
 
-    public static function retrieveSelectsData( $objects ): bool|array
+    public static function retrieveSelectsData( $objects, $getCategories = false ): bool|array
     {
 
         $objectsData = array();
@@ -224,8 +248,12 @@ class Helpers
                 $objectNamespace = explode('\\',get_class($object) );
                 $name = $objectNamespace[2];
 
+                if( $getCategories ) {
+                    $objectsData += [$name => $object::getAllCategories()];
+                }else {
+                    $objectsData += [$name => $object::getAll()];
+                }
 
-                $objectsData += [$name => $object::getAll()];
 
             }
             return $objectsData;
@@ -297,6 +325,110 @@ class Helpers
         if( str_ends_with($_SERVER['REQUEST_URI'], '/') ) {
             header("Location:".BASE_URL.rtrim($_SERVER['REQUEST_URI'], '/'));
         }
+    }
+
+    public static function saveImgUnix(string $directory, string $subDirectory = null, object $object, array $imgMethods, bool $update = false)
+    {
+        $log = NewLogger::newLogger('HELPERS_SAVEIMGUNIX', 'FirePHPHandler');
+        $log->info('Trying to save image with unix time name');
+
+        $compress = true;
+        $moveImg = true;
+
+        if ( $subDirectory != null ){
+            $path = "../public/uploads/images/$directory/$subDirectory/";
+
+        }else {
+
+            $path = "../public/uploads/images/$directory/";
+
+        }
+
+        $counter = 0;
+        try {
+            foreach ($_FILES as $file) {
+                if ( $file['size'] !== 0 ){
+                    echo 'hoia';
+                    if( $counter < count($imgMethods) ){
+                        if ($file['type'] == 'image/jpg' || $file['type'] == 'image/jpeg' || $file['type'] == 'image/png' || $file['type'] == 'image/gif') {
+
+                            if (!is_dir($path)) {
+
+                                mkdir($path, 0777, true);
+                            }
+
+                            $type = explode('/', $file['type'] );
+                            $type = $type[1];
+
+                            $unixTime = round(microtime(true)*1000);
+                            $filename = $unixTime.'.'.$type;
+
+                            if ( $update ){
+
+
+                                $lastName = $object->{$imgMethods[$counter][1]}();
+
+                                if( $lastName != null ){
+                                    unlink($path.$lastName);
+                                }
+
+
+                                $object->{$imgMethods[$counter][0]}($filename);
+
+                            }else {
+                                $object->{$imgMethods[$counter]}($filename);
+                            }
+
+                            $moveImg = move_uploaded_file($file['tmp_name'], $path.$filename);
+                            try{
+                                $log->info('Trying sto compress the image...');
+                                $compress = self::compressImage($path.$filename, $path.$filename, 9);
+
+                            }catch (\Exception $exception){
+                                $log->error('Compression has failed.', array('exception' => $exception));
+                            }
+                        }
+                    }
+                }else {
+                    if( $counter < count($imgMethods) ){
+                        if( $update ){
+
+                            $lastName = $object->{$imgMethods[$counter][1]}();
+
+
+                            if( $imgMethods[$counter][2] ){
+                                $log->info('Trying to delete one image.');
+                                $object->{$imgMethods[$counter][0]}("");
+                                $log->info('Trying to delete one image2.');
+
+
+                                $delete = unlink($path.$lastName);
+                                $log->info('Trying to delete one image3.');
+
+                            }else {
+                                if( $lastName != null || $lastName != ""  ){
+                                    $object->{$imgMethods[$counter][0]}($lastName);
+                                }
+                            }
+
+
+                        }
+                    }
+
+                }
+                usleep(150);
+                $counter++;
+            }
+
+
+        } catch (\Exception $exception){
+            $log->error('Something went wrong.', array('exception'=> $exception) );
+        }
+
+        $log->info('Images saved successfully.');
+        return $moveImg && $compress;
+
+
     }
 
 

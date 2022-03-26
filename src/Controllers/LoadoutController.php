@@ -21,26 +21,39 @@ class LoadoutController
         $loadout = new Loadout();
 
         $loadoutData = $loadout::getById($id, true);
+        $loadout->storeFormValues($loadoutData);
+
 
         if( !$loadoutData ){
             header("Location:".BASE_URL."/404");
             exit();
         }
 
+        $recommendedLoadouts = $loadout::getAll(true, 3, false, $loadout->getGameId(), $id);
+
+        foreach ( $recommendedLoadouts as $key=>$item ){
+            $item['uriShortName'] = DataConverter::stringToUri($item['shortName']);
+            $item['uriTitle'] = DataConverter::stringToUri( $item['title'] );
+
+            $recommendedLoadouts[$key] = $item;
+        }
+
+
+
         //Procesar Accesorios y Ventajas
         $loadoutData['attachments'] = DataConverter::convertLoadoutInfoFormat( $loadoutData['attachments'] );
         $loadoutData['perks'] = DataConverter::convertLoadoutInfoFormat( $loadoutData['perks'] );
         $loadoutData['description'] = DataConverter::convertLoadoutInfoFormat( $loadoutData['description'] );
 
-        $endpoint = DataConverter::stringToUri($loadoutData['title']);
+        $uri = DataConverter::stringToUri($loadoutData['title']);
 
-        if( !strpos($_SERVER['REQUEST_URI'], $endpoint) ){
+        if( !strpos($_SERVER['REQUEST_URI'], $uri) ){
             header("Location:".BASE_URL."/404");
             exit();
         }
 
         $view = __DIR__.'/../Views/Loadout/loadout.phtml';
-        RenderView::renderUser($view, null, $_SERVER['REQUEST_URI'], null, $loadoutData, $breadcrumbs);
+        RenderView::renderUser($view, $recommendedLoadouts, $_SERVER['REQUEST_URI'], null, $loadoutData, $breadcrumbs, $loadoutData['title']);
 
     }
 
@@ -59,7 +72,7 @@ class LoadoutController
         }
 
         $view = __DIR__.'/../Views/Loadout/all-loadouts.phtml';
-        RenderView::renderUser($view, $allGames, $_SERVER['REQUEST_URI'], null, null, $breadcrumbs );
+        RenderView::renderUser($view, $allGames, $_SERVER['REQUEST_URI'], null, null, $breadcrumbs, 'Cod Zone: Clases Call of Duty' );
 
 
     }
@@ -84,7 +97,7 @@ class LoadoutController
                 $saveLoadout = $loadout->insert();
 
                 if( $saveLoadout){
-                    $log->info('The weapon was created successfully');
+                    $log->info('The Loadout was created successfully');
                     Helpers::manageRedirect('clases');
                 }
 

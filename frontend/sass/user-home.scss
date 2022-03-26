@@ -40,7 +40,8 @@
 .home-list li>a {
   display: inline-block;
   @extend .p-1;
-  @extend .pl-2;
+  @extend .pl-4;
+  @extend .pr-4;
   word-break: break-all;
 }
 

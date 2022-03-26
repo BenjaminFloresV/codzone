@@ -1,7 +1,7 @@
 <?php
 /*  @var array $allData */
 /* @var string $finalUri */
-/* @var array $wpCats */
+/* @var array $catsData */
 /* @var array $objectData */
 /* @var array $crumbs */
 
@@ -54,7 +54,7 @@
         <div class="weapons-category-cards-container">
             <h2 class="title">Lista de Armas por Categoría</h2>
             <div class="columns is-multiline">
-                <?php foreach ($wpCats as $wpCat): ?>
+                <?php foreach ($catsData as $wpCat): ?>
                 <div wpcatid="<?=$wpCat['wpcategory_id']?>" class="column is-4 weapon-category-item js-modal-trigger" data-target="modal-js-example">
                     <div class="card weapon-cat-card">
                         <figure class="image">

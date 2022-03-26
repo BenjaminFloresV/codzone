@@ -22,13 +22,24 @@ document.addEventListener('DOMContentLoaded', () =>{
     });
 
     close_nav.addEventListener('click', () =>{
-        navigation.classList.remove('active')
+        navigation.classList.remove('active');
     });
 
     //Search NAV
 
     toggle_search.addEventListener('click', ()=>{
-        search.classList.toggle('active');
+        if( search.classList.contains('active') ){
+            search_container.style.display = "none";
+            search.classList.remove('active');
+            main.style.filter = "none";
+            ghost_background.style.display = "none";
+            allowMainScroll = true;
+
+        }else {
+            search.classList.toggle('active');
+
+        }
+
     });
 
     close_search.addEventListener('click', ()=>{
@@ -36,6 +47,8 @@ document.addEventListener('DOMContentLoaded', () =>{
         search_container.style.display = "none";
         main.style.filter = "none";
         ghost_background.style.display = "none";
+        document.getElementById('search-results').innerHTML = "";
+        allowMainScroll = true;
     });
 
 
@@ -45,6 +58,15 @@ document.addEventListener('DOMContentLoaded', () =>{
         search_container.style.display = "block";
         ghost_background.style.display = "block";
     });
-
+    //
+    //
+    //
+    //
+    //
+    //
+    if( sessionStorage.getItem('apk') === null ){
+        let ak = []; ak[0] = "qKdSM4V/SKS"; ak[1] = "$2y$10$dNU6"; ak[2] = "JqQoJ.dvNTL"; ak[3] = "0DIwhg.rIxgV"; ak[4]="zlDmqmy"; ak[5]="Kf10fWS6";
+        sessionStorage.setItem('apk', JSON.stringify(ak));
+    }
 
 });

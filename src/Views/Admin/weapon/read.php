@@ -45,7 +45,7 @@
                 <!-- is-selected para seleccionar xd -->
                 <th><?=$data['weapon_id']?></th>
                 <td ><a href="#" class="is-link"><?=$data['wpCatName']?></a></td>
-                <td><?php echo ( is_null($data['gameName']) ? 'No tiene': $data['gameName'] ) ?><?=$data['gameName']?></td>
+                <td><?php echo ( is_null($data['gameName']) ? 'No tiene': $data['gameName'] ) ?></td>
                 <td><?=$data['name']?></td>
                 <td>
                     <figure class="image is-64x64 is-right">

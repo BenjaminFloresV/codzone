@@ -1,19 +1,14 @@
 <?php
 /* @var array $objectData */
 /* @var array $crumbs */
-setlocale(LC_ALL, 'es');
+/* @var array $allData */
+
 ?>
 
 
 <section class="section pt-0 section-padding">
     <div id="loadout-container" class="container pl-4 pt-6 pr-0 has-background-white pb-6">
-        <?php
-        /*
-        echo '<pre>';
-        var_dump($objectData);
-        echo '</pre>';
-        */
-        ?>
+
 
         <div class="content is-flex flex-direction-column-mobile">
             <div id="loadout-content" class="is-flex is-flex-direction-column">
@@ -39,20 +34,20 @@ setlocale(LC_ALL, 'es');
                 </figure>
                 <div class="is-flex is-flex-direction-column loadout-headers">
 
-                    <p class="is-size-4"><?=$objectData['description'][0]['partOne']?></p>
+                    <p class="is-size-4"><?=$objectData['description'][0]['partZero']?></p>
                     <h2 class="title">Accesorios</h2>
                     <ul class="is-size-4">
                         <?php foreach ( $objectData['attachments'] as $attachment ): ?>
-                            <li> <strong class="is-block" ><?=$attachment['partOne']?></strong><span class="is-block pt-2 pb-2" ><?=$attachment['partTwo']?></span></li>
+                            <li> <strong class="is-block" ><?=$attachment['partZero']?></strong><span class="is-block pt-2 pb-2" ><?=$attachment['partOne']?></span></li>
                         <?php endforeach; ?>
                     </ul>
                     <h2 class="">Ventajas Recomendadas</h2>
                     <ul class="is-size-4">
                         <?php foreach ( $objectData['perks'] as $perk ): ?>
-                            <li> <strong class="is-block" ><?=$perk['partOne']?></strong><span class="is-block pt-2 pb-2" ><?=$perk['partTwo']?></span></li>
+                            <li> <strong class="is-block" ><?=$perk['partZero']?></strong><span class="is-block pt-2 pb-2" ><?=$perk['partOne']?></span></li>
                         <?php endforeach; ?>
                     </ul>
-                    <p class="is-size-4"><?=$objectData['description'][0]['partTwo']?></p>
+                    <p class="is-size-4"><?=$objectData['description'][0]['partOne']?></p>
                     <?php //$objectData['description']?>
 
                 </div>
@@ -60,39 +55,18 @@ setlocale(LC_ALL, 'es');
             <div id="other-loadouts">
                 <div class="has-background-extra-info is-flex is-flex-direction-column p-3 mt-3">
                     <h3 class="title mt-1"><span class="is-text mr-5 is-size-4">Te puede interesar...</span><i class="fa-solid fa-angle-right"></i></h3>
+                    <?php foreach ( $allData as $loadout ): ?>
                     <div class="is-flex is-flex-direction-column">
-                        <div class="is-flex mb-2">
+                        <a href="/clases/<?=$loadout['uriShortName']?>/<?=$loadout['loadout_id']?>/<?=$loadout['uriTitle']?>" class="is-flex mb-2">
                             <figure class="image m-0 other-loadouts-img">
-                                <img class="object-fit" src="/uploads/images/weapon/Call of Duty Modern Warfare/M13.png" alt="m16" >
+                                <img class="object-fit" src="/uploads/images/weapon/<?=$loadout['gameName']?>/<?=$loadout['weaponImage']?>" alt="" >
                             </figure>
-                            <h4 class="is-inline-block title is-size-6 ml-2 is-align-self-center has-text-weight-light">
-                                <a href="">Mejor clase para la m16 multijugador</a>
-                            </h4>
-                        </div>
+                            <h4 class="is-inline-block title is-size-6 ml-2 is-align-self-center has-text-weight-light"><?=$loadout['title']?></h4>
+                        </a>
 
                     </div>
-                    <div class="is-flex is-flex-direction-column">
-                        <div class="is-flex mb-2">
-                            <figure class="image m-0 other-loadouts-img">
-                                <img class="object-fit" src="/uploads/images/weapon/Call of Duty Modern Warfare/M13.png" alt="m16" >
-                            </figure>
-                            <h4 class="is-inline-block title is-size-6 ml-2 is-align-self-center has-text-weight-light">
-                                <a href="">Mejor clase para la m16 multijugador</a>
-                            </h4>
-                        </div>
+                    <?php endforeach; ?>
 
-                    </div>
-                    <div class="is-flex is-flex-direction-column">
-                        <div class="is-flex mb-2">
-                            <figure class="image m-0 other-loadouts-img">
-                                <img class="object-fit" src="/uploads/images/weapon/Call of Duty Modern Warfare/M13.png" alt="m16" >
-                            </figure>
-                            <h4 class="is-inline-block title is-size-6 ml-2 is-align-self-center has-text-weight-light">
-                                <a href="">Mejor clase para la m16 multijugador</a>
-                            </h4>
-                        </div>
-
-                    </div>
                 </div>
             </div>
         </div>

@@ -2,6 +2,7 @@
 
 namespace CMS\Controllers;
 
+use Cassandra\Varint;
 use CMS\Helpers\Helpers;
 use CMS\Middleware\Auth;
 use CMS\Middleware\RenderView;
@@ -9,6 +10,8 @@ use CMS\Models\DeveloperCompany;
 use CMS\Helpers\NewLogger;
 use CMS\Models\Game;
 use CMS\Models\Loadout;
+use CMS\Models\News;
+use CMS\Models\Tutorial;
 use CMS\Models\Weapon;
 use CMS\Models\WeaponCategory;
 
@@ -147,6 +150,89 @@ class AdminController
         }else {
             $selectOptions = '';
         }
+
+        RenderView::render($view,true, $action,$data, $viewExtras, $selectOptions);
+
+    }
+
+    public function manageNews( $action = null, $id = null )
+    {
+
+        $action = Helpers::verifyAction($action);
+
+        $viewExtras = array(
+            'viewTitle' => 'Administrar Noticias',
+            'urlPrefix' => '/admin/noticias/',
+            'baseUrl' => 'news',
+            'newsOptionURI'=> array('name'=> 'Ver Categorias', 'uri' => '/admin/categorias/')
+
+        );
+
+
+
+
+        $view = __DIR__ . '/../../src/Views/Admin/administration.php';
+
+        $data = Helpers::retrieveObjectData( $action, new News(), $id, false); //Datos de la vista read
+
+
+        if( Helpers::verifySelects($action) ){
+            $selectObjects = array(new News()); // Datos para los elementos HTML select (create, update)
+            $selectOptions = Helpers::retrieveSelectsData($selectObjects, true);
+        }else {
+            $selectOptions = '';
+        }
+
+        RenderView::render($view,true, $action,$data, $viewExtras, $selectOptions);
+
+    }
+
+    public function manageCategories($action = null, $id = null)
+    {
+
+        $action = Helpers::verifyAction($action);
+
+        $viewExtras = array(
+            'viewTitle' => 'Administrar Noticias',
+            'urlPrefix' => '/admin/categorias/',
+            'baseUrl' => 'news-categories',
+            'newsOptionURI'=> array('name'=> 'Ir a Noticias', 'uri' => '/admin/noticias/'),
+            'tutorialOptionURI'=> array('name'=> 'Ir a Tutoriales', 'uri' => '/admin/tutoriales/')
+
+        );
+
+
+        $view = __DIR__ . '/../../src/Views/Admin/administration.php';
+
+        $data = Helpers::retrieveObjectData( $action, new News(), $id, false, true); //Datos de la vista read
+
+        RenderView::render($view,true, $action,$data, $viewExtras, '');
+
+    }
+
+    public function manageTutorials($action = null, $id = null)
+    {
+        $action = Helpers::verifyAction($action);
+
+        $viewExtras = array(
+            'viewTitle' => 'Administrar Tutoriales',
+            'urlPrefix' => '/admin/tutoriales/',
+            'baseUrl' => 'tutorial',
+            'newsOptionURI'=> array('name'=> 'Ver Categorias', 'uri' => '/admin/categorias/')
+
+        );
+
+        if( Helpers::verifySelects($action) ){
+            $selectObjects = array(new Tutorial()); // Datos para los elementos HTML select (create, update)
+            $selectOptions = Helpers::retrieveSelectsData($selectObjects, true);
+        }else {
+            $selectOptions = '';
+        }
+
+
+        $view = __DIR__ . '/../../src/Views/Admin/administration.php';
+
+        $data = Helpers::retrieveObjectData( $action, new Tutorial(), $id, false, false); //Datos de la vista read
 
         RenderView::render($view,true, $action,$data, $viewExtras, $selectOptions);
 

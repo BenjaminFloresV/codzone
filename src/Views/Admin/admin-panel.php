@@ -11,9 +11,8 @@
                 queda bajo su responsabilidad la correcta utilización de las distintas funcionalidades. <a class="is-link">Cerrar Sesión</a>
             </p>
         </div>
-        <div class="columns">
-
-            <div class="column" >
+        <div class="columns is-multiline is-justify-content-center">
+            <div class="column is-4" >
                 <a href="/admin/desarrolladoras">
                     <div class="card">
                         <div class="card-image">
@@ -27,18 +26,11 @@
                                     <p class="title is-4">Administrar Desarrolladoras</p>
                                 </div>
                             </div>
-
-                            <div class="content">
-                                Aquí se adminsitran las diferentes compañías desarrolladoras que tiene Call of Duty
-                                <br>
-                            </div>
                         </div>
                     </div>
                 </a>
             </div>
-
-
-            <div class="column">
+            <div class="column is-4">
                 <a href="/admin/juegos">
                     <div class="card">
                         <div class="card-image">
@@ -52,16 +44,11 @@
                                     <p class="title is-4">Administrar Juegos</p>
                                 </div>
                             </div>
-
-                            <div class="content">
-                                Aquí se adminsitran las entregas que ha tenido la saga Call of Duty.
-                                <br>
-                            </div>
                         </div>
                     </div>
                 </a>
             </div>
-            <div class="column">
+            <div class="column is-4">
                 <a href="/admin/armas">
                     <div class="card">
                         <div class="card-image">
@@ -75,18 +62,11 @@
                                     <p class="title is-4">Administrar Armas</p>
                                 </div>
                             </div>
-
-                            <div class="content">
-                                Aquí se administran las diferentes armas que tiene cada entrega de CoD.
-                                <br>
-                            </div>
                         </div>
                     </div>
                 </a>
             </div>
-        </div>
-        <div class="columns is-centered">
-            <div class="column is-one-third">
+            <div class="column is-4">
                 <a href="/admin/categorias-armas">
                     <div class="card">
                         <div class="card-image">
@@ -100,16 +80,11 @@
                                     <p class="title is-4">Administrar Categorías de Armas</p>
                                 </div>
                             </div>
-
-                            <div class="content">
-                                Aquí podrás gestionar las categorías de armas existentes.
-                                <br>
-                            </div>
                         </div>
                     </div>
                 </a>
             </div>
-            <div class="column is-one-third">
+            <div class="column is-4">
                 <a href="/admin/clases">
                     <div class="card">
                         <div class="card-image">
@@ -123,10 +98,41 @@
                                     <p class="title is-4">Administrar Clases</p>
                                 </div>
                             </div>
-
-                            <div class="content">
-                                Aquí podrás adminstrar las diferentes clases para cada entrega de Call of Duty.
-                                <br>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="column is-4">
+                <a href="/admin/noticias">
+                    <div class="card">
+                        <div class="card-image">
+                            <figure class="image is-4by3">
+                                <img src="/uploads/images/others/noticias.jpg" alt="Placeholder image">
+                            </figure>
+                        </div>
+                        <div class="card-content">
+                            <div class="media">
+                                <div class="media-content has-text-centered">
+                                    <p class="title is-4">Administrar Noticias</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="column is-4">
+                <a href="/admin/tutoriales">
+                    <div class="card">
+                        <div class="card-image">
+                            <figure class="image is-4by3">
+                                <img src="/uploads/images/others/tutoriales.jpg" alt="Placeholder image">
+                            </figure>
+                        </div>
+                        <div class="card-content">
+                            <div class="media">
+                                <div class="media-content has-text-centered">
+                                    <p class="title is-4">Administrar Tutoriales</p>
+                                </div>
                             </div>
                         </div>
                     </div>

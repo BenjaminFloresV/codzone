@@ -6,21 +6,26 @@ use function CMS\Controllers\verifyUriMatch;
 
 class DataConverter
 {
-    public static function convertLoadoutInfoFormat( string $text )
+    public static function convertLoadoutInfoFormat( string $text, bool $isDescription = false )
     {
-        if( !strpos($text, ',') ){
+        if( !strpos($text, '/') ){
             $objects = array( $text );
         }else{
-            $objects = explode(',', $text);
+            $objects = explode('/', $text);
         }
+
+        $formatter = new \NumberFormatter('en', \NumberFormatter::SPELLOUT);
+
 
         foreach ( $objects as $key=>$object ){
             $newObject = array();
 
             $objectInfo = explode('_', $object); // Utilizamos guion bajo como separador en caso de usarse el guion normal para describir el accesorio
 
-            $newObject['partOne'] = trim( $objectInfo[0] );
-            $newObject['partTwo'] = trim( $objectInfo[1] );
+            for( $i = 0; $i < count($objectInfo); $i++ ){
+                $name = "part".ucfirst($formatter->format($i));
+                $newObject[$name] = trim($objectInfo[$i]);
+            }
 
             $objects[$key] = $newObject;
 
@@ -49,13 +54,33 @@ class DataConverter
         return $newData;
     }
 
+    public static function subjectToLower( array $array, string $subject, string $newSubject ){
+
+        $items = $array;
+
+        foreach ( $items as $key=>$item ){
+            $item[$newSubject] = strtolower( $item[$subject] );
+            $items[$key] = $item;
+        }
+
+        return $items;
+
+    }
+
     public static function stringToUri(string $string)
     {
         $newString = strtolower($string);
+
         $stringParts = explode(' ', $newString);
 
+        if( count($stringParts) > 1 ){
+            return implode('-', $stringParts);
+        }else {
+            return  $stringParts[0];
+        }
 
-        return implode('-', $stringParts);
+
+
     }
 
     public static function uriToString( string $uri )
@@ -100,12 +125,20 @@ class DataConverter
         $seventhExp = "/\/[a-z]+/i";
 
 
-        $uriForCrumbs = explode('/', $_SERVER['REQUEST_URI']);
+        if( !empty($_GET) ){
+            $uri = explode( '?', $_SERVER['REQUEST_URI']);
+            $uriForCrumbs = explode('/', $uri[0]);
+        }else {
+            $uriForCrumbs = explode('/', $_SERVER['REQUEST_URI']);
+        }
+
 
         $mainWord = '';
         $counter = 0;
 
         function UriMatch($expression ){
+
+
             return preg_match( $expression, $_SERVER['REQUEST_URI'] );
         }
 

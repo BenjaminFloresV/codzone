@@ -19,6 +19,15 @@ class RenderView
                 $viewTitle = $viewExtras['viewTitle'];
                 $urlPrefix = $viewExtras['urlPrefix'];
                 $baseUrl = $viewExtras['baseUrl'];
+                if( isset($viewExtras['newsOptionURI']) !== null ){
+                    $newsView = $viewExtras['newsOptionURI'];
+                }
+
+                if( isset($viewExtras['tutorialOptionURI']) !== null ){
+                    $tutorialView = $viewExtras['tutorialOptionURI'];
+                }
+
+
             }
 
             if ($selectsData != '' ){
@@ -34,7 +43,18 @@ class RenderView
 
     }
 
-    public static function renderUser($view, $data = null, $uri = null, $weaponCatsData = null, $mainObjectData = null, $breadcrumbs = null)
+    public static function renderHome($view = null, $lastNews = null, $someNews = null, $lastTutorial = null, $someTutorials = null, $loadouts = null, $randomLoadouts = null)
+    {
+
+
+        require_once __DIR__. '/../../src/Views/User/layouts/header.php';
+        require_once $view;
+        require_once __DIR__. '/../../src/Views/layouts/footer.phtml';
+        exit();
+
+    }
+
+    public static function renderUser($view, $data = null, $uri = null, $categoriesData = null, $mainObjectData = null, $breadcrumbs = null, $pageTitle = null)
     {
         if ( $data != null ){
             $allData = $data;
@@ -44,8 +64,8 @@ class RenderView
             $finalUri = $uri;
         }
 
-        if ( $weaponCatsData != null ){
-            $wpCats = $weaponCatsData;
+        if ( $categoriesData != null ){
+            $catsData = $categoriesData;
         }
 
         if ( $mainObjectData != null ) {
@@ -54,6 +74,10 @@ class RenderView
 
         if( $breadcrumbs != null ){
             $crumbs = $breadcrumbs;
+        }
+
+        if ( $pageTitle != null ){
+            $titlePage = $pageTitle;
         }
 
         require_once __DIR__. '/../../src/Views/User/layouts/header.php';

@@ -1,3 +1,11 @@
 .idea
 config.php
 routes/admin.php
+public
+composer.json
+composer.lock
+frontend/package-lock.json
+frontend/package.json
+frontend/index.phtml
+src/Auth
+src/Views/User/jwt.phtml

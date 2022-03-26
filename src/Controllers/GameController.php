@@ -46,7 +46,7 @@ class GameController
             $breadcrumbs = DataConverter::getBreadcrumbs();
 
             $view = __DIR__ . '/../Views/Loadout/loadout-game.phtml';
-            RenderView::renderUser($view, $loadoutsData, $_SERVER['REQUEST_URI'], $wpCatData, $gameData, $breadcrumbs);
+            RenderView::renderUser($view, $loadoutsData, $_SERVER['REQUEST_URI'], $wpCatData, $gameData, $breadcrumbs, "Clases para ".$gameData['short_name']);
             exit();
 
         } catch ( \Exception $exception ) {

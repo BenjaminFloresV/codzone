@@ -24,6 +24,10 @@ class Loadout
     private static $conn;
     private static $log;
 
+    public function getGameId(){
+        return $this->game_id;
+    }
+
     public function getName(){
         return $this->title;
     }
@@ -100,16 +104,32 @@ class Loadout
 
     }
 
-    public static function getAll($join = false)
+    public static function getAll($join = false, int $limit = null, bool $orderByDate = false, int $byGame = null, int $except = null )
     {
         if ( !self::$conn ) return false;
         try{
             self::$log->info('Trying to collect Loadouts data...');
             if ( $join ){
-                $sql = "SELECT l.*, UNIX_TIMESTAMP(l.creation_date) AS creationDate, UNIX_TIMESTAMP(l.date_update) AS dateUpdate, g.name AS gameName, g.short_name as shortName, w.name AS weaponName, wcat.name AS weaponcatName FROM loadout l ";
+                $sql = "SELECT l.*, UNIX_TIMESTAMP(l.creation_date) AS creationDate, UNIX_TIMESTAMP(l.date_update) AS dateUpdate, g.name AS gameName, g.short_name as shortName, w.name AS weaponName, wcat.name AS weaponcatName, w.image as weaponImage FROM loadout l ";
                 $sql .= "INNER JOIN game g ON g.game_id = l.game_id ";
                 $sql .= "INNER JOIN weapon w ON w.weapon_id = l.weapon_id ";
                 $sql .= "INNER JOIN weapon_category wcat ON wcat.wpcategory_id = l.wpcategory_id";
+
+                if( $orderByDate ){
+                    $sql .= " ORDER BY l.loadout_id DESC";
+                }
+
+                if( !is_null($byGame) ){
+                    $sql .= " WHERE g.game_id = :gameId";
+                }
+
+                if( !is_null($except) ){
+                    $sql .= " AND l.loadout_id <> :except";
+                }
+
+                if( $limit !== null ){
+                    $sql .= " LIMIT :limit";
+                }
 
 
             }else{
@@ -117,6 +137,9 @@ class Loadout
             }
 
             $st = self::$conn->prepare($sql);
+            if( !is_null($byGame) ) $st->bindValue(':gameId', $byGame, PDO::PARAM_INT);
+            if( $limit !== null ) $st->bindValue(':limit', $limit, PDO::PARAM_INT);
+            if( !is_null($except) ) $st->bindValue(':except', $except, PDO::PARAM_INT);
             $query = $st->execute();
 
             if ( $query ){
@@ -164,6 +187,38 @@ class Loadout
 
         }catch (Exception $exception){
             self::$log->error("Loadout data could not be collected", array('exception' => $exception));
+            return false;
+        }
+
+    }
+
+
+    public static function getRandom( bool $join = false)
+    {
+        if( !self::$conn ) return false; // Verify database connection
+        try {
+            if( $join ){
+                $sql = "SELECT l.title,l.loadout_id, UNIX_TIMESTAMP(l.creation_date) AS creationDate, g.short_name AS shortName, g.name AS gameName, w.image AS weaponImage FROM loadout l ";
+                $sql .= "INNER JOIN game g ON g.game_id=l.game_id ";
+                $sql .= "INNER JOIN weapon w ON w.weapon_id=l.weapon_id ";
+                $sql .= "ORDER BY RAND() LIMIT 3";
+            }
+
+            $st = self::$conn->prepare($sql);
+
+            $query = $st->execute();
+
+            if ( $query ){
+                $loadouts = $st->fetchAll();
+                self::$log->info("Loadouts data has been collected successfully.", array( 'data' => $loadouts ));
+                return  $loadouts;
+            }
+
+            self::$log->info("Loadouts data could not be collected");
+            return false;
+
+        } catch ( Exception $exception){
+            self::$log->error('Random News data cannot be collected', array( 'exception' => $exception ));
             return false;
         }
 
