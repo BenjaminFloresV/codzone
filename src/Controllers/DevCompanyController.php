@@ -11,6 +11,7 @@ class DevCompanyController
 
     public function insert()
     {
+        Helpers::isAdmin();
         $log = NewLogger::newLogger('DEVCOMP_CONTROLLER','FirePHPHandler');
         $log->info('Insert Method was executing...');
         if(!empty($_POST)){
@@ -47,6 +48,7 @@ class DevCompanyController
 
     public function delete( int $id)
     {
+        Helpers::isAdmin();
         $log = NewLogger::newLogger('DEVCOMP_CONTROLLER','FirePHPHandler');
         $log->info('Delete Method was executing...');
 
@@ -80,6 +82,7 @@ class DevCompanyController
     }
     public function update()
     {
+        Helpers::isAdmin();
         $log = NewLogger::newLogger('GAME_CONTROLLER','FirePHPHandler');
         $log->info('Update Method was executing...');
         if (!empty($_POST)){

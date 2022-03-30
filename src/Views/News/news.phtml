@@ -59,7 +59,7 @@
                     <h3 class="title mt-1"><span class="is-text mr-5 is-size-4">Te puede interesar...</span><i class="fa-solid fa-angle-right"></i></h3>
                     <?php foreach ($allData as $news ): ?>
                         <div class="is-flex is-flex-direction-column">
-                            <a href="/noticias/<?=$news['lowerCatName']?>/<?=$news['news_id']?>/<?=$news['uriTitle']?>" class="is-flex mb-2">
+                            <a href="/noticias/<?=$news['lowerCatName']?>/<?=$news['news_id']?>/<?=$news['uriTitle']?>" class="is-flex mb-2 aside-recommendations">
                                 <figure class="image m-0 other-loadouts-img">
                                     <img class="object-fit" src="/uploads/images/news/<?=$news['categoryName']?>/<?=$news['titleImage']?>" alt="" >
                                 </figure>

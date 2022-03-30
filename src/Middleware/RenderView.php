@@ -27,6 +27,10 @@ class RenderView
                     $tutorialView = $viewExtras['tutorialOptionURI'];
                 }
 
+                if( isset($viewExtras['homeOptionURI']) !== null ) {
+                    $homeView = $viewExtras['homeOptionURI'];
+                }
+
 
             }
 

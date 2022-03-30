@@ -5,6 +5,7 @@
 /* @var string $baseUrl */
 /* @var string $newsView */
 /* @var string $tutorialView */
+/* @var string $homeView */
 ?>
 <header class="section has-background-dark py-4 has-text-white">
     <h1 class="title has-text-centered has-text-white"><?=$viewTitle?></h1>
@@ -30,8 +31,12 @@
                 <?php if( $tutorialView !== null ): ?>
                     <li class="white-a"><a href="<?=$tutorialView['uri']?>"><?=$tutorialView['name']?></a></li>
                 <?php endif;?>
+                <?php if( $homeView !== null ): ?>
+                    <li class="white-a"><a href="<?=$homeView['uri']?>"><?=$homeView['name']?></a></li>
+                <?php endif;?>
+
                 <li class="white-a"><a href="<?=$urlPrefix?>crear">Crear</a></li>
-                <li class="white-a"><a class="li-panel">Cerrar Sesión</a></li>
+                <li class="white-a"><a href="/admin/logout" class="li-panel">Cerrar Sesión</a></li>
             </ul>
 
         </aside>

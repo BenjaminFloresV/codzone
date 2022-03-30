@@ -155,6 +155,14 @@ a, span, i{
   z-index: 11;
 }
 
+.aside-recommendations figure {
+  width: 40% !important;
+}
+
+.aside-recommendations h4 {
+  width: 60% !important;
+}
+
 #search-nav.active {
   display: flex;
 }
@@ -430,8 +438,39 @@ a, span, i{
 }
 
 
+.button.is-main-color {
+  background-color: #abab32;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.warning-color {
+  color: #ff0000;
+}
+
+.success-color {
+  color: #3fc700;
+}
+
+.alert {
+  padding: 1em;
+  font-weight: bold;
+}
+
+.alert.success-color {
+  border: 4px dotted #3fc700;
+
+}
+
+.alert.warning-color {
+  border: 4px dotted #ff0000;;
+}
+
+
+
 @import "./user-home.scss";
 @import "search-content.scss";
 @import "News/main";
 @import "Loadout/main";
+@import "Admin/main";
 @import "./media-queries.scss";

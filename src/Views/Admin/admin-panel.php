@@ -8,11 +8,11 @@
         <div class="content mb-6">
             <p class="subtitle has-text-justified">
                 Bienvenido al panel administrador del sitio, aquí podrá ver y gestionar toda la información contenida en el sitio web de mejoresclases.com,
-                queda bajo su responsabilidad la correcta utilización de las distintas funcionalidades. <a class="is-link">Cerrar Sesión</a>
+                queda bajo su responsabilidad la correcta utilización de las distintas funcionalidades. <a href="/admin/logout" class="is-link">Cerrar Sesión</a>
             </p>
         </div>
         <div class="columns is-multiline is-justify-content-center">
-            <div class="column is-4" >
+            <div class="column is-3" >
                 <a href="/admin/desarrolladoras">
                     <div class="card">
                         <div class="card-image">
@@ -23,14 +23,14 @@
                         <div class="card-content">
                             <div class="media">
                                 <div class="media-content has-text-centered">
-                                    <p class="title is-4">Administrar Desarrolladoras</p>
+                                    <p class="title is-4">Desarrolladoras</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </a>
             </div>
-            <div class="column is-4">
+            <div class="column is-3">
                 <a href="/admin/juegos">
                     <div class="card">
                         <div class="card-image">
@@ -41,14 +41,14 @@
                         <div class="card-content">
                             <div class="media">
                                 <div class="media-content has-text-centered">
-                                    <p class="title is-4">Administrar Juegos</p>
+                                    <p class="title is-4">Juegos</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </a>
             </div>
-            <div class="column is-4">
+            <div class="column is-3">
                 <a href="/admin/armas">
                     <div class="card">
                         <div class="card-image">
@@ -59,14 +59,14 @@
                         <div class="card-content">
                             <div class="media">
                                 <div class="media-content has-text-centered">
-                                    <p class="title is-4">Administrar Armas</p>
+                                    <p class="title is-4">Armas</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </a>
             </div>
-            <div class="column is-4">
+            <div class="column is-3">
                 <a href="/admin/categorias-armas">
                     <div class="card">
                         <div class="card-image">
@@ -77,14 +77,14 @@
                         <div class="card-content">
                             <div class="media">
                                 <div class="media-content has-text-centered">
-                                    <p class="title is-4">Administrar Categorías de Armas</p>
+                                    <p class="title is-4">Categorías de Armas</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </a>
             </div>
-            <div class="column is-4">
+            <div class="column is-3">
                 <a href="/admin/clases">
                     <div class="card">
                         <div class="card-image">
@@ -95,14 +95,14 @@
                         <div class="card-content">
                             <div class="media">
                                 <div class="media-content has-text-centered">
-                                    <p class="title is-4">Administrar Clases</p>
+                                    <p class="title is-4">Clases</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </a>
             </div>
-            <div class="column is-4">
+            <div class="column is-3">
                 <a href="/admin/noticias">
                     <div class="card">
                         <div class="card-image">
@@ -113,14 +113,14 @@
                         <div class="card-content">
                             <div class="media">
                                 <div class="media-content has-text-centered">
-                                    <p class="title is-4">Administrar Noticias</p>
+                                    <p class="title is-4">Noticias</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </a>
             </div>
-            <div class="column is-4">
+            <div class="column is-3">
                 <a href="/admin/tutoriales">
                     <div class="card">
                         <div class="card-image">
@@ -131,7 +131,7 @@
                         <div class="card-content">
                             <div class="media">
                                 <div class="media-content has-text-centered">
-                                    <p class="title is-4">Administrar Tutoriales</p>
+                                    <p class="title is-4">Tutoriales</p>
                                 </div>
                             </div>
                         </div>

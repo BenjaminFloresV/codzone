@@ -14,9 +14,9 @@
                 <?php $counter = 0 ?>
                 <?php foreach ( $crumbs as $crumb ): ?>
                     <?php if( ( $counter + 1 ) == count($crumbs) ): ?>
-                        <li class="is-active is-size-4"><a href="#" aria-current="page"><?=$crumb['word']?></a></li>
+                        <li class="is-active"><a href="#" aria-current="page"><?=$crumb['word']?></a></li>
                     <?php else: ?>
-                        <li class="is-size-4"><a href="<?=$crumb['url']?>"><?=$crumb['word']?></a></li>
+                        <li><a href="<?=$crumb['url']?>"><?=$crumb['word']?></a></li>
                     <?php endif; $counter++ ?>
                 <?php endforeach; ?>
 

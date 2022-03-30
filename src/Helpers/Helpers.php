@@ -2,6 +2,7 @@
 
 namespace CMS\Helpers;
 
+use CMS\Models\Settings;
 use JetBrains\PhpStorm\NoReturn;
 
 
@@ -174,10 +175,12 @@ class Helpers
             case 'insert':
                 $value = true;
                 break;
+            case 'home':
+                $value = true;
+                break;
             default:
                 $value = false;
                 break;
-
         }
         return $value;
     }
@@ -195,8 +198,11 @@ class Helpers
             case 'crear':
                 $value = 'insert';
                 break;
-            case 'delete';
+            case 'delete':
                 $value = 'delete';
+                break;
+            case 'home':
+                $value = 'home';
                 break;
             default:
                 $value ='read';
@@ -209,7 +215,6 @@ class Helpers
     public static function retrieveObjectData(string $action, object $object, $id = '', $join = false, $getObjectCategories = false )
     {
         if ($action == 'read') {
-
             if( $getObjectCategories ){
 
                 return $object::getAllCategories();
@@ -238,7 +243,7 @@ class Helpers
 
     }
 
-    public static function retrieveSelectsData( $objects, $getCategories = false ): bool|array
+    public static function retrieveSelectsData( $objects, $getCategories = false, array $getSettings = null ): bool|array
     {
 
         $objectsData = array();
@@ -248,14 +253,23 @@ class Helpers
                 $objectNamespace = explode('\\',get_class($object) );
                 $name = $objectNamespace[2];
 
+
                 if( $getCategories ) {
                     $objectsData += [$name => $object::getAllCategories()];
                 }else {
                     $objectsData += [$name => $object::getAll()];
                 }
-
-
             }
+
+            if( is_null($getSettings) !== true){
+                $settingObject = new Settings();
+                $settings = array();
+                foreach ($getSettings as $setting){
+                    $settings += [$setting => $settingObject->getOneSetting($setting)];
+                }
+                $objectsData['Settings'] = $settings;
+            }
+
             return $objectsData;
 
         } catch (\Exception $exception){
@@ -431,5 +445,20 @@ class Helpers
 
     }
 
+    public static function isAdmin()
+    {
+        if( !isset($_SESSION['admin'])) {
+            header("Location:".BASE_URL);
+            exit();
+        }
+    }
+
+    public static function deleteSession( string $name )
+    {
+        if(isset($_SESSION[$name])){
+            $_SESSION[$name] = null;
+            unset($_SESSION[$name]);
+        }
+    }
 
 }

@@ -2,16 +2,18 @@
 
 namespace CMS\Controllers;
 
-use Cassandra\Varint;
 use CMS\Helpers\Helpers;
 use CMS\Middleware\Auth;
 use CMS\Middleware\RenderView;
+use CMS\Models\Category;
 use CMS\Models\DeveloperCompany;
 use CMS\Helpers\NewLogger;
 use CMS\Models\Game;
 use CMS\Models\Loadout;
 use CMS\Models\News;
+use CMS\Models\Settings;
 use CMS\Models\Tutorial;
+use CMS\Models\User;
 use CMS\Models\Weapon;
 use CMS\Models\WeaponCategory;
 
@@ -27,6 +29,7 @@ class AdminController
             }
             var_dump( $_POST );
         }else {
+            Helpers::isAdmin();
             $view = __DIR__ . '/../../src/Views/Admin/admin-panel.php';
             RenderView::render($view);
         }
@@ -37,6 +40,7 @@ class AdminController
 
     public function manageGames( $action = null, $id = null )
     {
+        Helpers::isAdmin();
         $action = Helpers::verifyAction($action);
 
         $viewExtras = array(
@@ -64,7 +68,7 @@ class AdminController
 
     public function manageCompanies($action = null, $id = null) // Al establecer una valor para el método, se soluciono el tema del parametro GET recibido
     {
-
+        Helpers::isAdmin();
         $action = Helpers::verifyAction($action);
 
         $viewExtras = array(
@@ -86,6 +90,7 @@ class AdminController
 
     public function manageWeapons( $action = null, $id = null )
     {
+        Helpers::isAdmin();
         $action = Helpers::verifyAction($action);
 
         $viewExtras = array(
@@ -113,6 +118,7 @@ class AdminController
 
     public function manageWpCategories( $action = null, $id = null )
     {
+        Helpers::isAdmin();
         $action = Helpers::verifyAction($action);
 
         $viewExtras = array(
@@ -131,24 +137,40 @@ class AdminController
 
     public function manageLoadouts($action = null, $id = null)
     {
+        Helpers::isAdmin();
         $action = Helpers::verifyAction($action);
 
         $viewExtras = array(
             'viewTitle' => 'Administrar Clases',
             'urlPrefix' => '/admin/clases/',
-            'baseUrl' => 'loadout'
+            'baseUrl' => 'loadout',
+            'homeOptionURI'=> array('name'=> 'Home', 'uri' => '/admin/clases/home'),
         );
 
         $view = __DIR__ . '/../../src/Views/Admin/administration.php';
 
-
-        $data = Helpers::retrieveObjectData($action, new Loadout(), $id, true); //Datos de la vista read
+        if( !empty($_GET)){
+            $loadout = new Loadout();
+            $data = $loadout->getAllFiltered($_GET);
+        } else{
+            $data = Helpers::retrieveObjectData($action, new Loadout(), $id, true); //Datos de la vista read
+        }
 
         if( Helpers::verifySelects($action) ){
-            $selectObjects = array(new WeaponCategory(), new Game(), new Weapon()); // Datos para los elementos HTML select (create, update)
-            $selectOptions = Helpers::retrieveSelectsData($selectObjects);
+            if( $action == 'home' ){ //En caso de que la vista sea home, necesitaremos los valores de configuracion para las clases de tres juegos predeterminados
+                $selectOptions = Helpers::retrieveSelectsData(array( new Game()), false, ['lastHomeLoadouts']); // Datos para los elementos HTML select (create, update)
+                $selectOptions['Settings']['lastHomeLoadouts']['value'] = explode(',', $selectOptions['Settings']['lastHomeLoadouts']['value']);
+            }
+            else {
+                $selectObjects = array(new WeaponCategory(), new Game(), new Weapon()); // Datos para los elementos HTML select (create, update)
+                $selectOptions = Helpers::retrieveSelectsData($selectObjects);
+            }
+
         }else {
-            $selectOptions = '';
+            if( $action == 'read'){
+                $selectObjects = array(new Game(), new WeaponCategory());
+                $selectOptions = Helpers::retrieveSelectsData($selectObjects);
+            }
         }
 
         RenderView::render($view,true, $action,$data, $viewExtras, $selectOptions);
@@ -157,7 +179,7 @@ class AdminController
 
     public function manageNews( $action = null, $id = null )
     {
-
+        Helpers::isAdmin();
         $action = Helpers::verifyAction($action);
 
         $viewExtras = array(
@@ -169,18 +191,19 @@ class AdminController
         );
 
 
-
-
         $view = __DIR__ . '/../../src/Views/Admin/administration.php';
 
-        $data = Helpers::retrieveObjectData( $action, new News(), $id, false); //Datos de la vista read
+        $data = Helpers::retrieveObjectData( $action, new News(), $id, true); //Datos de la vista read
 
 
         if( Helpers::verifySelects($action) ){
             $selectObjects = array(new News()); // Datos para los elementos HTML select (create, update)
             $selectOptions = Helpers::retrieveSelectsData($selectObjects, true);
         }else {
-            $selectOptions = '';
+            if( $action == 'read'){
+                $category = new Category();
+                $selectOptions = $category::getAllCategories();
+            }
         }
 
         RenderView::render($view,true, $action,$data, $viewExtras, $selectOptions);
@@ -189,7 +212,7 @@ class AdminController
 
     public function manageCategories($action = null, $id = null)
     {
-
+        Helpers::isAdmin();
         $action = Helpers::verifyAction($action);
 
         $viewExtras = array(
@@ -212,6 +235,7 @@ class AdminController
 
     public function manageTutorials($action = null, $id = null)
     {
+        Helpers::isAdmin();
         $action = Helpers::verifyAction($action);
 
         $viewExtras = array(
@@ -236,6 +260,42 @@ class AdminController
 
         RenderView::render($view,true, $action,$data, $viewExtras, $selectOptions);
 
+    }
+
+
+    public function login()
+    {
+        if( isset($_SESSION['admin'])  ){
+            // logic
+            Helpers::manageRedirect();
+        }else if( !empty($_POST) ){
+            // logic
+            $user = new User();
+            $user->storeFormValues($_POST);
+
+            $userData = $user->login();
+
+            if( $userData !== false ){
+                $isAdmin = boolval($userData['isAdmin']);
+                if( $isAdmin ){
+                    $_SESSION['admin'] = $userData;
+                    Helpers::manageRedirect();
+                }
+            }else {
+                $_SESSION['error-message'] = 'El usuario y/o la contraseña no son correctas';
+                header("Location:".BASE_URL.'/admin-login');
+                exit();
+            }
+
+        }else {
+            $view = __DIR__.'/../../src/Views/Admin/login.phtml';
+            RenderView::render($view);
+        }
+    }
+
+    public function logout()
+    {
+        User::logout();
     }
 
 }

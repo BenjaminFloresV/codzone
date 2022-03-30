@@ -193,34 +193,39 @@ class Loadout
     }
 
 
-    public static function getRandom( bool $join = false)
+    public static function getByGames( array $games = null)
     {
         if( !self::$conn ) return false; // Verify database connection
         try {
-            if( $join ){
+            $loadouts = array();
+            foreach ( $games as $game) {
                 $sql = "SELECT l.title,l.loadout_id, UNIX_TIMESTAMP(l.creation_date) AS creationDate, g.short_name AS shortName, g.name AS gameName, w.image AS weaponImage FROM loadout l ";
                 $sql .= "INNER JOIN game g ON g.game_id=l.game_id ";
                 $sql .= "INNER JOIN weapon w ON w.weapon_id=l.weapon_id ";
-                $sql .= "ORDER BY RAND() LIMIT 3";
+                $sql .= "WHERE g.game_id=:game ORDER BY l.loadout_id DESC LIMIT 1";
+
+                $st = self::$conn->prepare($sql);
+                $st->bindValue(':game', $game, PDO::PARAM_INT);
+                $query = $st->execute();
+
+                if ( $query ){
+                    $loadout = $st->fetch();
+                    self::$log->info("Loadouts data has been collected successfully.", array( 'data' => $loadouts ));
+                    array_push($loadouts,$loadout);
+                }else {
+                    array_push($loadouts, array());
+                }
+                $st->closeCursor();
             }
 
-            $st = self::$conn->prepare($sql);
-
-            $query = $st->execute();
-
-            if ( $query ){
-                $loadouts = $st->fetchAll();
-                self::$log->info("Loadouts data has been collected successfully.", array( 'data' => $loadouts ));
-                return  $loadouts;
-            }
-
+            if( empty($loadouts) ) $loadouts = false;
             self::$log->info("Loadouts data could not be collected");
-            return false;
+
 
         } catch ( Exception $exception){
             self::$log->error('Random News data cannot be collected', array( 'exception' => $exception ));
-            return false;
         }
+        return $loadouts;
 
     }
 
@@ -414,5 +419,53 @@ class Loadout
             return false;
         }
 
+    }
+
+
+    public function getAllFiltered( array $data)
+    {
+        if ( !self::$conn ) return false;
+        try{
+            $result = false;
+            $gameId = $data['game'];
+            $weaponCatId = $data['weaponcat'];
+
+            self::$log->info('Trying to collect Loadouts data...');
+
+            $sql = "SELECT l.*, UNIX_TIMESTAMP(l.creation_date) AS creationDate, UNIX_TIMESTAMP(l.date_update) AS dateUpdate, g.name AS gameName, g.short_name as shortName, w.name AS weaponName, wcat.name AS weaponcatName, w.image as weaponImage FROM loadout l ";
+            $sql .= "INNER JOIN game g ON g.game_id = l.game_id ";
+            $sql .= "INNER JOIN weapon w ON w.weapon_id = l.weapon_id ";
+            $sql .= "INNER JOIN weapon_category wcat ON wcat.wpcategory_id = l.wpcategory_id";
+
+            $conditions = array();
+            // real escape
+            if( !empty($gameId)) {
+                $gameId = self::$conn->quote($gameId);
+                $conditions[] = "g.game_id={$gameId}";
+            }
+            if( !empty($weaponCatId)) {
+                $weaponCatId = self::$conn->quote($weaponCatId);
+                $conditions[] = "wcat.wpcategory_id={$weaponCatId}";
+            }
+
+            if( count($conditions) > 0 ) $sql.= " WHERE ".implode(' AND ', $conditions);
+
+            $st = self::$conn->prepare($sql);
+            $query = $st->execute();
+
+            if ( $query ){
+                $loadouts = $st->fetchAll();
+                self::$log->info("Loadouts data has been collected successfully.", array( 'data' => $loadouts ));
+                $result = $loadouts;
+            }
+
+            self::$log->info("Loadouts data could not be collected");
+
+        }catch (Exception $exception){
+            self::$log->error('Loadouts data could not be collected.', array( 'exception' => $exception ));
+
+        }
+
+        return $result;
     }
 }

@@ -45,7 +45,9 @@ const findMinorByAttribute = async ( containerClass , attributeName ) => {
 };
 
 const loopArticle = async ( data, container, className, categoryLeft = false ) =>{
-    return new Promise(resolve => data.forEach(e => {
+    return new Promise(resolve =>
+
+        data.forEach(e => {
         let article = document.createElement('article'); article.classList.add('article', className , `${e.articleType}` , 'is-flex', 'is-flex-direction-column', 'has-background-white', 'p-2', 'mb-3', 'mt-3'); article.setAttribute('id',`${e.id}`);
         let divImage = document.createElement('div');  divImage.setAttribute('id', 'post-image');  divImage.classList.add('is-flex', 'is-relative');
         let linkImage = document.createElement('a'); linkImage.href = `/${e.startUri}/${stringToUri(e.shortNameUri)}/${e.id}/${stringToUri(e.title)}`;
@@ -99,6 +101,8 @@ const renderArticles = async ( data, container, className = 'post-search-id', ca
 
 
 
+
+
 let allowSearchScroll = false;
 
 let search = {
@@ -143,11 +147,7 @@ let search = {
                         searchResults.appendChild(noResultSpan);
                     } else {
                         allowSearchScroll = true;
-                        data.sort(function (a, b) {
-                            return b.id - a.id;
-                        })
 
-                        data.reverse();
                         await renderArticles(data, searchResults, 'post-search-id').then( () => {
                             searchButton.disabled = false;
                         });

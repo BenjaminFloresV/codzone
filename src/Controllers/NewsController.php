@@ -81,6 +81,7 @@ class NewsController
 
     public function insert()
     {
+        Helpers::isAdmin();
         $log = NewLogger::newLogger('NEWS_CONTROLLER', 'FirePHPHandler');
         $log->info('Insert News method is executing');
 
@@ -119,7 +120,7 @@ class NewsController
 
     public function update()
     {
-
+        Helpers::isAdmin();
         $log = NewLogger::newLogger('NEWS_CONTROLLER', 'FirePHPHandler');
         $log->info('Update News method is executing');
 
@@ -170,6 +171,7 @@ class NewsController
 
     public function insertCategory()
     {
+        Helpers::isAdmin();
         $log = NewLogger::newLogger('NEWS_CONTROLLER', 'FirePHPHandler');
         $log->info('InsertCategory method is executing');
 
@@ -195,7 +197,7 @@ class NewsController
     }
 
     public function delete( int $id, int $images_id ){
-
+        Helpers::isAdmin();
         $log = NewLogger::newLogger('NEWS_CONTROLLER', 'FirePHPHandler');
         $log->info('Delete method is executing...');
         try {
@@ -233,6 +235,7 @@ class NewsController
 
     public function updateCategory()
     {
+        Helpers::isAdmin();
         $log = NewLogger::newLogger('NEWS_CONTROLLER', 'FirePHPHandler');
         $log->info('Update Category was executing');
         try {
@@ -260,6 +263,7 @@ class NewsController
 
     public function deleteCategory( int $id)
     {
+        Helpers::isAdmin();
         $log = NewLogger::newLogger('NEWS_CONTROLLER', 'FirePHPHandler');
         $log->info('Delete Category method is executing...');
         try {
@@ -283,4 +287,7 @@ class NewsController
         Helpers::manageRedirect('categorias-noticias');
 
     }
+
+
+
 }

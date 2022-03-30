@@ -6,6 +6,7 @@ use CMS\Helpers\DataConverter;
 use CMS\Middleware\RenderView;
 use CMS\Models\Loadout;
 use CMS\Models\News;
+use CMS\Models\Settings;
 use CMS\Models\Tutorial;
 
 class UserController
@@ -31,8 +32,11 @@ class UserController
         $lastNews['lowerCatName'] = DataConverter::stringToUri($lastNews['categoryName']);
         $lastNews['uriTitle'] = DataConverter::stringToUri($lastNews['title']);
 
+        $settings = new Settings();
+        $settings = $settings->getOneSetting('lastHomeLoadouts')['value'];
+        $gameSettings = explode(',', $settings);
+        $randomLoadout = $loadout::getByGames($gameSettings);
 
-        $randomLoadout = $loadout::getRandom(true);
 
         $someNews = $news::getAll(true,4, false,null, true);
 
@@ -65,11 +69,17 @@ class UserController
 
 
         foreach ( $randomLoadout as $key=>$item ){
+            if( $item == false ){
+                continue;
+            }
             $item['gameUri'] = DataConverter::stringToUri($item['shortName']);
             $randomLoadout[$key] = $item;
         }
 
         foreach ( $randomLoadout as $key=>$item ){
+            if( $item == false ){
+                continue;
+            }
             $item['loadoutUri'] = DataConverter::stringToUri($item['title']);
             $randomLoadout[$key] = $item;
         }

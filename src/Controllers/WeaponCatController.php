@@ -13,6 +13,7 @@ class WeaponCatController
 
     public function insert()
     {
+        Helpers::isAdmin();
         $log = NewLogger::newLogger('WPCAT_CONTROLLER','FirePHPHandler');
         $log->info('Insert Method was executing...');
         if(!empty($_POST)){
@@ -51,6 +52,7 @@ class WeaponCatController
 
     public function update()
     {
+        Helpers::isAdmin();
         $log = NewLogger::newLogger('WPCAT_CONTROLLER','FirePHPHandler');
         $log->info('Update Method was executing...');
 
@@ -87,7 +89,7 @@ class WeaponCatController
 
     public function delete( int $id )
     {
-
+        Helpers::isAdmin();
         $log = NewLogger::newLogger('WPCAT_CONTROLLER','FirePHPHandler');
         $log->info('Delete Method was executing...');
 

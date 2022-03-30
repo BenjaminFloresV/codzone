@@ -144,7 +144,7 @@ class Tutorial extends Category
             }
 
             if( $lastTutorial ){
-                $sql .= " ORDER BY t.creation_date DESC";
+                $sql .= " ORDER BY t.tutorial_id DESC";
             }
 
             if( !is_null($limit) ){

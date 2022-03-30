@@ -1,0 +1,12 @@
+#admin-login {
+  @extend .section;
+  @extend .min-height-100v;
+  @extend .is-flex;
+  @extend .is-justify-content-center;
+  @extend .has-background-grey-light;
+}
+
+#home-iframe {
+  width: 100%;
+  height: 500px;
+}

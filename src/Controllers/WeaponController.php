@@ -10,6 +10,7 @@ class WeaponController
 {
     public function insert(): void
     {
+        Helpers::isAdmin();
         $log = NewLogger::newLogger('WEAPON_CONTROLLER', 'FirePHPHandler');
         $log->info('Insert method is executing...');
 
@@ -50,6 +51,7 @@ class WeaponController
 
     public function update()
     {
+        Helpers::isAdmin();
         $log = NewLogger::newLogger('WPCAT_CONTROLLER', 'FirePHPHandler');
         $log->info('Update method is executing...');
 
@@ -100,6 +102,7 @@ class WeaponController
 
     public function delete(int $id)
     {
+        Helpers::isAdmin();
         $log = NewLogger::newLogger('WPCAT_CONTROLLER', 'FirePHPHandler');
         $log->info('Delete method is executing...');
 

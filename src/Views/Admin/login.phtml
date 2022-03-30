@@ -1,0 +1,27 @@
+<?php
+?>
+<section id="admin-login">
+    <div class="container is-align-self-center">
+        <form class="has-background-white column p-5 is-6 m-auto" method="POST" action="http://localhost:8001/admin-login">
+            <div class="field">
+                <label for="username" class="label">Username o Email</label>
+                <div class="control">
+                    <input class="input" type="text" name="username">
+                </div>
+            </div>
+            <div class="field">
+                <label for="password" class="label">Contraseña</label>
+                <div class="control">
+                    <input class="input" type="password" name="password">
+                </div>
+            </div>
+            <?php if( isset($_SESSION['error-message'])):?>
+                <span class="is-block p-1 mt-2 mb-2 warning-color"><?=$_SESSION['error-message']?></span>
+            <?php endif;?>
+            <?php \CMS\Helpers\Helpers::deleteSession('error-message') ?>
+            <div class="control">
+                <button class="button is-main-color">Ingresar</button>
+            </div>
+        </form>
+    </div>
+</section>

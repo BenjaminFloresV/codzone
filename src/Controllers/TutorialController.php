@@ -58,9 +58,9 @@ class TutorialController
         $tutorial = new Tutorial();
 
         if( !is_null($category) ){
-            $allNews = DataConverter::subjectToLower($tutorial::getAll(true, 5, true, $category), 'categoryName', 'lowerCatName');
+            $allNews = DataConverter::subjectToLower($tutorial::getAll(true, 1, true, $category, true), 'categoryName', 'lowerCatName');
         }else{
-            $allNews = DataConverter::subjectToLower($tutorial::getAll(true, 5), 'categoryName', 'lowerCatName');
+            $allNews = DataConverter::subjectToLower($tutorial::getAll(true, 1, false, null, true), 'categoryName', 'lowerCatName');
         }
 
 
