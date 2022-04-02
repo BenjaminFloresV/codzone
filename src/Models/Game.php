@@ -6,6 +6,7 @@ use CMS\Helpers\Connection;
 use CMS\Helpers\NewLogger;
 use Exception;
 use PDO;
+use \Psr\Log\LoggerInterface;
 
 class Game
 {
@@ -16,14 +17,15 @@ class Game
     private string $release_date;
     private string $description;
     private string $image;
-    private static $conn;
-    private static $log;
+    private static bool|PDO $conn;
+    private static LoggerInterface $log;
 
     public function setImage( string $image){
         $this->image = $image;
     }
 
-    public function getName(){
+    public function getName(): string
+    {
         return $this->name;
     }
 
@@ -47,7 +49,7 @@ class Game
 
     public function storeFormValues( array $data ): bool
     {
-        if( !self::$conn ) return false; // Verify database connection
+        $result = true;
         try{
             self::$log->info('Trying to store form values...');
             if ( isset($data['game_id'] ) ) $this->game_id = (int) $data['game_id'];
@@ -68,18 +70,17 @@ class Game
 
 
             self::$log->info('Form values have been stored successfully', array('formData' => array($this->name, $this->description, $this->release_date, $this->company_id)));
-            return true;
-
-
         }catch (Exception $exception){
-            self::$log->error('Cannot store form values');
-            return false;
+            self::$log->error('Cannot store form values');;
+            $result = false;
         }
+        return $result;
     }
 
     public static function getAll( bool $join = false): bool|array
     {
-        if( !self::$conn ) return false; // Verify database connection
+        $result = false;
+        if( !self::$conn ) return $result; // Verify database connection
         try{
             self::$log->info('Trying to retrieve Games all data...');
             $sql = "SELECT *, UNIX_TIMESTAMP(release_date) AS releaseDate FROM game";
@@ -91,21 +92,20 @@ class Game
             $query = $st->execute();
 
             if ($query) {
-                $games = $st->fetchAll();
-                self::$log->notice('All Games data collected successfully', array( 'games_list' => $games ) );
-                return $games;
+                $result = $st->fetchAll();
+                self::$log->notice('All Games data collected successfully', array( 'games_list' => $result ) );
             }
 
         } catch (Exception $exception){
             self::$log->error('All Games data cannot be collected', array( 'exception' => $exception ) );
-            return false;
         }
-        return false;
+        return $result;
     }
 
     public static function getById( $id, bool $join = false ): bool|array
     {
-        if( !self::$conn ) return false; // Verify database connection
+        $result = false;
+        if( !self::$conn ) return $result; // Verify database connection
         try{
             self::$log->info('Trying to retrieve Loadout data by id...');
             $sql = "SELECT *, UNIX_TIMESTAMP(release_date) AS releaseDate FROM game WHERE game_id = :id";
@@ -113,32 +113,27 @@ class Game
             $st->bindValue(":id", $id, PDO::PARAM_INT );
             $query = $st->execute();
 
-
             if($query){
-                $game = $st->fetch();
+                $result = $st->fetch();
 
-                if ( !$game ){
+                if ( !$result ){
                     self::$log->notice("The Loadout with id: $id do not exists." );
-                    return false;
                 }
 
-                self::$log->notice('The Loadout data was collected successfully', array( 'game' => $game ) );
-                return $game;
+                self::$log->notice('The Loadout data was collected successfully', array( 'game' => $result ) );
             }
 
         } catch (Exception $exception) {
             self::$log->error('The Loadout cannot be collected', array( 'exception' => $exception ));
-            return false;
         }
-
-        return false;
-
+        return $result;
     }
 
     public static function getByShortName( string $shortName )
     {
+        $result = false;
         self::$log->info('Trying to collect Loadout data by shortName');
-        if( !self::$conn ) return false;
+        if( !self::$conn ) return $result;
         try {
             self::$log->info('Trying to collect Loadout data by shortName');
             $sql = "SELECT * FROM game WHERE short_name=:short_name";
@@ -147,30 +142,25 @@ class Game
             $query = $st->execute();
 
             if($query){
-                $game = $st->fetch();
+                $result = $st->fetch();
 
-                if ( !$game ){
-                    self::$log->notice("The Loadout with short name: $shortName do not exists." );
-                    return false;
+                if ( $result ){
+                    self::$log->notice('The Loadout data was collected successfully', array( 'game' => $result ) );
                 }
 
-                self::$log->notice('The Loadout data was collected successfully', array( 'game' => $game ) );
-                return $game;
             }
-
-
 
         }catch ( Exception $exception ) {
             self::$log->error('Something went wrong while collecting data.', array( 'execption' => $exception ) );
 
         }
-
-        return false;
+        return $result;
     }
 
     public function insert(): bool
     {
-        if( !self::$conn ) return false; // Verify database connection
+        $result = false;
+        if( !self::$conn ) return $result; // Verify database connection
         try{
             self::$log->info('Trying to save data...');
             $sql = "INSERT INTO game ( game_id, company_id, name, short_name, release_date, description, image ) VALUES(NULL, :company_id, :game_name, :short_name , FROM_UNIXTIME(:releaseDate), :description, :image )";
@@ -181,25 +171,23 @@ class Game
             $st->bindValue(":releaseDate", $this->release_date, PDO::PARAM_INT);
             $st->bindValue(":description", $this->description, PDO::PARAM_STR);
             $st->bindValue(":image", $this->image, PDO::PARAM_STR);
-            $query = $st->execute();
+            $result = $st->execute();
 
-            if ( $query){
+            if ( $result){
                 self::$log->info("A Loadout has been created successfully: $this->name");
-                return true;
             }
-
-            return true;
 
         } catch (Exception $exception){
             self::$log->error('Loadout cannot be created', array( 'exception' => $exception ) );
-            return false;
         }
+
+        return $result;
     }
 
     public function update(): bool {
-
+        $result = false;
+        if( !self::$conn ) return $result; // Verify database connection
         try{
-            if( !self::$conn ) return false; // Verify database connection
             self::$log->info('Trying to update game data...');
             $sql = "UPDATE game SET  company_id = :company_id, name = :name, release_date = FROM_UNIXTIME(:releaseDate), description = :description, image = :image WHERE game_id = :game_id";
             $st = self::$conn->prepare( $sql );
@@ -210,24 +198,22 @@ class Game
             $st->bindValue(":description", $this->description, PDO::PARAM_STR);
             $st->bindValue(":image", $this->image, PDO::PARAM_STR);
 
-            $query = $st->execute();
+            $result = $st->execute();
 
-            if ( $query ){
+            if ( $result ){
                 self::$log->info("Loadout data with id {$this->game_id} has been updated successfully");
-                return true;
             }
 
         } catch (Exception $exception){
             self::$log->error('Loadout cannot be updated', array( 'exception' => $exception ) );
-            return false;
         }
-
-        return false;
+        return $result;
     }
 
     public function delete(): bool
     {
-        if( !self::$conn ) return false; // Verify database connection
+        $result = false;
+        if( !self::$conn ) return $result; // Verify database connection
         try{
             self::$log->notice("Trying to delete the game...");
             $sql = "DELETE FROM game WHERE game_id = :game_id";
@@ -237,15 +223,12 @@ class Game
 
             if ( $query ){
                 self::$log->notice("Loadout with id $this->game_id has been deleted");
-                return true;
             }
 
         } catch (Exception $exception){
             self::$log->error("Loadout with id $this->game_id cannot be deleted", array('exception' => $exception ) );
-            return false;
         }
-
-        return false;
+        return $result;
     }
 
 }

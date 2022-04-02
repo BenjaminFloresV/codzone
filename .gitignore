@@ -9,3 +9,5 @@ frontend/package.json
 frontend/index.phtml
 src/Auth
 src/Views/User/jwt.phtml
+src/Views/Api
+robots.txt

@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     deleteNewsCatButtons.forEach(function( deleteNewsCatButton ){
         let tdName = deleteNewsCatButton.parentElement.parentElement;
         document.getElementById('replaceName').innerText = tdName.children[1].textContent;
-        document.getElementById("del-anchor").href = `/admin/eliminar/categoria-noticia/${tdName.children[0].textContent}`;
+        document.getElementById("del-anchor").href = `/admin/eliminar/categoria/${tdName.children[0].textContent}`;
     });
 
 

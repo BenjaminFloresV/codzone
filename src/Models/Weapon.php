@@ -6,6 +6,7 @@ use CMS\Helpers\Connection;
 use CMS\Helpers\NewLogger;
 use Exception;
 use PDO;
+use Psr\Log\LoggerInterface;
 
 class Weapon
 {
@@ -14,10 +15,11 @@ class Weapon
     private int $game_id;
     private string $name;
     private string $image;
-    private static $conn;
-    private static $log;
+    private static bool|PDO $conn;
+    private static LoggerInterface $log;
 
-    public function getId(){
+    public function getId(): int
+    {
         return $this->weapon_id;
     }
 
@@ -25,7 +27,8 @@ class Weapon
         $this->weapon_id = $id;
     }
 
-    public function getName(){
+    public function getName(): string
+    {
         return $this->name;
     }
 
@@ -37,16 +40,17 @@ class Weapon
     {
         self::$log = NewLogger::newLogger('WEAPON_CLASS', 'FirePHPHandler');
         self::$conn = Connection::dbConnection();
-
         self::$log->info('Class has been instancied');
     }
 
-    public static function verifyConnection(){
+    public static function verifyConnection(): bool
+    {
         return self::$conn != null;
     }
 
     public function storeFormValues( array $data ): bool
     {
+        $result = true;
         try{
 
             self::$log->info('Trying to store form data...');
@@ -54,26 +58,24 @@ class Weapon
             if ( isset( $data['weapon_id'] ) ) $this->weapon_id = (int) $data['weapon_id'];
             if ( isset( $data['wpcategory_id'] ) ) $this->wpcategory_id = (int) $data['wpcategory_id'];
             if ( isset( $data['game_id'] ) ) $this->game_id = (int) $data['game_id'];
-            if ( isset( $data['name'] ) ) $this->name = (string) $data['name'];
-            if ( isset( $data['image'] ) ) $this->name = (string) $data['image'];
+            if ( isset( $data['name'] ) ) $this->name = (string) preg_replace( "/[^\.\,\-\_\'\"\@\?\!\:\$ a-zA-Z0-9()]/", "",$data['name']);
+            if ( isset( $data['image'] ) ) $this->name = (string) preg_replace( "/[^\.\,\-\_\'\"\@\?\!\:\$ a-zA-Z0-9()]/", "",$data['image']);
 
             self::$log->info('Data has been stored successfully', array('data' => $data));
 
-            return true;
-
         } catch (Exception $exception){
             self::$log->error('An error has occured.', array( 'exception' => $exception ) );
-            return false;
+            $result = false;
         }
 
-
-
+        return $result;
     }
 
 
     public static function getAll(bool $join = false): bool|array
     {
-        if ( !self::$conn ) return false;
+        $result = false;
+        if ( !self::$conn ) return $result;
         try{
             self::$log->info('Trying to retrieve Weapons all data...');
             $sql = "SELECT * FROM weapon";
@@ -81,27 +83,25 @@ class Weapon
                 $sql = "SELECT w.*, g.name AS gameName, wp.name AS wpCatName FROM weapon w ";
                 $sql .= "INNER JOIN game g ON g.game_id = w.game_id ";
                 $sql .= "INNER JOIN weapon_category wp ON wp.wpcategory_id = w.wpcategory_id";
-
             }
             $st = self::$conn->prepare( $sql );
             $query = $st->execute();
 
             if ($query) {
-                $weapons = $st->fetchAll();
-                self::$log->notice('All Weapons data collected successfully', array( 'games_list' => $weapons ) );
-                return $weapons;
+                $result = $st->fetchAll();
+                self::$log->notice('All Weapons data collected successfully', array( 'games_list' => $result ) );
             }
 
         } catch (Exception $exception){
             self::$log->error('All Weapons data cannot be collected', array( 'exception' => $exception ) );
-            return false;
         }
-        return false;
+        return $result;
     }
 
     public static function getById( int $id, bool $join = false )
     {
-        if ( !self::$conn ) return false;
+        $result = false;
+        if ( !self::$conn ) return $result;
         try{
             self::$log->info("Trying to retrieve Weapon data with id: $id");
             if ( $join ){
@@ -114,55 +114,53 @@ class Weapon
             $query = $st->execute();
 
             if ( $query ){
-                $weapon = $st->fetch();
+                $result = $st->fetch();
 
-                if ( !$weapon  ){
+                if ( !$result  ){
                     self::$log->notice("Weapon with id: $id do not exists." );
-                    return false;
                 }
-
-                self::$log->info("Weapon data with id: $id has been retrieved successfully.", array('data'=> $weapon));
-                return $weapon;
+                self::$log->info("Weapon data with id: $id has been retrieved successfully.", array('data'=> $result));
             }
 
         } catch (Exception $exception){
             self::$log->error("Cannot collect Weapon data with id: $id", array('exception' => $exception));
-            return false;
         }
+
+        return $result;
     }
 
     public function insert(): bool
     {
-        if ( !self::$conn ) return false;
+        $result = false;
+        if ( !self::$conn ) return $result;
         try{
             self::$log->info("Trying to insert Weapon data...");
             $sql = "INSERT INTO weapon ( weapon_id, wpcategory_id, game_id, name, image) VALUES(NULL, :wpcategory_id, :game_id, :name, :image )";
+
             $st = self::$conn->prepare( $sql );
             $st->bindValue(':wpcategory_id', $this->wpcategory_id, PDO::PARAM_INT);
             $st->bindValue( ':game_id', $this->game_id, PDO::PARAM_INT );
             $st->bindValue( ':name', $this->name, PDO::PARAM_STR );
             $st->bindValue( ':image', $this->image, PDO::PARAM_STR );
-            $query = $st->execute();
+            $result = $st->execute();
 
-            if ( $query ){
-
+            if ( $result ){
                 self::$log->info('Weapon has been created');
-                return true;
             }
 
             self::$log->info('Weapon cannot be created.');
-            return false;
 
         }catch (Exception $exception){
             self::$log->error('Weapon cannot be inserted', array( 'exception' => $exception ));
-            return false;
         }
+        return $result;
 
     }
 
     public function update(): bool
     {
-        if ( !self::$conn ) return false;
+        $result = false;
+        if ( !self::$conn ) return $result;
         try{
 
             self::$log->info("Trying to update Weapon data with id: $this->weapon_id");
@@ -173,44 +171,42 @@ class Weapon
             $st->bindValue( ':game_id', $this->game_id, PDO::PARAM_INT );
             $st->bindValue( ':weapon_name', $this->name, PDO::PARAM_STR );
             $st->bindValue( ':image', $this->image, PDO::PARAM_STR );
-            $query = $st->execute();
+            $result = $st->execute();
 
-            if ( !$query ){
+            if ( !$result ){
                 self::$log->info("Weapon with id: $this->weapon_id do not exists");
-                return false;
             }
 
             self::$log->info("Weapon with id: $this->weapon_id has been updated");
-            return true;
 
         }catch (Exception $exception){
             self::$log->error('Weapon cannot be updated');
-            return false;
         }
+
+        return $result;
 
     }
 
     public function delete(): bool
     {
-        if ( !self::$conn ) return false;
+        $result = false;
+        if ( !self::$conn ) return $result;
         try{
             self::$log->notice("Trying to delete the weapon...");
             $sql = "DELETE FROM weapon WHERE weapon_id = :weapon_id";
             $st = self::$conn->prepare( $sql );
             $st->bindValue( ':weapon_id', $this->weapon_id, PDO::PARAM_INT );
-            $query = $st->execute();
+            $result = $st->execute();
 
-            if ( $query ){
+            if ( $result ){
                 self::$log->notice("Weapon with id $this->weapon_id has been deleted");
-                return true;
             }
 
         } catch (Exception $exception){
             self::$log->error("Weapon with id $this->weapon_id cannot be deleted", array('exception' => $exception ) );
-            return false;
         }
 
-        return false;
+        return $result;
     }
 
 

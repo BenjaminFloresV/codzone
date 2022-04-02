@@ -1,5 +1,6 @@
 <?php
 /* @var array $allData */
+/* @var array $selects */
 ?>
 <div class="table-container has-background-white-ter">
     <div id="modal-js-example" class="modal">
@@ -25,6 +26,30 @@
 
         <button class="modal-close is-large" aria-label="close"></button>
     </div>
+    <div class="is-block">
+        <form class="is-flex is-justify-content-end pt-3 pr-3" method="GET" action="http://localhost:8001/admin/tutoriales">
+            <div class="field is-flex">
+                <label class="label is-align-self-center" for="weaponcat">Categoría:</label>
+                <div class="control ml-3">
+                    <div class="select">
+                        <select name="category">
+                            <?php foreach ($selects as $category): ?>
+                                <?php if( isset($_GET['category']) && $_GET['category'] == $category['category_id']):?>
+                                    <option value="<?=$category['category_id']?>" selected><?=$category['name']?></option>
+                                <?php else: ?>
+                                    <option value="<?=$category['category_id']?>"><?=$category['name']?></option>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <?php if( isset($_GET['category']) ):?>
+                <a href="/admin/tutoriales" class="button ml-3">Ver Todo</a>
+            <?php endif; ?>
+            <input type="submit" class="button ml-3" value="Filtrar">
+        </form>
+    </div>
     <table class="table is-fullwidth">
         <thead>
         <tr>
@@ -42,7 +67,7 @@
                 <!-- is-selected para seleccionar xd -->
                 <th><?=$data['tutorial_id']?></th>
                 <td><?=$data['images_id']?></td>
-                <td ><a href="#" class="is-link"><?=$data['category_id']?></a></td>
+                <td ><a href="#" class="is-link"><?=$data['categoryName']?></a></td>
                 <td><?=$data['title']?></td>
                 <td><?=$data['creation_date']?></td>
                 <td>

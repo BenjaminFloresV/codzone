@@ -149,11 +149,12 @@ class AdminController
 
         $view = __DIR__ . '/../../src/Views/Admin/administration.php';
 
+        $loadout = new Loadout();
+        //Datos de la vista read
         if( !empty($_GET)){
-            $loadout = new Loadout();
             $data = $loadout->getAllFiltered($_GET);
         } else{
-            $data = Helpers::retrieveObjectData($action, new Loadout(), $id, true); //Datos de la vista read
+            $data = $loadout::getAll(true, 20,true);
         }
 
         if( Helpers::verifySelects($action) ){
@@ -193,7 +194,12 @@ class AdminController
 
         $view = __DIR__ . '/../../src/Views/Admin/administration.php';
 
-        $data = Helpers::retrieveObjectData( $action, new News(), $id, true); //Datos de la vista read
+        if( !empty($_GET) ){
+            $news = new News();
+            $data = $news->getAllFiltered($_GET);
+        }else {
+            $data = Helpers::retrieveObjectData( $action, new News(), $id, true); //Datos de la vista read
+        }
 
 
         if( Helpers::verifySelects($action) ){
@@ -246,17 +252,26 @@ class AdminController
 
         );
 
+        if( !empty($_GET) ){
+            $tutorial = new Tutorial();
+            $data = $tutorial->getAllFiltered($_GET);
+        }else {
+            $data = Helpers::retrieveObjectData( $action, new Tutorial(), $id, true, false); //Datos de la vista read
+        }
+
+
         if( Helpers::verifySelects($action) ){
             $selectObjects = array(new Tutorial()); // Datos para los elementos HTML select (create, update)
             $selectOptions = Helpers::retrieveSelectsData($selectObjects, true);
         }else {
-            $selectOptions = '';
+            if( $action == 'read' ){
+                $category = new Category();
+                $selectOptions = $category::getAllCategories();
+            }
         }
 
 
         $view = __DIR__ . '/../../src/Views/Admin/administration.php';
-
-        $data = Helpers::retrieveObjectData( $action, new Tutorial(), $id, false, false); //Datos de la vista read
 
         RenderView::render($view,true, $action,$data, $viewExtras, $selectOptions);
 

@@ -6,7 +6,7 @@ use CMS\Helpers\Connection;
 use CMS\Helpers\NewLogger;
 use Exception;
 use PDO;
-
+use \Psr\Log\LoggerInterface;
 
 class DeveloperCompany
 {
@@ -16,10 +16,11 @@ class DeveloperCompany
     private string $foundationDate;
     private string $description;
     private string $image;
-    private static $conn;
-    private static $log;
+    private static bool|PDO $conn;
+    private static LoggerInterface $log;
 
-    public function getName(){
+    public function getName(): string
+    {
         return $this->name;
     }
 
@@ -27,7 +28,8 @@ class DeveloperCompany
         $this->name = $name;
     }
 
-    public function getId(){
+    public function getId(): int
+    {
         return $this->company_id;
     }
 
@@ -35,7 +37,8 @@ class DeveloperCompany
         $this->company_id = $id;
     }
 
-    public function getImage(){
+    public function getImage(): string
+    {
         return $this->image;
     }
 
@@ -60,9 +63,9 @@ class DeveloperCompany
     }
 
 
-    public function storeFormValues(array $data)
+    public function storeFormValues(array $data): bool
     {
-        if( !self::$conn ) return false; // Verify database connection
+        $result = true;
         try {
             self::$log->info('Trying to store data from the form');
             //self::$log->info("Datos: ", array('data' => $data));
@@ -87,15 +90,16 @@ class DeveloperCompany
 
         }catch (Exception $exception){
             self::$log->error('Cannot save data from the form', array('exception'=>$exception));
+            $result = false;
         }
 
-
+        return $result;
     }
 
     public static function getAll(): bool|array
     {
+        $result = false;
         if( !self::$conn ) return false; // Verify database connection
-
         try{
             self::$log->info('Trying to retrieve Companies data...');
             $sql = "SELECT *, UNIX_TIMESTAMP(foundation) AS foundationDate FROM company";
@@ -105,21 +109,20 @@ class DeveloperCompany
 
 
             if ($query) {
-                $companies = $st->fetchAll();
-                self::$log->notice('Companies data collected successfully', array( 'company_list' => $companies ) );
-                return $companies;
+                $result = $st->fetchAll();
+                self::$log->notice('Companies data collected successfully', array( 'company_list' => $result ) );
             }
 
         } catch (Exception $exception){
             self::$log->error('Companies data cannot be collected', array( 'exception' => $exception ) );
-            return false;
         }
-        return false;
+        return $result;
     }
 
     public static function getById( $id, bool $join = false )
     {
-        if( !self::$conn ) return false; // Verify database connection
+        $result = false;
+        if( !self::$conn ) return $result; // Verify database connection
         try{
             self::$log->info('Trying to retrieve Company data...');
             $sql = "SELECT *, UNIX_TIMESTAMP(foundation) AS foundationDate FROM company WHERE company_id = :id";
@@ -127,32 +130,25 @@ class DeveloperCompany
             $st->bindValue(":id", $id, PDO::PARAM_INT );
             $query = $st->execute();
 
-
-
             if($query){
-                $company = $st->fetch();
-                self::$log->info($company);
+                $result = $st->fetch();
 
-                if ( !$company  ){
-                    self::$log->notice("The Company with id: $id do not exists." );
-                    return false;
+                if ( $result  ){
+                    self::$log->notice('One Company data collected successfully', array( 'company' => $result ) );
                 }
-                self::$log->notice('One Company data collected successfully', array( 'company' => $company ) );
-                return $company;
+
             }
 
         } catch (Exception $exception) {
             self::$log->error('One Company cannot be collected', array( 'exception' => $exception ));
-            return false;
         }
-
-        return false;
-
+        return $result;
     }
 
     public function insert(): bool
     {
-        if( !self::$conn ) return false; // Verify database connection
+        $result = false;
+        if( !self::$conn ) return $result; // Verify database connection
         try{
             self::$log->info('Trying to save data...');
             $sql = "INSERT INTO company ( company_id, name, employees, foundation, description, image ) VALUES(NULL, :company_name, :employees, FROM_UNIXTIME(:foundation), :description, :image )";
@@ -162,23 +158,21 @@ class DeveloperCompany
             $st->bindValue(":foundation", $this->foundationDate, PDO::PARAM_INT);
             $st->bindValue(":description", $this->description, PDO::PARAM_STR);
             $st->bindValue(":image", $this->image, PDO::PARAM_STR);
-            $query = $st->execute();
+            $result = $st->execute();
 
-            if ( $query){
+            if ( $result){
                 self::$log->info("A Company has been created successfully: $this->name");
-                return true;
             }
-
-            return true;
 
         } catch (Exception $exception){
             self::$log->error('Company cannot be created', array( 'exception' => $exception ) );
-            return false;
         }
+        return $result;
     }
 
     public function update(): bool {
-        if( !self::$conn ) return false; // Verify database connection
+        $result = false;
+        if( !self::$conn ) return $result; // Verify database connection
         self::$log->info("Company data with id {$this->company_id} is updating...");
         try{
             $sql = "UPDATE company SET name = :company_name, employees = :employees, foundation = FROM_UNIXTIME(:foundation), description = :description, image = :image WHERE company_id = :company_id";
@@ -189,45 +183,38 @@ class DeveloperCompany
             $st->bindValue(":foundation", $this->foundationDate, PDO::PARAM_INT);
             $st->bindValue(":description", $this->description, PDO::PARAM_STR);
             $st->bindValue(":image", $this->image, PDO::PARAM_STR);
-            $query = $st->execute();
+            $result = $st->execute();
 
-            if ( $query ){
+            if ( $result ){
                 self::$log->info("Company data with id {$this->company_id} has been updated successfully");
-                return true;
             }
 
-            self::$log->info("Company could not be updated");
-            return false;
 
         } catch (Exception $exception){
             self::$log->error('Company cannot be updated', array( 'exception' => $exception ) );
-            return false;
         }
-
-        return false;
+        return $result;
     }
 
     public function delete(): bool
     {
-        if( !self::$conn ) return false; // Verify database connection
+        $result = false;
+        if( !self::$conn ) return $result; // Verify database connection
         try{
             self::$log->notice("Trying to delete the company...");
             $sql = "DELETE FROM company WHERE company_id = :company_id";
             $st = self::$conn->prepare( $sql );
             $st->bindValue( ':company_id', $this->company_id, PDO::PARAM_INT );
-            $query = $st->execute();
+            $result = $st->execute();
 
-            if ( $query ){
+            if ( $result ){
                 self::$log->notice("Company with id $this->company_id has been deleted");
-                return true;
             }
 
         } catch (Exception $exception){
             self::$log->error("Company with id $this->company_id cannot be deleted", array('exception' => $exception ) );
-            return false;
         }
-
-        return false;
+        return $result;
     }
 
 }

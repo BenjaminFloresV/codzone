@@ -5,7 +5,7 @@
 <div class="section p-0 has-background-white-ter">
     <div class="container is-0-widescreen rounded-corners dark-corners p-5">
         <h1 class="title has-text-centered">Agregar Categoría</h1>
-        <form  class="" runat="server" method="post" action="<?=BASE_URL?>/admin/editar/categoria-noticia" enctype="multipart/form-data" >
+        <form  class="" runat="server" method="post" action="<?=BASE_URL?>/admin/editar/categoria" enctype="multipart/form-data" >
             <input type="hidden" name="category_id" value="<?=$allData['category_id']?>">
             <div class="columns is-justify-content-center">
                 <div class="column is-4">

@@ -5,7 +5,6 @@ namespace CMS\Models;
 use CMS\Helpers\Connection;
 use CMS\Helpers\NewLogger;
 use Exception;
-use Monolog\Logger;
 use PDO;
 use Psr\Log\LoggerInterface;
 
@@ -20,14 +19,16 @@ class News extends Category
     private string $image_desc;
     private ?string $image_footer;
     private ?string $image_extra;
-    private static $log;
-    private static $conn;
+    private static LoggerInterface $log;
+    private static bool|PDO $conn;
 
-    public function setNews_id( int $id){
+    public function setNews_id( int $id)
+    {
         $this->news_id = $id;
     }
 
-    public function setCategoryName( string $name ){
+    public function setCategoryName( string $name )
+    {
         $this->category_name = trim( $name );
     }
 
@@ -35,48 +36,52 @@ class News extends Category
         $this->category_id = $id;
     }
 
-    public function getNewsCategory(){
+    public function getCategoryId(): int
+    {
         return $this->category_id;
     }
-
-
 
     public function setImages_id( int $images_id ){
         $this->images_id = $images_id;
     }
 
-    public function getTitle(){
+    public function getTitle(): string
+    {
         return $this->title;
     }
 
-    public function setImgTitle( $image ){
+    public function setImgTitle( string $image ){
         $this->image_title = $image;
     }
 
-    public function getImgTitle(){
+    public function getImgTitle(): string
+    {
         return $this->image_title;
     }
 
-    public function setImgDesc( $image ){
+    public function setImgDesc( string $image ){
         $this->image_desc = $image;
     }
-    public function getImgDesc(){
+    public function getImgDesc(): string
+    {
         return $this->image_desc;
     }
 
-    public function setImgFooter( $image ){
+    public function setImgFooter( string $image ){
         $this->image_footer = $image;
     }
 
-    public function getImgFooter(){
+    public function getImgFooter(): ?string
+    {
         return $this->image_footer;
     }
 
-    public function setImgExtra( $image ){
+    public function setImgExtra( string $image ){
         $this->image_extra = $image;
     }
 
-    public function getImgExtra(){
+    public function getImgExtra(): ?string
+    {
         return $this->image_extra;
     }
 
@@ -99,9 +104,10 @@ class News extends Category
         return self::$conn != null;
     }
 
-    public function storeFormValues( array $data)
+    public function storeFormValues( array $data): bool
     {
         self::$log->info('trying to store data.');
+        $result = false;
         try {
 
             if (isset($data['news_id'])) $this->news_id = (int)$data['news_id'];
@@ -117,29 +123,71 @@ class News extends Category
 
             if ( isset($data['category_name'])) $this->category_name = (string)$data['category_name'];
 
+            // Parse and store the foundation date
+            if (isset($data['creation_date'])) {
+                self::$log->info('Trying to insert creation_date');
+                $creationDate = explode('/', $data['creation_date']);
+
+                if (count($creationDate) == 3) {
+                    list ($d, $m, $y) = $creationDate;
+                    $this->creation_date = mktime(0, 0, 0, $m, $d, $y);
+                    $this->date_update = mktime(0, 0, 0, $m, $d, $y);
+                }
+            }
+
+            self::$log->info("Data was stored successfuly");
+
+
         } catch ( Exception $exception){
             self::$log->error('Something went wrong while storing data.', array('exception'=>$exception));
+            $result = false;
         }
 
+        return $result;
 
-        // Parse and store the foundation date
-        if (isset($data['creation_date'])) {
-            self::$log->info('Trying to insert creation_date');
-            $creationDate = explode('/', $data['creation_date']);
-
-            if (count($creationDate) == 3) {
-                list ($d, $m, $y) = $creationDate;
-                $this->creation_date = mktime(0, 0, 0, $m, $d, $y);
-                $this->date_update = mktime(0, 0, 0, $m, $d, $y);
-            }
-        }
-        self::$log->info("Data was stored successfuly");
     }
 
-
-    public static function getAll($join = false, $limit = null, bool $byCatName = false, string $categoryName = null, bool $lastNew = false, int $except =  null)
+    public function getAllFiltered( array $data ): bool|array
     {
-        if (!self::$conn) return false;
+        $result = false;
+        if ( !self::$conn ) return $result;
+        try {
+            self::$log->info('Trying to collect filtered News Data');
+            $categoryId = $data['category'];
+
+            $sql = "SELECT n.*, UNIX_TIMESTAMP(n.creation_date) AS creationDate, ni.image_title AS titleImage, ncat.name AS categoryName FROM news n ";
+            $sql .="INNER JOIN news_category ncat ON ncat.category_id=n.category_id ";
+            $sql .= "INNER JOIN news_images ni ON ni.images_id = n.images_id";
+
+            $conditions = array();
+
+            if( !empty($categoryId) ){
+                $categoryId = self::$conn->quote($categoryId);
+                $conditions[] = "ncat.category_id={$categoryId}";
+            }
+
+            if ( count($conditions) > 0 ) $sql .= " WHERE ".implode(' AND ', $conditions);
+
+            $st = self::$conn->prepare($sql);
+            $query = $st->execute();
+
+            if ( $query ){
+                $result = $st->fetchAll();
+                self::$log->info('Filtered news data was collected successfully');
+            }
+
+        } catch (Exception $exception){
+            self::$log->error('Something went wrong while collecting filtered news data', array('exception' => $exception));
+        }
+
+        return $result;
+
+    }
+
+    public static function getAll($join = false, $limit = null, bool $byCatName = false, string $categoryName = null, bool $lastNew = false, int $except =  null): bool|array
+    {
+        $result = false;
+        if (!self::$conn) return $result;
         try {
             self::$log->info('Trying to collect News data...');
             if ($join) {
@@ -167,8 +215,6 @@ class News extends Category
                 $sql .= " LIMIT :limit";
             }
 
-
-
             $st = self::$conn->prepare($sql);
             if(!is_null($limit)) $st->bindValue(':limit', $limit, PDO::PARAM_INT);
             if( $byCatName ) $st->bindValue(':categoryName', $categoryName, PDO::PARAM_STR);
@@ -177,25 +223,24 @@ class News extends Category
             $query = $st->execute();
 
             if ($query) {
-                $news = $st->fetchAll();
-                self::$log->info("News data has been collected successfully.", array('data' => $news));
-                return $news;
+                $result = $st->fetchAll();
+                self::$log->info("News data has been collected successfully.", array('data' => $result));
             }
 
             self::$log->info("News data could not be collected");
-            return false;
-
 
         } catch (Exception $exception) {
             self::$log->error('News data could not be collected.', array('exception' => $exception));
-            return false;
         }
+
+        return $result;
     }
 
 
     public static function getById( $id, bool $join = false )
     {
-        if( !self::$conn ) return false; // Verify database connection
+        $result = false;
+        if( !self::$conn ) return $result; // Verify database connection
         try{
             self::$log->info('Trying to retrieve News data...');
             if ( $join ){
@@ -211,33 +256,28 @@ class News extends Category
             $st->bindValue(":news_id", $id, PDO::PARAM_INT );
             $query = $st->execute();
 
-
             if($query){
-                $news = $st->fetch();
-                self::$log->info($news);
+                $result = $st->fetch();
+                self::$log->info($result);
 
-                if ( !$news  ){
+                if ( !$result  ){
                     self::$log->notice("The News with id: $id do not exists." );
-                    return false;
                 }
-                self::$log->notice('One News data was collected successfully', array( 'news' => $news ) );
-                return $news;
+                self::$log->notice('One News data was collected successfully', array( 'news' => $result ) );
             }
 
         } catch (Exception $exception) {
             self::$log->error('One News data cannot be collected', array( 'exception' => $exception ));
-            return false;
         }
-
-        return false;
-
+        return $result;
     }
 
 
 
     public static function getAllImages(int $images_id)
     {
-        if ( !self::$conn ) return false;
+        $result = false;
+        if ( !self::$conn ) return $result;
         try {
             self::$log->info('Trying to retrieve images data.');
             $sql = "SELECT * FROM news_images WHERE images_id=:images_id";
@@ -249,22 +289,21 @@ class News extends Category
 
             if( $query ){
 
-                self::$log->info('Data News was collected successfully');
-                return $st->fetch();
+                self::$log->info('Image News was collected successfully');
+                $result = $st->fetch();
 
             }
 
-            return $query;
-
         } catch ( Exception $exception ){
             self::$log->error("Images data could not be collected", array( 'exception' => $exception ));
-            return false;
         }
+        return $result;
     }
 
-    public function insert()
+    public function insert(): bool
     {
-        if ( !self::$conn ) return false;
+        $result = false;
+        if ( !self::$conn ) return $result;
         try{
             self::$log->info("Trying to insert News data...");
 
@@ -292,33 +331,26 @@ class News extends Category
             $secondSt->bindValue(':title', $this->title, PDO::PARAM_STR);
             $secondSt->bindValue(':description', $this->description, PDO::PARAM_STR);
             $secondSt->bindValue(':creation_date', $this->creation_date, PDO::PARAM_INT);
-
-            $query = $secondSt->execute();
-
-
-
+            // Second St
+            $result = $secondSt->execute();
 
             self::$log->info("Trying to insert News data...2");
 
-
-            if ( $query ){
+            if ( $result ){
                 self::$log->info("News data has been inserted successfully.");
-                return true;
             }
-
-            return false;
-
 
         }catch (Exception $exception){
             self::$log->error("News could not be inserted", array( 'exception' => $exception ));
-            return false;
         }
+        return $result;
     }
 
 
-    public function update()
+    public function update(): bool
     {
-        if ( !self::$conn ) return false;
+        $result = false;
+        if ( !self::$conn ) return $result;
         try{
             self::$log->info("Trying to insert News data...");
 
@@ -346,28 +378,27 @@ class News extends Category
             $secondSt->bindValue(':description', $this->description, PDO::PARAM_STR);
 
 
-            $query = $secondSt->execute();
+            $result = $secondSt->execute();
 
 
-            if ( $query ){
+            if ( $result ){
                 self::$log->info("News data has been updated successfully.");
-                return true;
             }
-
-            return false;
 
 
         }catch (Exception $exception){
             self::$log->error("News could not be inserted", array( 'exception' => $exception ));
-            return false;
         }
+
+        return $result;
     }
 
 
 
-    public function delete()
+    public function delete(): bool
     {
-        if ( !self::$conn ) return false;
+        $result = false;
+        if ( !self::$conn ) return $result;
         try {
             self::$log->info("Trying to delete News data...");
 
@@ -380,27 +411,23 @@ class News extends Category
             $firstSt = $db->prepare($firstSql);
             $secondSt = $db->prepare($secondSql);
 
-
             $firstSt->bindValue( ':news_id', $this->news_id,  PDO::PARAM_INT);
             $firstSt->execute();
             $firstSt->closeCursor();
 
             $secondSt->bindValue(':images_id', $this->images_id, PDO::PARAM_INT);
 
-            $query = $secondSt->execute();
+            $result = $secondSt->execute();
 
-            if ( !$query ){
+            if ( !$result ){
                 self::$log->info("The News with id: $this->news_id do not exists");
             }
 
-            return $query;
-
-
-
         } catch ( Exception $exception){
             self::$log->error('News could not be deleted', array( 'exception' => $exception ));
-            return false;
         }
+
+        return $result;
     }
 
 

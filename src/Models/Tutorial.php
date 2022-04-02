@@ -6,6 +6,7 @@ use CMS\Helpers\Connection;
 use CMS\Helpers\NewLogger;
 use Exception;
 use PDO;
+use \Psr\Log\LoggerInterface;
 
 class Tutorial extends Category
 {
@@ -18,7 +19,7 @@ class Tutorial extends Category
     private ?string $image_desc;
     private ?string $image_footer;
     private ?string $image_extra;
-    private static \Psr\Log\LoggerInterface $log;
+    private static LoggerInterface $log;
     private static bool|PDO $conn;
 
 
@@ -30,7 +31,8 @@ class Tutorial extends Category
         $this->images_id = $images_id;
     }
 
-    public function getTitle(){
+    public function getTitle(): string
+    {
         return $this->title;
     }
 
@@ -38,14 +40,16 @@ class Tutorial extends Category
         $this->image_title = $image;
     }
 
-    public function getImgTitle(){
+    public function getImgTitle(): string
+    {
         return $this->image_title;
     }
 
-    public function setImgDesc( $image ){
+    public function setImgDesc( string $image ){
         $this->image_desc = $image;
     }
-    public function getImgDesc(){
+    public function getImgDesc(): ?string
+    {
         return $this->image_desc;
     }
 
@@ -53,7 +57,8 @@ class Tutorial extends Category
         $this->image_footer = $image;
     }
 
-    public function getImgFooter(){
+    public function getImgFooter(): ?string
+    {
         return $this->image_footer;
     }
 
@@ -61,7 +66,8 @@ class Tutorial extends Category
         $this->image_extra = $image;
     }
 
-    public function getImgExtra(){
+    public function getImgExtra(): ?string
+    {
         return $this->image_extra;
     }
 
@@ -84,9 +90,10 @@ class Tutorial extends Category
         return self::$conn != null;
     }
 
-    public function storeFormValues( array $data)
+    public function storeFormValues( array $data): bool
     {
         self::$log->info('trying to store data.');
+        $result = true;
         try {
 
             if (isset($data['tutorial_id'])) $this->tutorial_id = (int)$data['tutorial_id'];
@@ -100,30 +107,69 @@ class Tutorial extends Category
             if ( isset($data['image_footer'])) $this->image_footer = (string)$data['image_footer'];
             if ( isset($data['image_extra'])) $this->image_extra = (string)$data['image_extra'];
 
+            // Parse and store the creation date
+            if (isset($data['creation_date'])) {
+                self::$log->info('Trying to insert creation_date');
+                $creationDate = explode('/', $data['creation_date']);
 
+                if (count($creationDate) == 3) {
+                    list ($d, $m, $y) = $creationDate;
+                    $this->creation_date = mktime(0, 0, 0, $m, $d, $y);
+                    $this->date_update = mktime(0, 0, 0, $m, $d, $y);
+                }
+            }
+
+            self::$log->info("Data was stored successfuly");
 
         } catch ( Exception $exception){
             self::$log->error('Something went wrong while storing data.', array('exception'=>$exception));
+            $result = false;
         }
 
+        return $result;
 
-        // Parse and store the creation date
-        if (isset($data['creation_date'])) {
-            self::$log->info('Trying to insert creation_date');
-            $creationDate = explode('/', $data['creation_date']);
 
-            if (count($creationDate) == 3) {
-                list ($d, $m, $y) = $creationDate;
-                $this->creation_date = mktime(0, 0, 0, $m, $d, $y);
-                $this->date_update = mktime(0, 0, 0, $m, $d, $y);
-            }
-        }
-        self::$log->info("Data was stored successfuly");
     }
 
-    public static function getAll($join = false, $limit = null, bool $byCatName = false, string $categoryName = null, bool $lastTutorial = false, int $except = null)
+    public function getAllFiltered( array $data ): bool|array
     {
-        if (!self::$conn) return false;
+        $result = false;
+        if ( !self::$conn ) return $result;
+        try {
+            self::$log->info('Trying to collect filtered Tutorial data.');
+            $categoryId = $data['category'];
+
+            $sql = "SELECT t.*, UNIX_TIMESTAMP(t.creation_date) AS creationDate, ti.image_title AS titleImage, ncat.name AS categoryName FROM tutorial t ";
+            $sql .="INNER JOIN news_category ncat ON ncat.category_id=t.category_id ";
+            $sql .= "INNER JOIN tutorial_images ti ON ti.images_id = t.images_id";
+
+            $conditions = array();
+            //real scape
+            if( !empty($categoryId) ){
+                $categoryId = self::$conn->quote($categoryId);
+                $conditions[] = "ncat.category_id={$categoryId}";
+            }
+
+            if( count($conditions) > 0) $sql .= " AND ".implode(' AND ', $conditions);
+
+            $st = self::$conn->prepare($sql);
+            $query = $st->execute();
+
+            if( $query ) {
+                $result = $st->fetchAll();
+                self::$log->info('Filtered Tutorial data was collected successfully');
+            }
+
+        } catch (Exception $exception){
+            self::$log->error('Something went wrong while trying to collect filtered News data', array('exception' => $exception));
+        }
+        return $result;
+    }
+
+    public static function getAll($join = false, $limit = null, bool $byCatName = false, string $categoryName = null, bool $lastTutorial = false, int $except = null): bool|array
+    {
+        $result = false;
+        if (!self::$conn) return $result;
         try {
             self::$log->info('Trying to collect Tutorial data...');
             if ($join) {
@@ -160,25 +206,26 @@ class Tutorial extends Category
             $query = $st->execute();
 
             if ($query) {
-                $tutorials = $st->fetchAll();
-                self::$log->info("Tutorial data has been collected successfully.", array('data' => $tutorials));
-                return $tutorials;
+                $result = $st->fetchAll();
+                self::$log->info("Tutorial data has been collected successfully.", array('data' => $result));
             }
 
             self::$log->info("Tutorial data could not be collected");
-            return false;
+
 
 
         } catch (Exception $exception) {
             self::$log->error('Tutorial data could not be collected.', array('exception' => $exception));
-            return false;
         }
+
+        return $result;
     }
 
     public static function getById( $id, bool $join = false )
     {
         // logic
-        if( !self::$conn ) return false; // Verify database connection
+        $result = false;
+        if( !self::$conn ) return $result; // Verify database connection
         try{
             self::$log->info('Trying to retrieve Tutorial data...');
             if ( $join ){
@@ -196,28 +243,27 @@ class Tutorial extends Category
 
 
             if($query){
-                $tutorial = $st->fetch();
-                self::$log->info($tutorial);
+                $result = $st->fetch();
+                self::$log->info($result);
 
-                if ( !$tutorial  ){
+                if ( !$result  ){
                     self::$log->notice("The Tutorial with id: $id do not exists." );
-                    return false;
+
                 }
-                self::$log->notice('Tutorial data was collected successfully', array( 'tutorial' => $tutorial ) );
-                return $tutorial;
+                self::$log->notice('Tutorial data was collected successfully', array( 'tutorial' => $result ) );
             }
 
         } catch (Exception $exception) {
             self::$log->error('Tutorial data cannot be collected', array( 'exception' => $exception ));
-            return false;
         }
 
-        return false;
+        return $result;
     }
 
     public static function getAllImages(int $images_id)
     {
         // logic
+        $result = false;
         if ( !self::$conn ) return false;
         try {
             self::$log->info('Trying to retrieve images data.');
@@ -229,24 +275,23 @@ class Tutorial extends Category
             $query = $st->execute();
 
             if( $query ){
-
                 self::$log->info('Data News was collected successfully');
-                return $st->fetch();
-
+                $result = $st->fetch();
             }
 
-            return $query;
 
         } catch ( Exception $exception ){
             self::$log->error("Images data could not be collected", array( 'exception' => $exception ));
-            return false;
         }
+
+        return $result;
     }
 
 
     public function insert(): bool
     {
-        if ( !self::$conn ) return false;
+        $result = false;
+        if ( !self::$conn ) return $result;
         try{
             self::$log->info("Trying to insert Tutorial data...");
 
@@ -275,29 +320,26 @@ class Tutorial extends Category
             $secondSt->bindValue(':description', $this->description, PDO::PARAM_STR);
             $secondSt->bindValue(':creation_date', $this->creation_date, PDO::PARAM_INT);
 
-            $query = $secondSt->execute();
-
-
+            $result = $secondSt->execute();
             self::$log->info("Trying to insert Tutorial data...2");
 
-
-            if ( $query ){
+            if ( $result ){
                 self::$log->info("Tutorial data has been inserted successfully.");
-                return true;
             }
 
-            return false;
 
 
         }catch (Exception $exception){
             self::$log->error("Tutorial data could not be inserted", array( 'exception' => $exception ));
-            return false;
         }
+
+        return $result;
     }
 
-    public function update()
+    public function update(): bool
     {
         // logic
+        $result = false;
         if ( !self::$conn ) return false;
         try{
             self::$log->info("Trying to insert Tutorial data...");
@@ -326,27 +368,25 @@ class Tutorial extends Category
             $secondSt->bindValue(':description', $this->description, PDO::PARAM_STR);
 
 
-            $query = $secondSt->execute();
+            $result = $secondSt->execute();
 
 
-            if ( $query ){
+            if ( $result ){
                 self::$log->info("Tutorial data has been updated successfully.");
-                return true;
             }
-
-            return false;
-
 
         }catch (Exception $exception){
             self::$log->error("Tutorial data could not be inserted", array( 'exception' => $exception ));
-            return false;
         }
+
+        return $result;
     }
 
-    public function delete()
+    public function delete(): bool
     {
         // logic
-        if ( !self::$conn ) return false;
+        $result = false;
+        if ( !self::$conn ) return $result;
         try {
             self::$log->info("Trying to delete News data...");
 
@@ -366,20 +406,17 @@ class Tutorial extends Category
 
             $secondSt->bindValue(':images_id', $this->images_id, PDO::PARAM_INT);
 
-            $query = $secondSt->execute();
+            $result = $secondSt->execute();
 
-            if ( !$query ){
+            if ( !$result ){
                 self::$log->info("The Tutorial with id: $this->tutorial_id do not exists");
             }
 
-            return $query;
-
-
-
         } catch ( Exception $exception){
             self::$log->error('Tutorial could not be deleted', array( 'exception' => $exception ));
-            return false;
         }
+
+        return $result;
     }
 
 

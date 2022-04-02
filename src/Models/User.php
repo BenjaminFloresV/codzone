@@ -4,6 +4,7 @@ namespace CMS\Models;
 use CMS\Helpers\Connection;
 use CMS\Helpers\Helpers;
 use CMS\Helpers\NewLogger;
+use JetBrains\PhpStorm\NoReturn;
 use PDO;
 use Psr\Log\LoggerInterface;
 
@@ -24,22 +25,24 @@ class User
         $this->conn = Connection::dbConnection();
     }
 
-    public function storeFormValues ( array $data )
+    public function storeFormValues ( array $data ): bool
     {
-        if ( isset($data['username']) ) $this->email = (string) $data['username'];
-        if ( isset($data['username']) ) $this->username = (string) $data['username'];
-        if ( isset($data['password']) ) $this->password = ( string ) $data['password'];
-        $this->log->info('Data stored successfully', array('data'=>$this->password));
-
-
+        $result = true;
+        try {
+            if ( isset($data['username']) ) $this->email = (string) preg_replace( "/[^\.\,\-\_\'\"\@\?\!\:\$ a-zA-Z0-9()]/", "", $data['username']);
+            if ( isset($data['username']) ) $this->username = (string) preg_replace( "/[^\.\,\-\_\'\"\@\?\!\:\$ a-zA-Z0-9()]/", "",$data['username']);
+            if ( isset($data['password']) ) $this->password = ( string ) $data['password'];
+        } catch ( \Exception $exception){
+            $this->log->info('Data cannot be stored :(', array('exception'=>$exception));
+            $result = false;
+        }
+        return $result;
     }
 
     public function login()
     {
-
+        $result = false;
         try {
-
-            $result = false;
             $sql = "SELECT * FROM users WHERE email=:email OR username=:username";
 
             $st = $this->conn->prepare($sql);
@@ -64,11 +67,10 @@ class User
 
         }
         return $result;
-        exit();
     }
 
 
-    public static function logout()
+    #[NoReturn] public static function logout()
     {
         if( isset($_SESSION['admin']) ){
             Helpers::deleteSession('admin');

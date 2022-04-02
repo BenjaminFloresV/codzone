@@ -88,8 +88,7 @@ class LoadoutController
         try {
             $loadout = new Loadout();
             if ( !$loadout::verifyConnection() ) Helpers::manageRedirect();
-            $loadout->storeFormValues($_POST);
-
+            $saveValues = $loadout->storeFormValues($_POST);
             $saveImg = Helpers::saveFile($loadout, 'loadout', true, $_POST['gameSubDirectory']);
 
             if( $saveImg ){

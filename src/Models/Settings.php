@@ -22,11 +22,10 @@ class Settings
         self::$log = NewLogger::newLogger('SETTINGS_MODEL', 'FirePHPHandler');
     }
 
-    public static function getAll()
+    public static function getAll(): bool|array
     {
         $result = false;
         if( !self::$conn ) return $result; // Verify database connection
-
         try{
 
             $sql = "SELECT * FROM settings";
@@ -36,8 +35,7 @@ class Settings
 
 
             if ($query) {
-                $companies = $st->fetchAll();
-                $result = $companies;
+                $result = $st->fetchAll();
             }
 
         } catch (Exception $exception){
@@ -50,7 +48,6 @@ class Settings
     {
         $result = false;
         if( !self::$conn ) return $result; // Verify database connection
-
         try{
 
             $sql = "SELECT * FROM settings WHERE name=:name";
@@ -61,8 +58,7 @@ class Settings
 
 
             if ($query) {
-                $setting = $st->fetch();
-                $result = $setting;
+                $result = $st->fetch();
             }
 
         } catch (Exception $exception){
@@ -71,11 +67,10 @@ class Settings
         return $result;
     }
 
-    public function updateSetting( $id, $value )
+    public function updateSetting( $id, $value ): bool
     {
         $result = false;
         if( !self::$conn ) return $result;
-
         try {
             $sql = "UPDATE settings SET value=:value WHERE setting_id=:setting_id";
             $st = self::$conn->prepare($sql);

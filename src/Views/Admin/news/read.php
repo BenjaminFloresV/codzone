@@ -34,7 +34,7 @@
                     <div class="select">
                         <select name="category">
                             <?php foreach ($selects as $category): ?>
-                                <?php if( isset($_GET['category']) && $_GET['category'] == $category['wpcategory_id']):?>
+                                <?php if( isset($_GET['category']) && $_GET['category'] == $category['category_id']):?>
                                     <option value="<?=$category['category_id']?>" selected><?=$category['name']?></option>
                                 <?php else: ?>
                                     <option value="<?=$category['category_id']?>"><?=$category['name']?></option>

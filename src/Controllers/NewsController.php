@@ -184,16 +184,16 @@ class NewsController
 
             if( $saveCategory){
                 $log->info('The News Category was created successfully');
-                Helpers::manageRedirect('categorias-noticias');
+                Helpers::manageRedirect('categorias');
             }
 
-            Helpers::manageRedirect('categorias-noticias');
+            Helpers::manageRedirect('categorias');
 
         } catch (\Exception $exception){
             $log->error('Something went wrong while saving the News Category', array('exception' => $exception));
         }
 
-        Helpers::manageRedirect('categorias-noticias');
+        Helpers::manageRedirect('categorias');
     }
 
     public function delete( int $id, int $images_id ){
@@ -211,7 +211,7 @@ class NewsController
             $imagesData = $news::getAllImages($images_id);
 
             $deleteImg = Helpers::deleteImage($imagesData, 'news',true, $newsData['categoryName']);
-            $deleteImg = true;
+
             if( $deleteImg ) {
 
                 $deleteNews = $news->delete();
@@ -246,8 +246,8 @@ class NewsController
             $updateCategory = $news->updateCategory();
 
             if( !$updateCategory ){
-                $log->warning("The News Category with id: {$news->getNewsCategory()} do not exists");
-                Helpers::manageRedirect('categorias-noticias');
+                $log->warning("The News Category with id: {$news->getCategoryId()} do not exists");
+                Helpers::manageRedirect('categorias');
             }
 
 
@@ -256,7 +256,7 @@ class NewsController
 
         }
 
-        Helpers::manageRedirect("categorias-noticias/editar/{$news->getNewsCategory()}");
+        Helpers::manageRedirect("categorias/editar/{$news->getCategoryId()}");
 
 
     }
