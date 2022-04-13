@@ -168,6 +168,8 @@ class News extends Category
 
             if ( count($conditions) > 0 ) $sql .= " WHERE ".implode(' AND ', $conditions);
 
+            $sql .= " ORDER BY n.news_id DESC";
+
             $st = self::$conn->prepare($sql);
             $query = $st->execute();
 

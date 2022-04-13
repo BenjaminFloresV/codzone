@@ -1,0 +1,75 @@
+
+#loader-container {
+  display: block;
+  height: 50px;
+  position: relative;
+  overflow: hidden;
+}
+
+.custom-loader {
+  margin: 0 auto;
+  width: 60px;
+  height: 50px;
+  text-align: center;
+  font-size: 10px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translateY(-50%) translateX(-50%);
+}
+.custom-loader > div {
+  height: 100%;
+  width: 8px;
+  display: inline-block;
+  float: left;
+  margin-left: 2px;
+  -webkit-animation: delay 0.8s infinite ease-in-out;
+  animation: delay 0.8s infinite ease-in-out;
+}
+
+.custom-loader .bar1 {
+  background-color: #abab32;
+}
+.custom-loader .bar2 {
+  background-color: #999;;
+  -webkit-animation-delay: -0.7s;
+  animation-delay: -0.7s;
+}
+.custom-loader .bar3 {
+  background-color: #abab32;
+  -webkit-animation-delay: -0.6s;
+  animation-delay: -0.6s;
+}
+.custom-loader .bar4 {
+  background-color: #999;;
+  -webkit-animation-delay: -0.5s;
+  animation-delay: -0.5s;
+}
+.custom-loader .bar5 {
+  background-color: #abab32;
+  -webkit-animation-delay: -0.4s;
+  animation-delay: -0.4s;
+}
+.custom-loader .bar6 {
+  background-color: #999;
+  -webkit-animation-delay: -0.3s;
+  animation-delay: -0.3s;
+}
+@-webkit-keyframes delay {
+  0%, 40%, 100% {
+    -webkit-transform: scaleY(0.05);
+  }
+  20% {
+    -webkit-transform: scaleY(1);
+  }
+}
+@keyframes delay {
+  0%, 40%, 100% {
+    transform: scaleY(0.05);
+    -webkit-transform: scaleY(0.05);
+  }
+  20% {
+    transform: scaleY(1);
+    -webkit-transform: scaleY(1);
+  }
+}

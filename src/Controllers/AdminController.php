@@ -23,18 +23,9 @@ class AdminController
 
     public function homePage()
     {
-        if(!empty($_POST)){
-            if (isset($_POST['name'])){
-                echo "HOli";
-            }
-            var_dump( $_POST );
-        }else {
-            Helpers::isAdmin();
-            $view = __DIR__ . '/../../src/Views/Admin/admin-panel.php';
-            RenderView::render($view);
-        }
-
-
+        Helpers::isAdmin();
+        $view = __DIR__ . '/../../src/Views/Admin/admin-panel.php';
+        RenderView::render($view);
 
     }
 
@@ -49,16 +40,13 @@ class AdminController
             'baseUrl' => 'game'
         );
 
-        $view = __DIR__ . '/../../src/Views/Admin/administration.php';
 
         if ( Helpers::verifySelects( $action ) ){
             $selectObjects = array(new DeveloperCompany());
             $selectsOptions = Helpers::retrieveSelectsData($selectObjects);
-        }else {
-            $selectsOptions = '';
         }
 
-
+        $view = __DIR__ . '/../../src/Views/Admin/administration.php';
         $data = Helpers::retrieveObjectData($action, new Game(), $id, true);
         RenderView::render($view,true, $action,$data, $viewExtras, $selectsOptions);
 
@@ -78,7 +66,6 @@ class AdminController
         );
 
         $view = __DIR__ . '/../../src/Views/Admin/administration.php';
-
         $data = Helpers::retrieveObjectData($action, new DeveloperCompany(), $id, false);
         RenderView::render($view, true, $action, $data , $viewExtras, '');
 
@@ -99,19 +86,15 @@ class AdminController
             'baseUrl' => 'weapon'
         );
 
-        $view = __DIR__ . '/../../src/Views/Admin/administration.php';
-        $weapon = new Weapon();
 
         if( Helpers::verifySelects( $action ) ){
             $selectObjects = array(new WeaponCategory(), new Game());
             $selectsOptions = Helpers::retrieveSelectsData($selectObjects);
 
-        }else {
-            $selectsOptions = '';
         }
 
-        $data = Helpers::retrieveObjectData($action, $weapon, $id, true);
-
+        $view = __DIR__ . '/../../src/Views/Admin/administration.php';
+        $data = Helpers::retrieveObjectData($action, new Weapon(), $id, true);
         RenderView::render($view, true, $action,$data, $viewExtras, $selectsOptions);
 
     }
@@ -128,8 +111,6 @@ class AdminController
         );
 
         $view = __DIR__ . '/../../src/Views/Admin/administration.php';
-
-
         $data = Helpers::retrieveObjectData($action, new WeaponCategory(), $id, false);
         RenderView::render($view, true, $action,$data, $viewExtras, '');
 
@@ -146,16 +127,6 @@ class AdminController
             'baseUrl' => 'loadout',
             'homeOptionURI'=> array('name'=> 'Home', 'uri' => '/admin/clases/home'),
         );
-
-        $view = __DIR__ . '/../../src/Views/Admin/administration.php';
-
-        $loadout = new Loadout();
-        //Datos de la vista read
-        if( !empty($_GET)){
-            $data = $loadout->getAllFiltered($_GET);
-        } else{
-            $data = $loadout::getAll(true, 20,true);
-        }
 
         if( Helpers::verifySelects($action) ){
             if( $action == 'home' ){ //En caso de que la vista sea home, necesitaremos los valores de configuracion para las clases de tres juegos predeterminados
@@ -174,6 +145,9 @@ class AdminController
             }
         }
 
+
+        $view = __DIR__ . '/../../src/Views/Admin/administration.php';
+        $data = Helpers::retrieveObjectData( $action, new Loadout(), $id, true);
         RenderView::render($view,true, $action,$data, $viewExtras, $selectOptions);
 
     }
@@ -191,17 +165,6 @@ class AdminController
 
         );
 
-
-        $view = __DIR__ . '/../../src/Views/Admin/administration.php';
-
-        if( !empty($_GET) ){
-            $news = new News();
-            $data = $news->getAllFiltered($_GET);
-        }else {
-            $data = Helpers::retrieveObjectData( $action, new News(), $id, true); //Datos de la vista read
-        }
-
-
         if( Helpers::verifySelects($action) ){
             $selectObjects = array(new News()); // Datos para los elementos HTML select (create, update)
             $selectOptions = Helpers::retrieveSelectsData($selectObjects, true);
@@ -212,6 +175,8 @@ class AdminController
             }
         }
 
+        $view = __DIR__ . '/../../src/Views/Admin/administration.php';
+        $data = Helpers::retrieveObjectData( $action, new News(), $id, true); //Datos del objeto
         RenderView::render($view,true, $action,$data, $viewExtras, $selectOptions);
 
     }
@@ -230,11 +195,8 @@ class AdminController
 
         );
 
-
         $view = __DIR__ . '/../../src/Views/Admin/administration.php';
-
         $data = Helpers::retrieveObjectData( $action, new News(), $id, false, true); //Datos de la vista read
-
         RenderView::render($view,true, $action,$data, $viewExtras, '');
 
     }
@@ -252,14 +214,6 @@ class AdminController
 
         );
 
-        if( !empty($_GET) ){
-            $tutorial = new Tutorial();
-            $data = $tutorial->getAllFiltered($_GET);
-        }else {
-            $data = Helpers::retrieveObjectData( $action, new Tutorial(), $id, true, false); //Datos de la vista read
-        }
-
-
         if( Helpers::verifySelects($action) ){
             $selectObjects = array(new Tutorial()); // Datos para los elementos HTML select (create, update)
             $selectOptions = Helpers::retrieveSelectsData($selectObjects, true);
@@ -270,9 +224,8 @@ class AdminController
             }
         }
 
-
+        $data = Helpers::retrieveObjectData( $action, new Tutorial(), $id, true, false); //Datos de la vista read
         $view = __DIR__ . '/../../src/Views/Admin/administration.php';
-
         RenderView::render($view,true, $action,$data, $viewExtras, $selectOptions);
 
     }

@@ -89,8 +89,7 @@ const loopArticle = async ( data, container, className, categoryLeft = false ) =
         readMoreDiv.appendChild(readMoreLink);
 
         article.appendChild(divImage); article.appendChild(linkContent); article.appendChild(readMoreDiv);
-        container.appendChild(article)
-        resolve(true);
+        resolve(container.appendChild(article));
     }))
 }
 
@@ -100,26 +99,46 @@ const renderArticles = async ( data, container, className = 'post-search-id', ca
 
 
 
+const renderLoader = async ( target ) => {
+    return new Promise(resolve => {
+        let container = document.createElement('div'); container.id = 'loader-container';
+        let loader = document.createElement('div'); loader.classList.add('custom-loader');
+        for(let i = 1; i < 7; i++){
+            let bar = document.createElement('div'); bar.classList.add(`bar${i}`);
+            loader.appendChild(bar);
+        }
+        container.appendChild(loader);
+        let searchResults = document.getElementById(target);
+        resolve(searchResults.appendChild(container));
+    });
+};
+
+const removeLoader = () => {
+    let loader = document.getElementById('loader-container');
+    loader.remove();
+}
+
+
 
 
 
 let allowSearchScroll = false;
 
 let search = {
-    init: function (){
+    init: async function (){
 
 
         let searchInput = document.getElementById('search-input');
-
+        let searchArticlesResult = document.getElementById('search-articles-results');
         let searchButton = document.getElementById('search-button');
 
 
-        searchButton.addEventListener('click', () =>{
+        searchButton.addEventListener('click', async () => {
             allowMainScroll = false;
             allowSearchScroll = true;
             searchButton.disabled = true;
-
-
+            searchArticlesResult.style.display = 'none';
+            await renderLoader('search-results');
             let content = searchInput.value;
             let myHeaders = new Headers();
             myHeaders.append("Content-Type", "text/plain");
@@ -132,10 +151,10 @@ let search = {
                 credentials: 'include',
                 headers: myHeaders
             })
-                .then(res =>res.json())
+                .then(res => res.json())
                 .then(async data => {
                     console.log(data);
-                    let searchResults = document.getElementById('search-results');
+                    let searchResults = document.getElementById('search-articles-results');
                     searchResults.innerHTML = '';
                     if (data.status) {
                         allowSearchScroll = false;
@@ -145,11 +164,18 @@ let search = {
                         noResultSpan.classList.add('is-size-3');
                         noResultSpan.innerHTML = `${data.status}`;
                         searchResults.appendChild(noResultSpan);
+                        removeLoader();
+                        searchResults.style.display = 'flex';
                     } else {
                         allowSearchScroll = true;
 
-                        await renderArticles(data, searchResults, 'post-search-id').then( () => {
-                            searchButton.disabled = false;
+                        await renderArticles(data, searchResults, 'post-search-id').then(() => {
+
+                            setTimeout(()=>{
+                                searchButton.disabled = false;
+                                removeLoader();
+                                searchResults.style.display = 'flex';
+                            }, 1000);
                         });
 
 
@@ -157,10 +183,8 @@ let search = {
                     }
 
 
-
-
                 })
-                .catch(err=>console.log(err))
+                .catch(err => console.log(err))
 
 
         });
@@ -221,7 +245,7 @@ let SearchEndless = {
 
     load: async function ( lastId ){
 
-        let searchResults = document.getElementById('search-results');
+        let searchResults = document.getElementById('search-articles-results');
         let content = document.getElementById('search-input').value;
 
         console.log("=====");

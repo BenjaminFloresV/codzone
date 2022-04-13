@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () =>{
         search_container.style.display = "none";
         main.style.filter = "none";
         ghost_background.style.display = "none";
-        document.getElementById('search-results').innerHTML = "";
+        document.getElementById('search-articles-results').innerHTML = "";
         allowMainScroll = true;
     });
 
@@ -57,6 +57,8 @@ document.addEventListener('DOMContentLoaded', () =>{
         main.style.filter = "blur(6px)";
         search_container.style.display = "block";
         ghost_background.style.display = "block";
+        search_container.scrollIntoView({behavior: 'smooth'});
+
     });
     //
     //

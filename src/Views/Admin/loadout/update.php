@@ -2,9 +2,11 @@
 /* @var array $selects */
 /* @var array $allData */
 
+
 $games = $selects['Game'];
 $wpcategories = $selects['WeaponCategory'];
 $weapons = $selects['Weapon'];
+
 
 ?>
 <div class="section p-0 has-background-white-ter">

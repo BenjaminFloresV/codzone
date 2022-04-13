@@ -13,7 +13,7 @@
         <script src="https://kit.fontawesome.com/81bf225702.js" crossorigin="anonymous"></script>
         <script src="/js/search"></script>
         <script src="/js/navigation"></script>
-        <script type="text/javascript" src="/js/main-scroll"></script>
+        <script type="text/javascript" src="/js/main-scroll" defer></script>
 
     </head>
     <body>
@@ -30,7 +30,9 @@
                 <div class="search-content">
                     <h2 class="title search-title">Resultados de la Búsqueda:</h2>
                     <div id="search-results" class="search-results is-flex is-flex-direction-column is-justify-content-center">
+                        <div id="search-articles-results">
 
+                        </div>
                     </div>
                 </div>
             </div>
@@ -83,6 +85,7 @@
                 </div>
             </div>
         </header>
+        <div style="width: 100px"></div>
         <section id="main" class="section desktop main-background-color main-home">
 
 

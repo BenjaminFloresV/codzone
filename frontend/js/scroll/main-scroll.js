@@ -67,7 +67,17 @@ let endless = {
 
                         data.reverse();
 
-                        await renderArticles(data, postContainer, 'post-id', categoryLeft);
+                        allowMainScroll = false;
+                        await renderLoader(container);
+
+                        setTimeout(async ()=>{
+                            await renderArticles(data, postContainer, 'post-id', categoryLeft).then(() =>{
+                                removeLoader();
+                                allowMainScroll = true;
+                            });
+                        }, 1000);
+
+
 
                     }
                 }

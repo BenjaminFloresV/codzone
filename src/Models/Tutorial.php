@@ -152,6 +152,8 @@ class Tutorial extends Category
 
             if( count($conditions) > 0) $sql .= " AND ".implode(' AND ', $conditions);
 
+            $sql .= " ORDER BY t.tutorial_id DESC";
+
             $st = self::$conn->prepare($sql);
             $query = $st->execute();
 

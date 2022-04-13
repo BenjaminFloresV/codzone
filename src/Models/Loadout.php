@@ -130,21 +130,10 @@ class Loadout
                 $sql .= "INNER JOIN weapon w ON w.weapon_id = l.weapon_id ";
                 $sql .= "INNER JOIN weapon_category wcat ON wcat.wpcategory_id = l.wpcategory_id";
 
-                if( $orderById ){
-                    $sql .= " ORDER BY l.loadout_id DESC";
-                }
-
-                if( !is_null($byGame) ){
-                    $sql .= " WHERE g.game_id = :gameId";
-                }
-
-                if( !is_null($except) ){
-                    $sql .= " AND l.loadout_id <> :except";
-                }
-
-                if( $limit !== null ){
-                    $sql .= " LIMIT :limit";
-                }
+                if( $orderById ) $sql .= " ORDER BY l.loadout_id DESC";
+                if( !is_null($byGame) ) $sql .= " WHERE g.game_id = :gameId";
+                if( !is_null($except) ) $sql .= " AND l.loadout_id <> :except";
+                if( $limit !== null ) $sql .= " LIMIT :limit";
 
 
             }else{
@@ -428,7 +417,10 @@ class Loadout
                 $conditions[] = "wcat.wpcategory_id={$weaponCatId}";
             }
 
+
             if( count($conditions) > 0 ) $sql.= " WHERE ".implode(' AND ', $conditions);
+
+            $sql.= " ORDER BY l.loadout_id DESC";
 
             $st = self::$conn->prepare($sql);
             $query = $st->execute();

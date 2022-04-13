@@ -467,6 +467,12 @@ a, span, i{
 }
 
 
+#search-articles-results {
+  display: none;
+  flex-direction: column;
+  width: 100%;
+  margin: auto;
+}
 
 @import "./user-home.scss";
 @import "search-content.scss";
@@ -474,3 +480,5 @@ a, span, i{
 @import "Loadout/main";
 @import "Admin/main";
 @import "./media-queries.scss";
+@import "./Loader/loader";
+

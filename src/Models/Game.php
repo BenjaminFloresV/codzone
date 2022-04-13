@@ -77,7 +77,7 @@ class Game
         return $result;
     }
 
-    public static function getAll( bool $join = false): bool|array
+    public static function getAll( bool $join = false, int $limit = null, bool $orderById = false): bool|array
     {
         $result = false;
         if( !self::$conn ) return $result; // Verify database connection
@@ -88,7 +88,14 @@ class Game
                 $sql = "SELECT g.*, UNIX_TIMESTAMP(g.release_date) AS releaseData, c.name AS companyName FROM game g INNER JOIN company c ON g.company_id = c.company_id";
             }
 
+            if( $orderById ) $sql .= " ORDER BY c.company_id";
+
+            if( $limit !== null ) $sql .= " LIMIT :limit";
+
             $st = self::$conn->prepare( $sql );
+
+            if( $limit !== null  ) $st->bindParam(':limit', $limit, PDO::PARAM_INT);
+
             $query = $st->execute();
 
             if ($query) {

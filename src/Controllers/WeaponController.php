@@ -71,7 +71,6 @@ class WeaponController
                 $update = $weapon->update();
 
 
-
                 if( $update ){
                     $log->info('Weapon object has been updated successfully');
 
