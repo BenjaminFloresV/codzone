@@ -4,25 +4,16 @@ namespace CMS\Models\Singleton;
 
 abstract class Singleton
 {
+    private static array $instances = array();
 
     public static function getInstance()
     {
-
         $calledClass = get_called_class();
-
-        if( $_SESSION['SINGLETON'] === null ) {
-            $_SESSION['SINGLETON'] = array();
+        if( !isset( self::$instances[$calledClass] ) ) {
+            self::$instances[$calledClass] = new $calledClass();
         }
 
-        if(  !is_array( unserialize($_SESSION['SINGLETON'][$calledClass]) ) ) {
-            $class = new $calledClass();
-            $_SESSION['SINGLETON'][$calledClass] = serialize($class);
-        }
-
-
-
-        return unserialize($_SESSION['SINGLETON'][$calledClass]);
+        return self::$instances[$calledClass];
     }
-
 }
 
