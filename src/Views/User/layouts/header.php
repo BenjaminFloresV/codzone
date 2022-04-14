@@ -12,9 +12,9 @@
         <title><?=!is_null($titlePage) ? $titlePage : 'CoD Zone'?></title>
         <link rel="shortcut icon" type="image/png" href="/uploads/favicon.png">
         <link rel="stylesheet" type="text/css" href="/css/mystyles"><link>
-        <script src="https://kit.fontawesome.com/81bf225702.js" crossorigin="anonymous"></script>
-        <script src="/js/search"></script>
-        <script src="/js/navigation"></script>
+        <script src="https://kit.fontawesome.com/81bf225702.js" crossorigin="anonymous" defer></script>
+        <script src="/js/search" defer></script>
+        <script src="/js/navigation" defer></script>
         <script type="text/javascript" src="/js/main-scroll" defer></script>
 
     </head>
@@ -23,7 +23,7 @@
             <div class="search-box">
                 <input id="search-input" class="input" type="text" placeholder="Escribe aquí tu búsqueda" >
             </div>
-            <button id="search-button" class="button has-background-black-ter has-text-white is-align-self-center ml-3">BUSCAR</button>
+            <button id="search-buttogit stn" class="button has-background-black-ter has-text-white is-align-self-center ml-3">BUSCAR</button>
             <i id="close-search" class="fas fa-regular fa-xmark is-align-self-center is-size-1 ml-5"></i>
         </div>
         <div id="ghost-background"></div>
