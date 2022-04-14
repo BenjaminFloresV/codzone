@@ -1,5 +1,7 @@
 <?php
 /* @var string $titlePage */
+
+
 ?>
 <!DOCTYPE html>
 <html lang="es">

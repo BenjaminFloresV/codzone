@@ -86,7 +86,7 @@ class News extends Category
     }
 
 
-    public function __construct()
+    protected function __construct()
     {
         parent::__construct();
         $this->image_extra = null;

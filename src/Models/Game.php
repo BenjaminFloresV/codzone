@@ -7,8 +7,9 @@ use CMS\Helpers\NewLogger;
 use Exception;
 use PDO;
 use \Psr\Log\LoggerInterface;
+use CMS\Models\Singleton\Singleton;
 
-class Game
+class Game extends Singleton
 {
     private int $game_id;
     private int $company_id;
@@ -19,6 +20,7 @@ class Game
     private string $image;
     private static bool|PDO $conn;
     private static LoggerInterface $log;
+
 
     public function setImage( string $image){
         $this->image = $image;
@@ -33,7 +35,9 @@ class Game
         $this->game_id = $id;
     }
 
-    public function __construct()
+
+
+    protected function __construct()
     {
         self::$log = NewLogger::newLogger('GAME_CLASS','FirePHPHandler');
         self::$conn = Connection::dbConnection();

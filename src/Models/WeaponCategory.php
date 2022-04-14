@@ -5,18 +5,20 @@ namespace CMS\Models;
 
 use CMS\Helpers\Connection;
 use CMS\Helpers\NewLogger;
+use CMS\Models\Singleton\Singleton;
 use Exception;
 use PDO;
 use Psr\Log\LoggerInterface;
 
 
-class WeaponCategory
+final class WeaponCategory extends Singleton
 {
     private int $wpcategory_id;
     private string $name;
     private string $image;
     private static bool|PDO $conn;
     private static LoggerInterface $log;
+
 
     public function getId(): int
     {
@@ -48,7 +50,7 @@ class WeaponCategory
         $this->image = $image;
     }
 
-    public function __construct()
+    protected function __construct()
     {
         self::$log = NewLogger::newLogger('WP_CAT_CLASS', 'FirePHPHandler');
         self::$conn = Connection::dbConnection();

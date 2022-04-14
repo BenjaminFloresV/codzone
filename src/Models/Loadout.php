@@ -7,8 +7,9 @@ use CMS\Helpers\NewLogger;
 use Exception;
 use PDO;
 use \Psr\Log\LoggerInterface;
+use CMS\Models\Singleton\Singleton;
 
-class Loadout
+class Loadout extends Singleton
 {
     private int $loadout_id;
     private int $game_id;
@@ -24,6 +25,7 @@ class Loadout
     private bool $isWarzone;
     private static bool|PDO $conn;
     private static  LoggerInterface $log;
+
 
     public function getGameId(): int
     {
@@ -48,12 +50,13 @@ class Loadout
         $this->image = $img;
     }
 
-    public function __construct()
+    protected function __construct()
     {
         self::$conn = Connection::dbConnection();
         self::$log = NewLogger::newLogger('LOADOUT_CLASS', 'FirePHPHandler');
 
         self::$log->info('Class has been instancied');
+
 
     }
 

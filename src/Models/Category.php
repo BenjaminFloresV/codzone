@@ -4,11 +4,12 @@ namespace CMS\Models;
 
 use CMS\Helpers\Connection;
 use CMS\Helpers\NewLogger;
+use CMS\Models\Singleton\Singleton;
 use Exception;
 use PDO;
 use Psr\Log\LoggerInterface;
 
-class Category
+class Category extends Singleton
 {
 
     private static bool|PDO $conn;
@@ -16,7 +17,7 @@ class Category
     protected string $category_name;
 
 
-    public function __construct()
+    protected function __construct()
     {
 
         self::$conn = Connection::dbConnection();

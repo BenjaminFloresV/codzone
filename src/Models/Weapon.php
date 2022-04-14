@@ -4,11 +4,12 @@ namespace CMS\Models;
 
 use CMS\Helpers\Connection;
 use CMS\Helpers\NewLogger;
+use CMS\Models\Singleton\Singleton;
 use Exception;
 use PDO;
 use Psr\Log\LoggerInterface;
 
-class Weapon
+class Weapon extends Singleton
 {
     private int $weapon_id;
     private int $wpcategory_id;
@@ -36,7 +37,7 @@ class Weapon
         $this->image =  $image;
     }
 
-    public function __construct()
+    protected function __construct()
     {
         self::$log = NewLogger::newLogger('WEAPON_CLASS', 'FirePHPHandler');
         self::$conn = Connection::dbConnection();

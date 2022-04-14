@@ -4,11 +4,12 @@ namespace CMS\Models;
 
 use CMS\Helpers\Connection;
 use CMS\Helpers\NewLogger;
+use CMS\Models\Singleton\Singleton;
 use Exception;
 use PDO;
 use Psr\Log\LoggerInterface;
 
-class Settings
+class Settings extends Singleton
 {
     private int $setting_id;
     private string $name;
@@ -16,7 +17,7 @@ class Settings
     private static bool|\PDO $conn;
     private static LoggerInterface $log;
 
-    public function __construct()
+    protected function __construct()
     {
         self::$conn = Connection::dbConnection();
         self::$log = NewLogger::newLogger('SETTINGS_MODEL', 'FirePHPHandler');

@@ -7,8 +7,9 @@ use CMS\Helpers\NewLogger;
 use Exception;
 use PDO;
 use \Psr\Log\LoggerInterface;
+use CMS\Models\Singleton\Singleton;
 
-class DeveloperCompany
+class DeveloperCompany extends Singleton
 {
     private int $company_id;
     private string $name;
@@ -46,7 +47,7 @@ class DeveloperCompany
         $this->image = $image;
     }
 
-    public function __construct()
+    protected function __construct()
     {
 
         self::$log = NewLogger::newLogger('COMPANY_CLASS', 'FirePHPHandler');
