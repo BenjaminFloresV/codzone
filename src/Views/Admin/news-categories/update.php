@@ -17,12 +17,13 @@
                     </div>
                 </div>
             </div>
+            <?php include __DIR__."/../session-messages/success-error.phtml"?>
             <div class="field is-grouped is-grouped-centered">
                 <div class="control">
                     <input type="submit" class="button is-dark" value="Editar">
                 </div>
                 <div class="control">
-                    <a class="button is-link is-light">Cancel</a>
+                    <a href="/admin/categorias" class="button is-link is-light">Cancel</a>
                 </div>
             </div>
         </form>

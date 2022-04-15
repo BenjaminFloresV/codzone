@@ -28,6 +28,7 @@
 
         <button class="modal-close is-large" aria-label="close"></button>
     </div>
+    <?php include __DIR__."/../session-messages/success-error.phtml"?>
     <table class="table is-fullwidth">
         <thead>
         <tr>

@@ -1,0 +1,8 @@
+<?php if (isset($_SESSION['success-message'])):?>
+    <div id="success-error-msg" class="is-block has-text-centered mt-2 mb-3"><span class="success-color alert is-inline-block has-text-centered"><?=$_SESSION['success-message']?></span></div>
+    <?php \CMS\Helpers\Helpers::deleteSession('success-message');?>
+<?php elseif( isset($_SESSION['error-message']) ):?>
+    <div id="success-error-msg" class="is-block has-text-centered mt-2 mb-3"><span class="warning-color alert is-inline-block has-text-centered"><?=$_SESSION['error-message']?></span></div>
+    <?php \CMS\Helpers\Helpers::deleteSession('error-message');?>
+<?php endif; ?>
+

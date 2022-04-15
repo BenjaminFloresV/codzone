@@ -54,7 +54,7 @@
                 </div>
             </div>
 
-            <div class="field mb-6">
+            <div class="field">
                 <label class="label">Logo de la Empresa</label>
                 <div class="columns">
                     <div class="file">
@@ -79,12 +79,14 @@
                     </div>
                 </div>
             </div>
+
+            <?php include __DIR__."/../session-messages/success-error.phtml"?>
             <div class="field is-grouped is-grouped-centered">
                 <div class="control">
                     <input type="submit" class="button is-dark" value="Editar">
                 </div>
                 <div class="control">
-                    <a class="button is-link is-light">Cancel</a>
+                    <a href="/admin/desarrolladoras/" class="button is-link is-light">Cancel</a>
                 </div>
             </div>
 

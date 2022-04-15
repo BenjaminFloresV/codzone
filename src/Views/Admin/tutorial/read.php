@@ -50,6 +50,7 @@
             <input type="submit" class="button ml-3" value="Filtrar">
         </form>
     </div>
+    <?php include __DIR__."/../session-messages/success-error.phtml"?>
     <table class="table is-fullwidth">
         <thead>
         <tr>

@@ -64,6 +64,10 @@ SimpleRouter::get('/js/search', function(){
     include __DIR__ . '/../assets/js/search/search.php';
 });
 
+SimpleRouter::get('/js/detect-messages', function (){
+    include __DIR__ . '/../assets/js/Admin/detect-message.php';
+});
+
 
 
 

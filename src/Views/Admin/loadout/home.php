@@ -6,13 +6,7 @@ $settings = $selects['Settings'];
 
 <div class="table-container has-background-white-ter">
     <iframe id="home-iframe" src="http://localhost:8001" allowfullscreen="" aria-hidden="false"tabindex="0"></iframe>
-    <?php if (isset($_SESSION['success-message'])):?>
-        <div class="is-block has-text-centered mt-2"><span class="success-color alert is-inline-block has-text-centered"><?=$_SESSION['success-message']?></span></div>
-        <?php \CMS\Helpers\Helpers::deleteSession('success-message');?>
-    <?php elseif( isset($_SESSION['error-message']) ):?>
-        <div class="is-block has-text-centered mt-2"><span class="warning-color alert is-inline-block has-text-centered"><?=$_SESSION['error-message']?></span></div>
-        <?php \CMS\Helpers\Helpers::deleteSession('error-message');?>
-    <?php endif; ?>
+    <?php include __DIR__."/../session-messages/success-error.phtml"?>
     <div class="is-block p-4">
         <form method="POST" action="/admin/clases/home-settings">
             <input type="hidden" value="<?=$settings['lastHomeLoadouts']['setting_id']?>" name="settingId">

@@ -44,7 +44,7 @@
                     <input type="submit" class="button is-dark" value="Crear">
                 </div>
                 <div class="control">
-                    <a class="button is-link is-light">Cancel</a>
+                    <a href="/admin/categorias-armas" class="button is-link is-light">Cancel</a>
                 </div>
             </div>
 
