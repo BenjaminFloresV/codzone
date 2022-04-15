@@ -21,6 +21,7 @@ class Settings extends Singleton
     {
         self::$conn = Connection::dbConnection();
         self::$log = NewLogger::newLogger('SETTINGS_MODEL', 'FirePHPHandler');
+        self::$log->notice('The Class Has been instancied.');
     }
 
     public static function getAll(): bool|array
@@ -71,6 +72,7 @@ class Settings extends Singleton
     public function updateSetting( $id, $value ): bool
     {
         $result = false;
+        self::$log->info('Trying to update setting');
         if( !self::$conn ) return $result;
         try {
             $sql = "UPDATE settings SET value=:value WHERE setting_id=:setting_id";
@@ -82,11 +84,14 @@ class Settings extends Singleton
             $result = $st->execute();
 
             if( $st->rowCount() === 0 ){
+
+                self::$log->info('No setting row was affected');
                 $result = false;
             }
 
         } catch (Exception $exception){
             self::$log->error('Something went wrong', array('exception'=>$exception));
+
         }
 
         return $result;

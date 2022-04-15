@@ -230,9 +230,9 @@ class Game extends Singleton
             $sql = "DELETE FROM game WHERE game_id = :game_id";
             $st = self::$conn->prepare( $sql );
             $st->bindValue( ':game_id', $this->game_id, PDO::PARAM_INT );
-            $query = $st->execute();
+            $result = $st->execute();
 
-            if ( $query ){
+            if ( $result ){
                 self::$log->notice("Loadout with id $this->game_id has been deleted");
             }
 

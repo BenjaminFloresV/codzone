@@ -15,7 +15,7 @@ class Tutorial extends Category
     private string $title;
     private string $description;
     private string $creation_date;
-    private string $image_title;
+    private ?string $image_title;
     private ?string $image_desc;
     private ?string $image_footer;
     private ?string $image_extra;
@@ -40,7 +40,7 @@ class Tutorial extends Category
         $this->image_title = $image;
     }
 
-    public function getImgTitle(): string
+    public function getImgTitle(): ?string
     {
         return $this->image_title;
     }
@@ -76,6 +76,7 @@ class Tutorial extends Category
     {
 
         parent::__construct();
+        $this->image_title = null;
         $this->image_desc = null;
         $this->image_extra = null;
         $this->image_footer = null;
@@ -269,7 +270,7 @@ class Tutorial extends Category
         if ( !self::$conn ) return false;
         try {
             self::$log->info('Trying to retrieve images data.');
-            $sql = "SELECT * FROM tutorial_images WHERE images_id=:images_id";
+            $sql = "SELECT image_title, image_desc, image_footer, image_extra FROM tutorial_images WHERE images_id=:images_id";
             $st = self::$conn->prepare($sql);
 
             $st->bindValue(':images_id', $images_id, PDO::PARAM_INT);
