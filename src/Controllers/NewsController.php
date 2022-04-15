@@ -4,10 +4,11 @@ namespace CMS\Controllers;
 
 use CMS\Helpers\DataConverter;
 use CMS\Helpers\Helpers;
+use CMS\Helpers\ImageManager;
 use CMS\Helpers\NewLogger;
 use CMS\Middleware\RenderView;
-use CMS\Models\Loadout;
 use CMS\Models\News;
+use Exception;
 
 class NewsController
 {
@@ -27,7 +28,8 @@ class NewsController
         }
 
         //Procesar Descripcion
-        $newsData['description'] = DataConverter::convertLoadoutInfoFormat( $newsData['description'] );
+        $newsData['description'] = DataConverter::convertLoadoutInfoFormat($newsData['description']);
+
 
         $recommendedNews = $news::getAll(true, 3, true, $category, false, $id);
 
@@ -47,7 +49,7 @@ class NewsController
         }
 
         $view = __DIR__.'/../Views/News/news.phtml';
-        RenderView::renderUser($view, $recommendedNews, $_SERVER['REQUEST_URI'], null, $newsData, $breadcrumbs, $newsData['title']);
+        RenderView::renderUser($view, $recommendedNews, $_SERVER['REQUEST_URI'], null, $newsData, $breadcrumbs, $newsData['title'], $newsData['description'][0]['partZero']);
 
     }
 
@@ -74,7 +76,7 @@ class NewsController
 
 
         $view = __DIR__.'/../Views/News/all-news.phtml';
-        RenderView::renderUser($view, $allNews, $_SERVER['REQUEST_URI'], $allCategories, null, $breadcrumbs, trim("Cod Zone: Noticias $category") );
+        RenderView::renderUser($view, $allNews, $_SERVER['REQUEST_URI'], $allCategories, null, $breadcrumbs, trim("Cod Zone: Noticias $category"), ALL_NEWS_META_DESCRIPTION );
 
     }
 
@@ -90,31 +92,34 @@ class NewsController
             $news = News::getInstance();
             if ( !$news::verifyConnection() ) Helpers::manageRedirect();
             $news->storeFormValues($_POST);
+
             $category = $news::getCategoryById($_POST['category_id']);
 
             $imgMethods = array('setImgTitle', 'setImgDesc','setImgFooter','setImgExtra');
 
-            $saveFiles = Helpers::saveImgUnix('news', $category['name'],$news, $imgMethods);
 
-            if( $saveFiles ){
+            $saveImg = ImageManager::saveImgUnix('news', $category['name'],$news, $imgMethods);
+
+            if( $saveImg ){
 
                 $saveNews = $news->insert();
 
                 if( $saveNews ){
+
                     Helpers::manageRedirect('noticias');
-                    exit();
+
                 }
 
             }
 
 
-        } catch ( \Exception $exception ){
+        } catch ( Exception $exception ){
             $log->error('Something went wrong while inserting News data.', array('exception'=>$exception));
 
         }
 
         Helpers::manageRedirect('noticias');
-        exit();
+
 
     }
 
@@ -143,7 +148,7 @@ class NewsController
             $category = $news::getCategoryById($_POST['category_id']);
 
 
-            $saveFiles = Helpers::saveImgUnix('news', $category['name'],$news, $imgMethods, true);
+            $saveFiles = ImageManager::saveImgUnix('news', $category['name'],$news, $imgMethods, true);
 
             if( $saveFiles ){
                 $update = $news->update();
@@ -151,20 +156,18 @@ class NewsController
                 if( $update ){
 
                     Helpers::manageRedirect('noticias');
-                    exit();
                 }
 
             }
 
 
-        } catch (\Exception $exception){
+        } catch (Exception $exception){
             $log->error('Something went wrong while updating.', array('exception'=>$exception));
 
         }
 
 
         Helpers::manageRedirect('noticias');
-        exit();
 
     }
 
@@ -184,12 +187,12 @@ class NewsController
 
             if( $saveCategory){
                 $log->info('The News Category was created successfully');
-                Helpers::manageRedirect('categorias');
+                $_SESSION['success-message'] = 'Categoria creada con éxito';
+            }else {
+                $_SESSION['error-message'] = 'No se pudo crear la categoría';
             }
 
-            Helpers::manageRedirect('categorias');
-
-        } catch (\Exception $exception){
+        } catch (Exception $exception){
             $log->error('Something went wrong while saving the News Category', array('exception' => $exception));
         }
 
@@ -210,7 +213,8 @@ class NewsController
 
             $imagesData = $news::getAllImages($images_id);
 
-            $deleteImg = Helpers::deleteImage($imagesData, 'news',true, $newsData['categoryName']);
+            $deleteImg = ImageManager::deleteImage($imagesData, 'news',true, $newsData['categoryName']);
+
 
             if( $deleteImg ) {
 
@@ -224,7 +228,7 @@ class NewsController
 
 
 
-        } catch ( \Exception $exception ){
+        } catch ( Exception $exception ){
             $log->error('Somethin went wrong whilte trying to elimnate the news data', array('exception' => $exception ));
 
         }
@@ -247,11 +251,13 @@ class NewsController
 
             if( !$updateCategory ){
                 $log->warning("The News Category with id: {$news->getCategoryId()} do not exists");
-                Helpers::manageRedirect('categorias');
+                $_SESSION['error-message'] = 'No se pudo actualizar la categoría';
+            }else {
+                $_SESSION['success-message'] = 'Categoría actualizada con éxito';
             }
 
 
-        } catch ( \Exception $exception){
+        } catch ( Exception $exception){
             $log->error('Something went wrong while updating the category', array('exception' => $exception));
 
         }
@@ -271,15 +277,18 @@ class NewsController
             if ( !$news::verifyConnection() ) Helpers::manageRedirect();
             $news->setNewsCategory($id);
 
-            $deleteNews = $news->deleteCategory();
+            $deleteCategory = $news->deleteCategory();
 
-            if( $deleteNews ){
+            if( $deleteCategory ){
                 $log->info('News data was deleted successfully');
+                $_SESSION['success-message'] = 'Categoría eliminada con éxito';
+            }else {
+                $_SESSION['error-message'] = 'No se pudo eliminar la categoría';
             }
 
 
 
-        } catch ( \Exception $exception ){
+        } catch ( Exception $exception ){
             $log->error('Something went wrong while trying to eliminate the news data', array('exception' => $exception ));
 
         }

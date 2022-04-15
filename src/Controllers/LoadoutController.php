@@ -4,10 +4,12 @@ namespace CMS\Controllers;
 
 use CMS\Helpers\DataConverter;
 use CMS\Helpers\Helpers;
+use CMS\Helpers\ImageManager;
 use CMS\Helpers\NewLogger;
 use CMS\Middleware\RenderView;
 use CMS\Models\Game;
 use CMS\Models\Loadout;
+use Exception;
 
 
 class LoadoutController
@@ -41,9 +43,9 @@ class LoadoutController
 
 
         //Procesar Accesorios y Ventajas
-        $loadoutData['attachments'] = DataConverter::convertLoadoutInfoFormat( $loadoutData['attachments'] );
-        $loadoutData['perks'] = DataConverter::convertLoadoutInfoFormat( $loadoutData['perks'] );
-        $loadoutData['description'] = DataConverter::convertLoadoutInfoFormat( $loadoutData['description'] );
+        $loadoutData['attachments'] = DataConverter::convertLoadoutInfoFormat($loadoutData['attachments']);
+        $loadoutData['perks'] = DataConverter::convertLoadoutInfoFormat($loadoutData['perks']);
+        $loadoutData['description'] = DataConverter::convertLoadoutInfoFormat($loadoutData['description']);
 
         $uri = DataConverter::stringToUri($loadoutData['title']);
 
@@ -53,7 +55,7 @@ class LoadoutController
         }
 
         $view = __DIR__.'/../Views/Loadout/loadout.phtml';
-        RenderView::renderUser($view, $recommendedLoadouts, $_SERVER['REQUEST_URI'], null, $loadoutData, $breadcrumbs, $loadoutData['title']);
+        RenderView::renderUser($view, $recommendedLoadouts, $_SERVER['REQUEST_URI'], null, $loadoutData, $breadcrumbs, $loadoutData['title'], $loadoutData['description'][0]['partZero']);
 
     }
 
@@ -72,7 +74,7 @@ class LoadoutController
         }
 
         $view = __DIR__.'/../Views/Loadout/all-loadouts.phtml';
-        RenderView::renderUser($view, $allGames, $_SERVER['REQUEST_URI'], null, null, $breadcrumbs, 'Cod Zone: Clases Call of Duty' );
+        RenderView::renderUser($view, $allGames, $_SERVER['REQUEST_URI'], null, null, $breadcrumbs, 'Cod Zone: Clases Call of Duty', ALL_LOADOUTS_META_DESCRIPTION );
 
 
     }
@@ -84,12 +86,11 @@ class LoadoutController
         $log = NewLogger::newLogger('LOADOUT_CONTROLLER', 'FirePHPHandler');
         $log->info('Insert method is executing');
 
-
         try {
             $loadout = Loadout::getInstance();
             if ( !$loadout::verifyConnection() ) Helpers::manageRedirect();
             $saveValues = $loadout->storeFormValues($_POST);
-            $saveImg = Helpers::saveFile($loadout, 'loadout', true, $_POST['gameSubDirectory']);
+            $saveImg = ImageManager::saveImage($loadout, 'loadout', true, $_POST['gameSubDirectory']);
 
             if( $saveImg ){
 
@@ -98,14 +99,13 @@ class LoadoutController
 
                 if( $saveLoadout){
                     $log->info('The Loadout was created successfully');
-                    Helpers::manageRedirect('clases');
+                    $_SESSION['success-message'] = 'Clase creada con éxito';
+                }else {
+                    $_SESSION['error-message'] = 'No se pudo crear la calse';
                 }
-
             }
 
-            Helpers::manageRedirect('clases');
-
-        } catch (\Exception $exception){
+        } catch (Exception $exception){
             $log->error('Something went wrong while saving the Loadout', array('exception' => $exception));
         }
 
@@ -130,32 +130,28 @@ class LoadoutController
                 $lastData = $loadout::getById($_POST['loadout_id']);
 
                 $log->info('Trying to update the loadout image...');
-                $updateImg = Helpers::updateImage($lastData, $loadout, 'loadout', $_FILES['image'], $_POST['title'], true, $_POST['gameSubDirectory']);
-                $update = $loadout->update();
+                $updateImg = ImageManager::updateImage($lastData, $loadout, 'loadout', $_FILES['image'], $_POST['title'], true, $_POST['gameSubDirectory']);
 
-                if ($update) {
-                    $log->info('Loadout object has been updated successfully');
 
-                    if ($updateImg) {
+                if ($updateImg) {
+
+                    $update = $loadout->update();
+                    if ($update) {
                         $log->info('Loadout image has been updated successfully...');
+                        $_SESSION['success-message'] = 'Clase actualizada con éxito';
                     } else {
                         $log->warning('Loadout image could not be updated');
+                        $_SESSION['error-message'] = 'No se pudo actualizar la clase';
                     }
 
-                    Helpers::manageRedirect('clases');
-                } else {
-                    $log->warning('Loadout object could not be updated');
                 }
-
-
             }
 
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $log->error('Something went wrong...', array('exception' => $exception));
-            Helpers::manageRedirect('clases');
         }
 
-        Helpers::manageRedirect('clases');
+        Helpers::manageRedirect('clases/editar/'.$_POST['loadout_id']);
     }
 
     public function delete(int $id)
@@ -165,31 +161,31 @@ class LoadoutController
         $log->info('Delete method is executing...');
 
         try {
-
-
             $loadout = Loadout::getInstance();
             if ( !$loadout::verifyConnection() ) Helpers::manageRedirect();
             $loadout->setId($id);
 
             $loadoutData = $loadout::getById($id, true);
-            $delete = $loadout->delete();
-            $deleteImg = Helpers::deleteImage( $loadoutData['image'], 'loadout', true, $loadoutData['gameName'] );
+            $deleteImg = ImageManager::deleteImage( $loadoutData['image'], 'loadout', true, $loadoutData['gameName'] );
 
-            if(!$deleteImg) $log->warning('The weapon image could not be delete.');
+            if($deleteImg) {
+                $log->warning('The weapon image could not be delete.');
+                $delete = $loadout->delete();
 
-            if ( !$delete){
-                $log->info("Weapon with id: $id do not exists");
-            } else {
-                $log->info("Weapon was deleted successfully.");
+                if( $delete ) {
+                    $log->info("Weapon was deleted successfully.");
+                    $_SESSION['success-message'] = 'Clase eliminada con éxito';
+                } else {
+                    $_SESSION['error-message'] = 'No se pudo eliminar la clase';
+                    $log->info("Weapon with id: $id do not exists");
+                }
+
+
             }
 
 
-            // Terminar delete weapon
-            // Implementar en Helpers un método para eliminar imágenes.
-
-        } catch (\Exception $exception){
+        } catch (Exception $exception){
             $log->error('Something went wrong while deleting the loadout', array( 'exception' => $exception ));
-            Helpers::manageRedirect('clases');
         }
 
         Helpers::manageRedirect('clases');
@@ -197,13 +193,6 @@ class LoadoutController
 
     }
 
-    public function updateLastHomeLoadouts()
-    {
-        if( !empty($_POST) ){
-            //logic
-            echo 'hli';
-        }
-    }
 
 
 }

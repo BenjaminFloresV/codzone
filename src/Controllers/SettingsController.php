@@ -22,8 +22,8 @@ class SettingsController
             }else {
                 $_SESSION['error-message'] = "No se pudieron actualizar los datos";
             }
+
         }
         Helpers::manageRedirect('clases/home');
-        exit();
     }
 }

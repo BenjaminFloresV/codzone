@@ -25,22 +25,16 @@ class UserController
 
 
         $news = News::getInstance();
-
         $lastNews = $news::getAll(true, 1, false, null, true );
         $lastNews = $lastNews[0];
-
         $lastNews['lowerCatName'] = DataConverter::stringToUri($lastNews['categoryName']);
         $lastNews['uriTitle'] = DataConverter::stringToUri($lastNews['title']);
-
         $settings = Settings::getInstance();
         $settings = $settings->getOneSetting('lastHomeLoadouts')['value'];
         $gameSettings = explode(',', $settings);
         $randomLoadout = $loadout::getByGames($gameSettings);
 
-
         $someNews = $news::getAll(true,4, false,null, true);
-
-
 
         $tutorial = Tutorial::getInstance();
         $lastTutorial = $tutorial::getAll(true, 1, false, null, true);
@@ -57,7 +51,6 @@ class UserController
 
             $someTutorials[$key] = $tutorial;
         }
-
 
 
         foreach ( $someNews as $key=>$news ){

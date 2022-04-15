@@ -1,12 +1,12 @@
 <?php
 
 namespace CMS\Controllers;
-use CMS\Helpers\Connection;
+
 use CMS\Helpers\Helpers;
+use CMS\Helpers\ImageManager;
 use CMS\Helpers\NewLogger;
-use CMS\Models\DeveloperCompany;
-use CMS\Models\Game;
 use CMS\Models\WeaponCategory;
+use Exception;
 
 class WeaponCatController
 {
@@ -23,24 +23,23 @@ class WeaponCatController
                 if ( !$wpcategory::verifyConnection() ) Helpers::manageRedirect();
                 $wpcategory->storeFormValues($_POST);
 
-                $saveFile = Helpers::saveFile($wpcategory, 'weapon_category');
+                $saveImg = ImageManager::saveImage($wpcategory, 'weapon_category');
                 $log->info('Image saved.');
 
-                if ( $saveFile ){
+                if ( $saveImg ){
 
                     $save = $wpcategory->insert();
 
                     if ($save){
                         $log->info('The Company has been created');
-                        Helpers::manageRedirect('categorias-armas/');
+                        $_SESSION['success-message'] = 'Categoría de arma creada con éxito';
+                    }else {
+                        $_SESSION['error-message'] = 'No se pudo crear la categoría de arma';
                     }
                 }
 
-                Helpers::manageRedirect('categorias-armas/');
 
-
-
-            }catch (\Exception $exception){
+            }catch (Exception $exception){
                 $log->error('Something went wrong, cannot create Company', array('exception' => $exception));
             }
 
@@ -67,24 +66,29 @@ class WeaponCatController
                 //Guardar la imagen
                 $lastData = $wpcategory::getById($id);
 
-                $updateImg = Helpers::updateImage($lastData, $wpcategory, 'weapon_category', $_FILES['image'], $_POST['name']);
+                $updateImg = ImageManager::updateImage($lastData, $wpcategory, 'weapon_category', $_FILES['image'], $_POST['name']);
 
-                $update = $wpcategory->update();
 
-                if ( $update && $updateImg ){
-                    Helpers::manageRedirect('categorias-armas/');
+
+                if ( $updateImg ){
+                    $update = $wpcategory->update();
+                    if( $update  ) {
+                        $_SESSION['success-message'] = 'Categoría de arma actualizada';
+                    }else {
+                        $_SESSION['error-message'] = 'No se pudo actualizar la categoría de arma';
+                    }
+
                 }
 
 
-            }catch (\Exception $exception){
+            }catch (Exception $exception){
                 $log->error('Something went wrong', array( 'exception' => $exception ));
-                Helpers::manageRedirect('categorias-armas/');
+
             }
 
-
+            Helpers::manageRedirect('categorias-armas/editar/'.$_POST['wpcategory_id']);
         }
 
-        Helpers::manageRedirect('categorias-armas/');
     }
 
     public function delete( int $id )
@@ -100,26 +104,28 @@ class WeaponCatController
             $wpcategory->setId($id);
 
             $wpcategoryData = $wpcategory::getById($id);
-            $deleteImg = Helpers::deleteImage($wpcategoryData['image'], 'weapon_category');
-            $delete =  $wpcategory->delete();
+            $deleteImg = ImageManager::deleteImage($wpcategoryData['image'], 'weapon_category');
 
 
-            if ( !$deleteImg ) $log->warning('The Weapon Cat Image could not be deleted.');
 
-            if ( !$delete ){
-                $log->info("Company with id: $id do not exists");
+            if ( $deleteImg ) {
 
-            } else {
+                $log->warning('The Weapon Cat Image could not be deleted.');
+                $delete =  $wpcategory->delete();
+                if( $delete ) {
+                    $_SESSION['success-message'] = 'Categoría de arma eliminada con éxito';
+                }else {
+                    $_SESSION['error-message'] = 'No se pudo eliminar la categoría de arma';
+                }
 
-                $log->info("Company was deleted successfully.");
             }
-            Helpers::manageRedirect('categorias-armas/');
 
 
-        } catch (\Exception $exception){
+        } catch (Exception $exception){
             $log->error('Something went wrong', array('exception' => $exception));
-            Helpers::manageRedirect('categorias-armas/');
         }
+
+        Helpers::manageRedirect('categorias-armas/');
 
     }
 }

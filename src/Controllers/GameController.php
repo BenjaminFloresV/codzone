@@ -4,11 +4,13 @@ namespace CMS\Controllers;
 
 use CMS\Helpers\DataConverter;
 use CMS\Helpers\Helpers;
+use CMS\Helpers\ImageManager;
 use CMS\Helpers\NewLogger;
 use CMS\Middleware\RenderView;
 use CMS\Models\Game;
 use CMS\Models\Loadout;
 use CMS\Models\WeaponCategory;
+use Exception;
 
 class GameController
 {
@@ -42,14 +44,14 @@ class GameController
                 $loadoutsData[$key]['title'] = DataConverter::stringToUri($loadout['title']);
             }
 
-
+            $metaDescription = "Necesitas una clase de Call of Duty ".$gameData['short_name']."? Este es el lugar indicado para ti, entra y busca la clase que necesitas sin rodeos, directo al grano. Espero que te sean de utilidad :)";
             $breadcrumbs = DataConverter::getBreadcrumbs();
 
             $view = __DIR__ . '/../Views/Loadout/loadout-game.phtml';
-            RenderView::renderUser($view, $loadoutsData, $_SERVER['REQUEST_URI'], $wpCatData, $gameData, $breadcrumbs, "Clases para ".$gameData['short_name']);
+            RenderView::renderUser($view, $loadoutsData, $_SERVER['REQUEST_URI'], $wpCatData, $gameData, $breadcrumbs, "Clases para ".$gameData['short_name'], $metaDescription);
             exit();
 
-        } catch ( \Exception $exception ) {
+        } catch ( Exception $exception ) {
             $log->error( 'Something went wrong while load the index view', array( 'exception' => $exception ) );
 
         }
@@ -69,32 +71,28 @@ class GameController
                 if ( !$game::verifyConnection() ) Helpers::manageRedirect();
                 $game->storeFormValues($_POST);
 
-                $saveFile = Helpers::saveFile($game, 'game');
+                $saveImg = ImageManager::saveImage($game, 'game');
 
-                if ( $saveFile ){
+                if ( $saveImg ){
                     $log->info('Image saved.');
 
                     $save = $game->insert();
 
                     if ($save){
                         $log->info('The game has been created');
-
-
-                        Helpers::manageRedirect('juegos');
+                        $_SESSION['success-message'] ='Juego creado con éxito';
+                    }else {
+                        $_SESSION['error-message'] ='No se pudo crear el Juego';
                     }
                 }
 
-                Helpers::manageRedirect('juegos');
-
-
-            }catch (\Exception $exception){
+            }catch (Exception $exception){
                 $log->error('Something went wrong, cannot create Loadout', array('exception' => $exception));
-                Helpers::manageRedirect('juegos');
             }
 
-        }else {
-            Helpers::manageRedirect('juegos');
         }
+
+        Helpers::manageRedirect('juegos');
 
     }
 
@@ -123,25 +121,27 @@ class GameController
                 }
 
 
-                $updateImg = Helpers::updateImage($lastData, $game, 'game', $_FILES['image'], $_POST['name']);
+                $updateImg = ImageManager::updateImage($lastData, $game, 'game', $_FILES['image'], $_POST['name']);
 
-                $update = $game->update();
+                if ( $updateImg ){
 
-                if ( $update && $updateImg ){
-                    Helpers::manageRedirect('juegos');
+                    $update = $game->update();
+                    if( $update ) {
+                        $_SESSION['success-message'] ='Juego actualizado con éxito';
+                    } else {
+                        $_SESSION['error-message'] ='No se pudo actualizar el juego';
+                    }
                 }
 
 
-            }catch (\Exception $exception){
+            }catch (Exception $exception){
                 $log->error('Something went wrong', array( 'exception' => $exception ));
-                header("Location: ".BASE_URL."/admin/juegos/editar/".$id);
-                exit();
             }
 
 
         }
 
-        Helpers::manageRedirect('juegos');
+        Helpers::manageRedirect("juegos/editar/".$id);
 
 
     }
@@ -158,27 +158,30 @@ class GameController
             $game->setId($id);
             $gameData = $game::getById($id);
 
-            $deleteImg = Helpers::deleteImage($gameData['image'], 'game');
-            $delete =  $game->delete();
+            $deleteImg = ImageManager::deleteImage($gameData['image'], 'game');
 
-            if ( !$deleteImg ) $log->warning('The Loadout Image could not be deleted');
+            if ( $deleteImg ) {
 
-            if ( !$delete ){
-                $log->info("Company with id: $id do not exists");
+                $delete =  $game->delete();
+                if ( $delete ) {
+                    $_SESSION['success-message'] = 'Juego eliminado con éxito';
+                } else {
+                    $_SESSION['error-message'] = 'No se pudo eliminar el juego';
+                }
 
-
-            } else {
-
-                $log->info("Company was deleted successfully.");
+            }else {
+                $log->warning('The Loadout Image could not be deleted');
             }
-            Helpers::manageRedirect('juegos');
 
 
-        } catch (\Exception $exception){
+
+
+
+        } catch (Exception $exception){
             $log->error('Something went wrong', array('exception' => $exception));
-            Helpers::manageRedirect('juegos');
         }
 
+        Helpers::manageRedirect('juegos');
     }
 
 }

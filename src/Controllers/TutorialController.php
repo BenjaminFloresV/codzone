@@ -4,10 +4,11 @@ namespace CMS\Controllers;
 
 use CMS\Helpers\DataConverter;
 use CMS\Helpers\Helpers;
+use CMS\Helpers\ImageManager;
 use CMS\Helpers\NewLogger;
 use CMS\Middleware\RenderView;
-use CMS\Models\News;
 use CMS\Models\Tutorial;
+use Exception;
 
 class TutorialController
 {
@@ -27,7 +28,7 @@ class TutorialController
         }
 
         //Procesar Descripcion
-        $tutorialData['description'] = DataConverter::convertLoadoutInfoFormat( $tutorialData['description'] );
+        $tutorialData['description'] = DataConverter::convertLoadoutInfoFormat($tutorialData['description']);
 
         $recommendedTutorials = $tutorial::getAll(true, 3, true, $category, false, $id);
 
@@ -46,7 +47,7 @@ class TutorialController
         }
 
         $view = __DIR__.'/../Views/Tutorial/tutorial.phtml';
-        RenderView::renderUser($view, $recommendedTutorials, $_SERVER['REQUEST_URI'], null, $tutorialData, $breadcrumbs, $tutorialData['title']);
+        RenderView::renderUser($view, $recommendedTutorials, $_SERVER['REQUEST_URI'], null, $tutorialData, $breadcrumbs, $tutorialData['title'], $tutorialData['description'][0]['partZero']);
 
     }
 
@@ -73,7 +74,7 @@ class TutorialController
 
 
         $view = __DIR__.'/../Views/Tutorial/all-tutorials.phtml';
-        RenderView::renderUser($view, $allNews, $_SERVER['REQUEST_URI'], $allCategories, null, $breadcrumbs, trim("Cod Zone: Tutoriales $category") );
+        RenderView::renderUser($view, $allNews, $_SERVER['REQUEST_URI'], $allCategories, null, $breadcrumbs, trim("Cod Zone: Tutoriales $category"), ALL_TUTORIALS_META_DESCRIPTION );
 
     }
 
@@ -91,28 +92,25 @@ class TutorialController
 
             $imgMethods = array('setImgTitle', 'setImgDesc','setImgFooter','setImgExtra');
 
-            $saveFiles = Helpers::saveImgUnix('tutorial', $category['name'],$tutorial, $imgMethods);
+            $saveImg = ImageManager::saveImgUnix('tutorial', $category['name'],$tutorial, $imgMethods);
 
-            if( $saveFiles ){
+            if( $saveImg ){
 
                 $saveNews = $tutorial->insert();
 
                 if( $saveNews ){
-                    Helpers::manageRedirect('tutoriales');
-                    exit();
+                    $_SESSION['success-message'] = 'Tutorial creado con éxito';
+                }else {
+                    $_SESSION['error-message'] = 'No se pudo crear el tutorial';
                 }
 
             }
 
-
-        } catch ( \Exception $exception ){
+        } catch ( Exception $exception ){
             $log->error('Something went wrong while inserting News data.', array('exception'=>$exception));
 
         }
-
         Helpers::manageRedirect('noticias');
-        exit();
-
     }
 
     public function update()
@@ -139,29 +137,25 @@ class TutorialController
 
             $category = $tutorial::getCategoryById($_POST['category_id']);
 
+            $saveImg = ImageManager::saveImgUnix('tutorial', $category['name'],$tutorial, $imgMethods, true);
 
-            $saveFiles = Helpers::saveImgUnix('tutorial', $category['name'],$tutorial, $imgMethods, true);
-
-            if( $saveFiles ){
+            if( $saveImg ){
                 $update = $tutorial->update();
 
                 if( $update ){
-
-                    Helpers::manageRedirect('tutoriales');
-                    exit();
+                    $_SESSION['success-message'] = 'Tutorial actualizado con éxito';
+                }else {
+                    $_SESSION['error-message'] = 'El tutorial no se pudo actualizar';
                 }
 
             }
 
-
-        } catch (\Exception $exception){
+        } catch (Exception $exception){
             $log->error('Something went wrong while updating.', array('exception'=>$exception));
 
         }
 
-
-        Helpers::manageRedirect('tutoriales');
-        exit();
+        Helpers::manageRedirect('tutoriales/editar/'.$_POST['tutorial_id']);
 
     }
 
@@ -179,27 +173,29 @@ class TutorialController
 
             $imagesData = $tutorial::getAllImages($images_id);
 
-            $deleteImg = Helpers::deleteImage($imagesData, 'tutorial',true, $tutorialData['categoryName']);
+            $deleteImg = ImageManager::deleteImage($imagesData, 'tutorial',true, $tutorialData['categoryName']);
 
             if( $deleteImg ) {
 
                 $deleteNews = $tutorial->delete();
 
                 if( $deleteNews ){
+                    $_SESSION['success-message'] = 'Tutorial eliminado con éxito';
                     $log->info('News data was deleted successfully');
+                }else {
+                    $_SESSION['error-message'] = 'No se pudo eliminar el tutorial';
                 }
 
             }
 
 
 
-        } catch ( \Exception $exception ){
+        } catch ( Exception $exception ){
             $log->error('Something went wrong while trying to delete tutorial data', array('exception' => $exception ));
 
         }
 
         Helpers::manageRedirect('tutoriales');
-        exit();
 
     }
 

@@ -3,8 +3,10 @@
 namespace CMS\Controllers;
 
 use CMS\Helpers\Helpers;
+use CMS\Helpers\ImageManager;
 use CMS\Helpers\NewLogger;
 use CMS\Models\DeveloperCompany;
+use Exception;
 
 class DevCompanyController
 {
@@ -21,28 +23,30 @@ class DevCompanyController
                 if ( !$company::verifyConnection() ) Helpers::manageRedirect();
                 $company->storeFormValues($_POST);
 
-                $saveFile = Helpers::saveFile($company, 'company');
+                $saveImg = ImageManager::saveImage($company, 'company');
 
                 $log->info('Image saved.');
 
-                if ( $saveFile ){
+                if ( $saveImg ){
 
                     $save = $company->insert();
 
                     if ($save){
                         $log->info('The Company has been created');
-                        Helpers::manageRedirect('desarrolladoras');
+                        $_SESSION['success-message'] = 'Compañía creada con éxito';
+
+                    }else {
+                        $_SESSION['error-message'] = 'No se pudo crear la Compañía';
                     }
                 }
 
 
-            }catch (\Exception $exception){
+            }catch (Exception $exception){
                 $log->error('Something went wrong, cannot create Company', array('exception' => $exception));
             }
-            Helpers::manageRedirect('desarrolladoras');
 
         }
-        Helpers::manageRedirect('desarolladoras');
+        Helpers::manageRedirect('desarrolladoras');
 
     }
 
@@ -59,20 +63,24 @@ class DevCompanyController
             $companyData = $company::getById($id);
 
             $delete =  $company->delete();
-            $deleteImg = Helpers::deleteImage($companyData['image'], 'company');
+            $deleteImg = ImageManager::deleteImage($companyData['image'], 'company');
 
-            if(!$deleteImg) $log->warning('The company image could not be delete.');
+            if(!$deleteImg){
+                $log->warning('The company image could not be delete.');
+                $_SESSION['error-message'] = 'No se pudo eliminar la compañía';
+            }
 
             if ( !$delete){
                 $log->info("Company with id: $id do not exists");
+                $_SESSION['error-message'] = 'No se pudo eliminar la compañía';
             } else {
                 $log->info("Company was deleted successfully.");
+                $_SESSION['success-message'] = 'La compañía ha sido eliminada.';
             }
 
 
-        } catch (\Exception $exception){
+        } catch (Exception $exception){
             $log->error('Something went wrong', array('exception' => $exception));
-            Helpers::manageRedirect('desarrolladoras');
 
         }
         Helpers::manageRedirect('desarrolladoras');
@@ -96,27 +104,29 @@ class DevCompanyController
                 //Guardar la imagen
                 $lastData = $company::getById($_POST['company_id']);
 
+                $updateImg = ImageManager::updateImage($lastData, $company, 'company', $_FILES['image'], $_POST['name']);
 
-                $updateImg = Helpers::updateImage($lastData, $company, 'company', $_FILES['image'], $_POST['name']);
+                if ( $updateImg ){
+                    $update = $company->update();
 
-                $update = $company->update();
+                    if( $update ) {
+                        $_SESSION['success-message'] = 'Compañía actualizada con éxito';
+                        Helpers::manageRedirect('desarrolladoras/editar/'.$_POST['company_id']);
+                    }else {
+                        $_SESSION['error-message'] = 'Compañía actualizada con éxito';
+                    }
 
-                if ( $update && $updateImg ){
-                    Helpers::manageRedirect('desarrolladoras');
                 }
 
 
-            }catch (\Exception $exception){
+            }catch (Exception $exception){
                 $log->error('Something went wrong', array( 'exception' => $exception ));
-                header("Location: ".BASE_URL."/admin/desarrolladoras/editar/".$_POST['company_id']);
-                exit();
             }
 
 
         }
 
-        Helpers::manageRedirect('desarrolladoras');
-
+        Helpers::manageRedirect('desarrolladoras/editar/'.$_POST['company_id']);
 
     }
 

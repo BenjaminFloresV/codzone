@@ -49,9 +49,6 @@ class AdminController
         $view = __DIR__ . '/../../src/Views/Admin/administration.php';
         $data = Helpers::retrieveObjectData($action, Game::getInstance(), $id, true);
         RenderView::render($view,true, $action,$data, $viewExtras, $selectsOptions);
-
-
-
     }
 
     public function manageCompanies($action = null, $id = null) // Al establecer una valor para el método, se soluciono el tema del parametro GET recibido
