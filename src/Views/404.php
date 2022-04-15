@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__.'/../Views/User/layouts/header.php';
+require_once __DIR__ . '/../Views/User/layouts/header.phtml';
 ?>
 
 <section class="section pt-6 is-100-vheight">

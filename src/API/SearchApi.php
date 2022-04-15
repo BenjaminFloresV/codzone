@@ -23,7 +23,7 @@ class SearchApi
 
     }
 
-    private function accessActor($conn, $sql, $searchtext = null ){
+    private function accessActor($conn, $sql){
 
         try {
 
@@ -33,7 +33,7 @@ class SearchApi
 
             foreach ( $result as $row){
                 if( !in_array($row, $array) ){
-                    array_push($array, $row);
+                    $array[] = $row;
                 }
 
             }
@@ -114,31 +114,31 @@ class SearchApi
                         $fullSearch = $conn->quote('%'.$searchInput.'%');
                         //CLASES
                         $sql = "SELECT l.title, 'clases' AS startUri, 'loadout' AS startImgUri, 'loadout-article' AS articleType, UNIX_TIMESTAMP(l.creation_date) AS creationDate, l.loadout_id AS id, l.description, g.name AS imgDirectory, g.short_name AS shortNameUri, g.short_name AS catName, l.image AS image FROM ( SELECT * FROM loadout l ORDER BY l.loadout_id DESC ) AS l";
-                        $sql .= " INNER JOIN game g ON g.game_id=l.game_id WHERE CONCAT(l.title,' ', g.short_name,' ', l.description) LIKE {$fullSearch}";
+                        $sql .= " INNER JOIN game g ON g.game_id=l.game_id WHERE CONCAT(l.title,' ', g.short_name,' ', l.description) LIKE $fullSearch";
 
                         if( $allowMinorId ) {
                             $loadoutId = $lastSearchParsed[0]->loadout;
-                            $sql .= " AND l.loadout_id < {$loadoutId}";
+                            $sql .= " AND l.loadout_id < $loadoutId";
                         }
 
                         //NOTICIAS
                         $sql .= " UNION ALL SELECT n.title, 'noticias' AS startUri, 'news' AS startImgUri, 'news-article' AS articleType, UNIX_TIMESTAMP(n.creation_date) AS creationDate, n.news_id AS id, n.description, ncat.name AS imgDirectory, ncat.name AS shortNameUri, ncat.name AS catName, nimages.image_desc AS image FROM ( SELECT * FROM news n ORDER BY n.news_id DESC ) AS n";
                         $sql .= " INNER JOIN news_category ncat ON ncat.category_id=n.category_id";
-                        $sql .= " INNER JOIN news_images nimages ON nimages.images_id=n.images_id WHERE CONCAT(n.title,' ',ncat.name, ' ', n.description) LIKE {$fullSearch}";
+                        $sql .= " INNER JOIN news_images nimages ON nimages.images_id=n.images_id WHERE CONCAT(n.title,' ',ncat.name, ' ', n.description) LIKE $fullSearch";
 
                         if( $allowMinorId ) {
                             $newsId = $lastSearchParsed[0]->news;
-                            $sql .= " AND n.news_id < {$newsId}";
+                            $sql .= " AND n.news_id < $newsId";
                         }
 
                         //TUTORIALES
                         $sql .= " UNION ALL SELECT t.title, 'tutoriales' AS startUri, 'tutorial' AS startImgUri, 'tutorial-article' AS articleType, UNIX_TIMESTAMP(t.creation_date) AS creationDate, t.tutorial_id AS id, t.description, ncat.name AS imgDirectory, ncat.name AS shortNameUri, ncat.name AS catName, timages.image_title AS image FROM ( SELECT * FROM tutorial t ORDER BY t.tutorial_id DESC ) AS t";
                         $sql .= " INNER JOIN news_category ncat ON ncat.category_id=t.category_id";
-                        $sql .= " INNER JOIN tutorial_images timages ON timages.images_id=t.images_id WHERE CONCAT(t.title,' ',ncat.name, ' ', t.description) LIKE {$fullSearch}";
+                        $sql .= " INNER JOIN tutorial_images timages ON timages.images_id=t.images_id WHERE CONCAT(t.title,' ',ncat.name, ' ', t.description) LIKE $fullSearch";
 
                         if( $allowMinorId ) {
                             $tutorialId = $lastSearchParsed[0]->tutorial;
-                            $sql .= " AND t.tutorial_id < {$tutorialId}";
+                            $sql .= " AND t.tutorial_id < $tutorialId";
                         }
 
                         $sql .= " ORDER BY id DESC LIMIT 8";
@@ -149,7 +149,7 @@ class SearchApi
 
                             foreach ( $result as $row){
                                 if ( !in_array($row, $array) ){
-                                    array_push($array, $row);
+                                    $array[] = $row;
                                 }
                             }
 
@@ -160,33 +160,33 @@ class SearchApi
                                 $searchText = $conn->quote('%'.$value.'%');
 
                                 $sql = "SELECT l.title, 'clases' AS startUri, 'loadout' AS startImgUri, 'loadout-article' AS articleType, UNIX_TIMESTAMP(l.creation_date) AS creationDate, l.loadout_id AS id, l.description, g.name AS imgDirectory, g.short_name AS shortNameUri, g.short_name AS catName, l.image AS image FROM ( SELECT * FROM loadout l ) AS l";
-                                $sql .= " INNER JOIN game g ON g.game_id=l.game_id WHERE CONCAT(l.title,' ', g.short_name,' ', l.description) LIKE {$searchText}";
+                                $sql .= " INNER JOIN game g ON g.game_id=l.game_id WHERE CONCAT(l.title,' ', g.short_name,' ', l.description) LIKE $searchText";
 
                                 if( $allowMinorId ) {
                                     $loadoutId = $lastSearchParsed[0]->loadout;
-                                    $sql .= " AND l.loadout_id < {$loadoutId}";
+                                    $sql .= " AND l.loadout_id < $loadoutId";
                                 }
 
                                 //NOTICIAS
                                 $sql .= " UNION ALL SELECT n.title, 'noticias' AS startUri, 'news' AS startImgUri, 'news-article' AS articleType, UNIX_TIMESTAMP(n.creation_date) AS creationDate, n.news_id AS id, n.description, ncat.name AS imgDirectory, ncat.name AS shortNameUri, ncat.name AS catName, nimages.image_desc AS image FROM ( SELECT * FROM news n ORDER BY n.news_id DESC ) AS n";
                                 $sql .= " INNER JOIN news_category ncat ON ncat.category_id=n.category_id";
-                                $sql .= " INNER JOIN news_images nimages ON nimages.images_id=n.images_id WHERE CONCAT(n.title,' ',ncat.name, ' ', n.description) LIKE {$searchText}";
+                                $sql .= " INNER JOIN news_images nimages ON nimages.images_id=n.images_id WHERE CONCAT(n.title,' ',ncat.name, ' ', n.description) LIKE $searchText";
 
                                 if( $allowMinorId ) {
                                     $newsId = $lastSearchParsed[0]->news;
 
-                                    $sql .= " AND n.news_id < {$newsId}";
+                                    $sql .= " AND n.news_id < $newsId";
                                 }
 
                                 //TUTORIALES
                                 $sql .= " UNION ALL SELECT t.title, 'tutoriales' AS startUri, 'tutorial' AS startImgUri, 'tutorial-article' AS articleType, UNIX_TIMESTAMP(t.creation_date) AS creationDate, t.tutorial_id AS id, t.description, ncat.name AS imgDirectory, ncat.name AS shortNameUri, ncat.name AS catName, timages.image_title AS image FROM ( SELECT * FROM tutorial t ORDER BY t.tutorial_id DESC ) AS t";
                                 $sql .= " INNER JOIN news_category ncat ON ncat.category_id=t.category_id";
-                                $sql .= " INNER JOIN tutorial_images timages ON timages.images_id=t.images_id WHERE CONCAT(t.title,' ',ncat.name, ' ', t.description) LIKE {$searchText}";
+                                $sql .= " INNER JOIN tutorial_images timages ON timages.images_id=t.images_id WHERE CONCAT(t.title,' ',ncat.name, ' ', t.description) LIKE $searchText";
 
 
                                 if( $allowMinorId ) {
                                     $tutorialId = $lastSearchParsed[0]->tutorial;
-                                    $sql .= " AND t.tutorial_id < {$tutorialId}";
+                                    $sql .= " AND t.tutorial_id < $tutorialId";
                                 }
 
                                 $sql .= " LIMIT 5";
@@ -195,7 +195,7 @@ class SearchApi
 
                                 foreach ($result as $row) {
                                     if ( !in_array($row, $array) ){
-                                        array_push($array, $row);
+                                        $array[] = $row;
                                     }
                                 }
 
@@ -246,15 +246,14 @@ class SearchApi
             $lastId = $conn->quote( $_SERVER['HTTP_X_LAST_LOADOUT_ID'] );
 
             $sql = "SELECT l.title, 'clases' AS startUri, 'loadout' AS startImgUri, 'loadout-article' AS articleType, UNIX_TIMESTAMP(l.creation_date) AS creationDate, l.loadout_id AS id, l.description, g.name AS imgDirectory, g.short_name AS shortNameUri, g.short_name AS catName, l.image AS image FROM ( SELECT * FROM loadout l ORDER BY l.loadout_id DESC ) AS l";
-            $sql .= " INNER JOIN game g ON g.game_id=l.game_id WHERE l.loadout_id < {$lastId} LIMIT 5";
+            $sql .= " INNER JOIN game g ON g.game_id=l.game_id WHERE l.loadout_id < $lastId LIMIT 5";
 
             $this->accessActor($conn, $sql);
-            exit();
 
         }else {
             echo json_encode(['status'=>'Access Denied']);
-            exit();
         }
+        exit();
 
 
     }
@@ -287,20 +286,19 @@ class SearchApi
             //NOTICIAS
             $sql = "SELECT n.title, 'noticias' AS startUri, 'news' AS startImgUri, 'news-article' AS articleType, UNIX_TIMESTAMP(n.creation_date) AS creationDate, n.news_id AS id, n.description, ncat.name AS imgDirectory, ncat.name AS shortNameUri, ncat.name AS catName, nimages.image_title AS image FROM ( SELECT * FROM news n ORDER BY n.news_id DESC ) AS n";
             $sql .= " INNER JOIN news_category ncat ON ncat.category_id=n.category_id";
-            $sql .= " INNER JOIN news_images nimages ON nimages.images_id=n.images_id WHERE n.news_id < {$lastId}";
+            $sql .= " INNER JOIN news_images nimages ON nimages.images_id=n.images_id WHERE n.news_id < $lastId";
             if( $_SERVER['HTTP_SUBCATEGORY_NAME'] !== 'null' ) {
-                $sql .= " AND ncat.name = {$subcategoryName}";
+                $sql .= " AND ncat.name = $subcategoryName";
             }
             $sql .= " ORDER BY n.news_id DESC LIMIT 1";
 
 
             $this->accessActor($conn, $sql);
-            exit();
 
         }else {
             echo json_encode(['status'=>'Access Denied']);
-            exit();
         }
+        exit();
     }
 
     public function getTutorials()
@@ -332,18 +330,17 @@ class SearchApi
             $sql .= " INNER JOIN news_category ncat ON ncat.category_id=t.category_id";
             $sql .= " INNER JOIN tutorial_images timages ON timages.images_id=t.images_id WHERE t.tutorial_id < $lastId";
             if( $_SERVER['HTTP_SUBCATEGORY_NAME'] !== 'null' ) {
-                $sql .= " AND ncat.name = {$subcategoryName}";
+                $sql .= " AND ncat.name = $subcategoryName";
             }
             $sql .= " ORDER BY t.tutorial_id DESC LIMIT 1";
 
 
             $this->accessActor($conn, $sql);
-            exit();
 
         }else {
             echo json_encode(['status'=>'Access Denied']);
-            exit();
         }
+        exit();
 
     }
 
