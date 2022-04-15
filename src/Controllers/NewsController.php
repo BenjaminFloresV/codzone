@@ -105,9 +105,10 @@ class NewsController
                 $saveNews = $news->insert();
 
                 if( $saveNews ){
+                    $_SESSION['success-message'] = 'Noticia creada con éxito';
 
-                    Helpers::manageRedirect('noticias');
-
+                }else {
+                    $_SESSION['error-message'] = 'No se pudo crear la noticia';
                 }
 
             }
@@ -155,7 +156,9 @@ class NewsController
 
                 if( $update ){
 
-                    Helpers::manageRedirect('noticias');
+                    $_SESSION['success-message'] = 'Noticia actualizada con éxito';
+                } else {
+                    $_SESSION['error-message'] = 'No se pudo actualizar la noticia';
                 }
 
             }
@@ -222,6 +225,9 @@ class NewsController
 
                 if( $deleteNews ){
                     $log->info('News data was deleted successfully');
+                    $_SESSION['success-message'] = 'Noticia eliminada con éxito';
+                }else {
+                    $_SESSION['error-message'] = 'No se pudo eliminar la notiica';
                 }
 
             }
