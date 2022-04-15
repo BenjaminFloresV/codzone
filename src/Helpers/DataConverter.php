@@ -2,7 +2,8 @@
 
 namespace CMS\Helpers;
 
-use function CMS\Controllers\verifyUriMatch;
+
+use NumberFormatter;
 
 class DataConverter
 {
@@ -14,7 +15,7 @@ class DataConverter
             $objects = explode('/', $text);
         }
 
-        $formatter = new \NumberFormatter('en', \NumberFormatter::SPELLOUT);
+        $formatter = new NumberFormatter('en', NumberFormatter::SPELLOUT);
 
 
         foreach ( $objects as $key=>$object ){
@@ -54,7 +55,8 @@ class DataConverter
         return $newData;
     }
 
-    public static function subjectToLower( array $array, string $subject, string $newSubject ){
+    public static function subjectToLower( array $array, string $subject, string $newSubject ): array
+    {
 
         $items = $array;
 
@@ -67,7 +69,7 @@ class DataConverter
 
     }
 
-    public static function stringToUri(string $string)
+    public static function stringToUri(string $string): string
     {
         $newString = strtolower($string);
 
@@ -78,18 +80,14 @@ class DataConverter
         }else {
             return  $stringParts[0];
         }
-
-
-
     }
 
-    public static function uriToString( string $uri )
+    public static function uriToString( string $uri ): string
     {
 
         if( !strpos($uri, '-') ){
             return ucfirst($uri);
         }
-
 
         $uriParts = explode('-', $uri);
 
@@ -103,7 +101,7 @@ class DataConverter
     }
 
 
-    public static function getBreadcrumbs()
+    public static function getBreadcrumbs(): array
     {
 
         $breadcrumbs = array(
@@ -116,7 +114,6 @@ class DataConverter
         $firstExp = "/\/[a-z]+\/[a-z\-]+\d+\/\d+\/[a-z\-\d+]+$/i";
         $thirdExp = "/\/[a-z]+\/[a-z]+\/\d+\/[a-z\-\d+]+$/i";
         $fourthExp = "/\/[a-z]+\/[a-z\-]+\/\d+\/[a-z\-\d+]+$/i";
-
 
         $secondExp = "/\/[a-z]+\/\d+\/[a-z\-]+/i";
         $fifthExp = "/\/[a-z]+\/\d+\/[a-z\-\d+]+/i";
@@ -136,9 +133,8 @@ class DataConverter
         $mainWord = '';
         $counter = 0;
 
-        function UriMatch($expression ){
-
-
+        function UriMatch($expression ): bool|int
+        {
             return preg_match( $expression, $_SERVER['REQUEST_URI'] );
         }
 
@@ -156,19 +152,18 @@ class DataConverter
 
                     }
                     if( !is_numeric( $crumb ) && !strpos($crumb, '-') ){
+                        $crumbData['word'] = ucfirst($crumb);
                         if( $counter > 1 ){
-                            $crumbData['word'] = ucfirst($crumb);
                             $crumbData['url'] = BASE_URL.'/'.$mainWord;
                         }else {
-                            $crumbData['word'] = ucfirst($crumb);
                             $crumbData['url'] = BASE_URL.'/'.$crumb.'/';
                         }
 
 
                     }elseif ( !is_numeric( $crumb ) && ( strpos($crumb, '-') != false ) ){
 
+                        $crumbData['word'] = DataConverter::uriToString($crumb);
                         if ( !isset($lastId) ) {
-                            $crumbData['word'] = DataConverter::uriToString($crumb);
                             $crumbData['url'] = BASE_URL.'/'.$mainWord.'/'.$crumb.'/';
                             if( $counter == 2 ){
                                 $mainWord = $mainWord.'/'.$crumb.'/';
@@ -177,7 +172,6 @@ class DataConverter
 
                         }else {
 
-                            $crumbData['word'] = DataConverter::uriToString($crumb);
                             $crumbData['url'] = BASE_URL."/$mainWord"."$lastId/$crumb/";
 
                             unset($lastId);
@@ -193,11 +187,8 @@ class DataConverter
                         continue;
                     }
 
-                    array_push($breadcrumbs, $crumbData);
-
-
+                    $breadcrumbs[] = $crumbData;
                 }
-
                 $counter++;
             }
 
@@ -218,8 +209,8 @@ class DataConverter
 
                     if( !is_numeric( $crumb ) && !strpos($crumb, '-') ){
 
+                        $crumbData['word'] = DataConverter::uriToString($crumb);
                         if ( !isset($lastId) ) {
-                            $crumbData['word'] = DataConverter::uriToString($crumb);
                             $crumbData['url'] = BASE_URL.'/'.$mainWord;
                             if( $counter == 2 ){
                                 $mainWord = $mainWord.'/'.$crumb.'/';
@@ -228,7 +219,6 @@ class DataConverter
 
                         }else {
 
-                            $crumbData['word'] = DataConverter::uriToString($crumb);
                             $crumbData['url'] = BASE_URL."/$mainWord"."$lastId/$crumb/";
 
                             unset($lastId);
@@ -238,8 +228,8 @@ class DataConverter
 
                     }elseif ( !is_numeric( $crumb ) && ( strpos($crumb, '-') != false ) ){
 
+                        $crumbData['word'] = DataConverter::uriToString($crumb);
                         if ( !isset($lastId) ) {
-                            $crumbData['word'] = DataConverter::uriToString($crumb);
                             $crumbData['url'] = BASE_URL.'/'.$mainWord.'/'.$crumb.'/';
                             if( $counter == 2 ){
                                 $mainWord = $mainWord.'/'.$crumb.'/';
@@ -248,7 +238,6 @@ class DataConverter
 
                         }else {
 
-                            $crumbData['word'] = DataConverter::uriToString($crumb);
                             $crumbData['url'] = BASE_URL."/$mainWord"."$lastId/$crumb/";
 
                             unset($lastId);
@@ -258,8 +247,8 @@ class DataConverter
 
                     }elseif( !is_numeric( $crumb ) && !strpos($crumb, '-') ){
 
+                        $crumbData['word'] = DataConverter::uriToString($crumb);
                         if ( !isset($lastId) ) {
-                            $crumbData['word'] = DataConverter::uriToString($crumb);
                             $crumbData['url'] = BASE_URL.'/'.$mainWord.'/'.$crumb.'/';
                             if( $counter == 2 ){
                                 $mainWord = $mainWord.'/'.$crumb.'/';
@@ -268,7 +257,6 @@ class DataConverter
 
                         }else {
 
-                            $crumbData['word'] = DataConverter::uriToString($crumb);
                             $crumbData['url'] = BASE_URL."/$mainWord"."$lastId/$crumb/";
 
                             unset($lastId);
@@ -283,7 +271,7 @@ class DataConverter
                     if( count($crumbData) == 0 ){
                         continue;
                     }
-                    array_push($breadcrumbs, $crumbData);
+                    $breadcrumbs[] = $crumbData;
 
 
                 }
