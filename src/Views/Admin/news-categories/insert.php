@@ -21,7 +21,7 @@
                     <input type="submit" class="button is-dark" value="Agregar">
                 </div>
                 <div class="control">
-                    <a class="button is-link is-light">Cancel</a>
+                    <a href="<?=BASE_URL?>/admin/categorias" class="button is-link is-light">Cancel</a>
                 </div>
             </div>
         </form>

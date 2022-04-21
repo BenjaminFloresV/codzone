@@ -195,23 +195,30 @@ class NewsController
         Helpers::isAdmin();
         $log = NewLogger::newLogger('NEWS_CONTROLLER', 'FirePHPHandler');
         $log->info('InsertCategory method is executing');
+        if( !empty($_POST) && FormVerifier::verifyInputs($_POST)){
 
-        try {
-            $news = News::getInstance();
-            if ( !$news::verifyConnection() ) Helpers::manageRedirect();
-            $news->storeFormValues($_POST);
+            try {
+                $news = News::getInstance();
+                if ( !$news::verifyConnection() ) Helpers::manageRedirect();
+                $news->storeFormValues($_POST);
 
-            $saveCategory = $news->insertCategory();
+                $saveCategory = $news->insertCategory();
 
-            if( $saveCategory){
-                $log->info('The News Category was created successfully');
-                $_SESSION['success-message'] = 'Categoria creada con éxito';
-            }else {
-                $_SESSION['error-message'] = 'No se pudo crear la categoría';
+                if( $saveCategory){
+                    $log->info('The News Category was created successfully');
+                    $_SESSION['success-message'] = 'Categoria creada con éxito';
+                }else {
+                    $_SESSION['error-message'] = 'No se pudo crear la categoría';
+                }
+
+            } catch (Exception $exception){
+                $log->error('Something went wrong while saving the News Category', array('exception' => $exception));
             }
 
-        } catch (Exception $exception){
-            $log->error('Something went wrong while saving the News Category', array('exception' => $exception));
+
+        }else {
+            $_SESSION['error-message'] = 'Todos los campos son requeridos';
+            Helpers::manageRedirect('categorias/crear');
         }
 
         Helpers::manageRedirect('categorias');
@@ -263,27 +270,34 @@ class NewsController
         Helpers::isAdmin();
         $log = NewLogger::newLogger('NEWS_CONTROLLER', 'FirePHPHandler');
         $log->info('Update Category was executing');
-        try {
-            $news = News::getInstance();
-            if( !$news::verifyConnection() ) Helpers::manageRedirect();
-            $news->storeFormValues($_POST);
+        if( !empty($_POST) && FormVerifier::verifyInputs($_POST)) {
 
-            $updateCategory = $news->updateCategory();
+            try {
+                $news = News::getInstance();
+                if( !$news::verifyConnection() ) Helpers::manageRedirect();
+                $news->storeFormValues($_POST);
 
-            if( !$updateCategory ){
-                $log->warning("The News Category with id: {$news->getCategoryId()} do not exists");
-                $_SESSION['error-message'] = 'No se pudo actualizar la categoría';
-            }else {
-                $_SESSION['success-message'] = 'Categoría actualizada con éxito';
+                $updateCategory = $news->updateCategory();
+
+                if( !$updateCategory ){
+                    $log->warning("The News Category with id: {$news->getCategoryId()} do not exists");
+                    $_SESSION['error-message'] = 'No se pudo actualizar la categoría';
+                }else {
+                    $_SESSION['success-message'] = 'Categoría actualizada con éxito';
+                }
+
+
+            } catch ( Exception $exception){
+                $log->error('Something went wrong while updating the category', array('exception' => $exception));
+
             }
 
-
-        } catch ( Exception $exception){
-            $log->error('Something went wrong while updating the category', array('exception' => $exception));
-
+        }else {
+            $_SESSION['error-message'] = 'Todos los campos son requeridos';
         }
 
-        Helpers::manageRedirect("categorias/editar/{$news->getCategoryId()}");
+
+        Helpers::manageRedirect("categorias/editar/".$_POST['category_id']);
 
 
     }
