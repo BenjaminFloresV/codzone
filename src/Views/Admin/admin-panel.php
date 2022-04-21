@@ -13,7 +13,7 @@
         </div>
         <div class="columns is-multiline is-justify-content-center">
             <div class="column is-3" >
-                <a href="/admin/desarrolladoras">
+                <a href="<?=BASE_URL?>/admin/desarrolladoras">
                     <div class="card">
                         <div class="card-image">
                             <figure class="image is-4by3">
@@ -31,7 +31,7 @@
                 </a>
             </div>
             <div class="column is-3">
-                <a href="/admin/juegos">
+                <a href="<?=BASE_URL?>/admin/juegos">
                     <div class="card">
                         <div class="card-image">
                             <figure class="image is-4by3">
@@ -49,7 +49,7 @@
                 </a>
             </div>
             <div class="column is-3">
-                <a href="/admin/armas">
+                <a href="<?=BASE_URL?>/admin/armas">
                     <div class="card">
                         <div class="card-image">
                             <figure class="image is-4by3">
@@ -67,7 +67,7 @@
                 </a>
             </div>
             <div class="column is-3">
-                <a href="/admin/categorias-armas">
+                <a href="<?=BASE_URL?>/admin/categorias-armas">
                     <div class="card">
                         <div class="card-image">
                             <figure class="image is-4by3">
@@ -85,7 +85,7 @@
                 </a>
             </div>
             <div class="column is-3">
-                <a href="/admin/clases">
+                <a href="<?=BASE_URL?>/admin/clases">
                     <div class="card">
                         <div class="card-image">
                             <figure class="image is-4by3">
@@ -103,7 +103,7 @@
                 </a>
             </div>
             <div class="column is-3">
-                <a href="/admin/noticias">
+                <a href="<?=BASE_URL?>/admin/noticias">
                     <div class="card">
                         <div class="card-image">
                             <figure class="image is-4by3">
@@ -121,7 +121,7 @@
                 </a>
             </div>
             <div class="column is-3">
-                <a href="/admin/tutoriales">
+                <a href="<?=BASE_URL?>/admin/tutoriales">
                     <div class="card">
                         <div class="card-image">
                             <figure class="image is-4by3">

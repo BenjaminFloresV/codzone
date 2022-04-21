@@ -5,7 +5,7 @@ $settings = $selects['Settings'];
 ?>
 
 <div class="table-container has-background-white-ter">
-    <iframe id="home-iframe" src="http://localhost:8001" allowfullscreen="" aria-hidden="false"tabindex="0"></iframe>
+    <iframe id="home-iframe" src="<?=BASE_URL?>" allowfullscreen="" aria-hidden="false"tabindex="0"></iframe>
     <?php include __DIR__."/../session-messages/success-error.phtml"?>
     <div class="is-block p-4">
         <form method="POST" action="<?=BASE_URL?>/admin/clases/home-settings">
