@@ -47,6 +47,7 @@ class RenderView
 
     }
 
+    // This method renders the main page of the user view.
     public static function renderHome($view = null, $lastNews = null, $someNews = null, $lastTutorial = null, $someTutorials = null, $loadouts = null, $randomLoadouts = null)
     {
         $metaDescription = 'Bienvenido a CodZone, aquí encontrarás información relacionada a Call of Duty. Tenemos variedad de tutoriales, noticias y las mejores clases para que puedas tener una experienca de juego mucho más divertida en Call of Duty.';
@@ -58,6 +59,7 @@ class RenderView
 
     }
 
+    // This method renders all user's views
     public static function renderUser($view, $data = null, $uri = null, $categoriesData = null, $mainObjectData = null, $breadcrumbs = null, $pageTitle = null, $metaDescription = null)
     {
         if ( $data != null ){

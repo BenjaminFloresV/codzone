@@ -29,7 +29,7 @@ class TutorialController
         }
 
         //Procesar Descripcion
-        $tutorialData['description'] = DataConverter::convertLoadoutInfoFormat($tutorialData['description']);
+        $tutorialData['description'] = DataConverter::explodeContent($tutorialData['description']);
 
         $recommendedTutorials = $tutorial::getAll(true, 3, true, $category, false, $id);
 

@@ -44,9 +44,9 @@ class LoadoutController
 
 
         //Procesar Accesorios y Ventajas
-        $loadoutData['attachments'] = DataConverter::convertLoadoutInfoFormat($loadoutData['attachments']);
-        $loadoutData['perks'] = DataConverter::convertLoadoutInfoFormat($loadoutData['perks']);
-        $loadoutData['description'] = DataConverter::convertLoadoutInfoFormat($loadoutData['description']);
+        $loadoutData['attachments'] = DataConverter::explodeContent($loadoutData['attachments']);
+        $loadoutData['perks'] = DataConverter::explodeContent($loadoutData['perks']);
+        $loadoutData['description'] = DataConverter::explodeContent($loadoutData['description']);
 
         $uri = DataConverter::stringToUri($loadoutData['title']);
 

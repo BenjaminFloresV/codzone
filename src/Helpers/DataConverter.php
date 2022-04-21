@@ -7,7 +7,8 @@ use NumberFormatter;
 
 class DataConverter
 {
-    public static function dateFormatter( array $data )
+    // We use this to replace dates format in insert and update methods used in controllers
+    public static function dateFormatter( array $data ): array
     {
         foreach ( $data as $key=>$input) {
             if( preg_match('/\d+-\d+-\d+/', $input ) ) {
@@ -17,7 +18,8 @@ class DataConverter
         return $data;
     }
 
-    public static function convertLoadoutInfoFormat( string $text, bool $isDescription = false )
+    // We use this method to explode data if it is necessary to specific usage on Views
+    public static function explodeContent(string $text ): array
     {
         if( !strpos($text, '/') ){
             $objects = array( $text );
@@ -31,7 +33,7 @@ class DataConverter
         foreach ( $objects as $key=>$object ){
             $newObject = array();
 
-            $objectInfo = explode('_', $object); // Utilizamos guion bajo como separador en caso de usarse el guion normal para describir el accesorio
+            $objectInfo = explode('_', $object);
 
             for( $i = 0; $i < count($objectInfo); $i++ ){
                 $name = "part".ucfirst($formatter->format($i));
@@ -47,24 +49,7 @@ class DataConverter
 
     }
 
-    public static function addGameURL(array $data )
-    {
-
-        $newData = $data;
-
-        if( $data['gameName'] != null ){
-
-            $gameName = explode("Call of Duty", $data['gameName']);
-            $newData['shortName'] = trim( $gameName[1] );
-
-            $gameURL = str_replace( " ", "-",  strtolower($data['gameName']));
-            $newData['gameURL'] = $gameURL;
-        }
-
-
-        return $newData;
-    }
-
+    // This method converts a specific array's string to lower case, it is necessary for some URL formats
     public static function subjectToLower( array $array, string $subject, string $newSubject ): array
     {
 
@@ -79,6 +64,8 @@ class DataConverter
 
     }
 
+
+    // This method converts a string with white spaces to URL format
     public static function stringToUri(string $string): string
     {
         $newString = strtolower($string);
@@ -92,6 +79,7 @@ class DataConverter
         }
     }
 
+    // This method does the opposite processs of the above method
     public static function uriToString( string $uri ): string
     {
 
@@ -110,7 +98,7 @@ class DataConverter
         return implode(' ', $uriParts);
     }
 
-
+    // This method generates the Breadcrumbs
     public static function getBreadcrumbs(): array
     {
 

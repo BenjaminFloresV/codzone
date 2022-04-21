@@ -31,7 +31,7 @@ class UserController
                 //$loadouts[0]['description'] = DataConverter::convertLoadoutInfoFormat($loadouts[0]['description']);
 
                 foreach ( $loadouts as $key=>$item ){
-                    $item['description'] = DataConverter::convertLoadoutInfoFormat($item['description']);
+                    $item['description'] = DataConverter::explodeContent($item['description']);
                     $loadouts[$key] = $item;
                 }
 

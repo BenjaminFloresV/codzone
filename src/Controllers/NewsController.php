@@ -29,7 +29,7 @@ class NewsController
         }
 
         //Procesar Descripcion
-        $newsData['description'] = DataConverter::convertLoadoutInfoFormat($newsData['description']);
+        $newsData['description'] = DataConverter::explodeContent($newsData['description']);
 
 
         $recommendedNews = $news::getAll(true, 3, true, $category, false, $id);

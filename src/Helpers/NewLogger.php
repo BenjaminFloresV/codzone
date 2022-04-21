@@ -7,6 +7,7 @@ use Psr\Log\LoggerInterface;
 
 class NewLogger
 {
+    // This method creates a news logger for debugging tasks
     public static function newLogger($name , $handler) : LoggerInterface
     {
         $logger = new Logger($name);

@@ -33,11 +33,13 @@ class FormVerifier
         return $result;
     }
 
+    // This method verifies if all inputs are valid
     public static function verifyInputs( array $data ): bool
     {
         $result = false;
 
         foreach ( $data as $input) {
+            // We use all the methods above to verify the type of input, if any condition doesn't match that means that the input is invalid
             if( self::verifyString($input) || self::verifyInt( $input ) || self::verifyDate( $input ) || self::verifyBoolean($input) ) {
                 $result = true;
             }else {

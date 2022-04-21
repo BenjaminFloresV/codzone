@@ -168,7 +168,7 @@ class ImageManager
         return $result;
     }
 
-
+    // This method compresses any image by changing his format to webp format.
     public static function compressImage( string $source, string $destination, int $quality ): bool
     {
 
@@ -202,7 +202,7 @@ class ImageManager
 
     }
 
-
+    // This method saves images using unix time stamp as name, it is used in the following controllers: Tutorial and News
     public static function saveImgUnix(string $directory, string $subDirectory = null, object $object, array $imgMethods, bool $update = false): bool
     {
         $log = NewLogger::newLogger('HELPERS_SAVEIMGUNIX', 'FirePHPHandler');

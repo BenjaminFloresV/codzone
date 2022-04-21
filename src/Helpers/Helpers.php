@@ -9,21 +9,22 @@ use JetBrains\PhpStorm\NoReturn;
 
 class Helpers
 {
-
+    // This method is used to do redirects at Administrator Views
     #[NoReturn] public static function manageRedirect(string $view = '' ){
         header("Location:".BASE_URL."/admin/$view");
         exit();
     }
 
 
-
+    // This method update a directory's name if the name of a game or any other subject that changes, because
+    // some subjects has a name dependency associated to a category or entity.
     public static function updateDirectory($oldDir, $newDir): bool
     {
         return rename($oldDir, $newDir);
     }
 
 
-
+    // This method verify if a specific Views needs categories data or entities
     public static function verifySelects( $action ): bool
     {
         return match ($action) {
@@ -32,7 +33,8 @@ class Helpers
         };
     }
 
-
+    //  This method verify the URL endpoint in some Adminsitrator Views
+    // to determinates the php file that needs to be loaded from Admin's Views folder.
     public static function verifyAction( $action ): string
     {
         return match ($action) {
@@ -44,6 +46,7 @@ class Helpers
         };
     }
 
+    // This method is used to get object data if we need to update data or show all the data of certain entity.
     public static function retrieveObjectData(string $action, object $object, $id = '', $join = false, $getObjectCategories = false ): array|bool
     {
         $result = array();
@@ -83,6 +86,7 @@ class Helpers
 
     }
 
+    // This method verifies if the URL requested is valid, if it is not the case, it does a redirection
     public static function verifyUriRequest()
     {
         if( str_ends_with($_SERVER['REQUEST_URI'], '/') ) {
@@ -90,6 +94,7 @@ class Helpers
         }
     }
 
+    // This method returns arrays within array with different entities's data that is necessary for Admin actions( insert, update, etc )
     public static function retrieveSelectsData( $objects, $getCategories = false, array $getSettings = null ): bool|array
     {
 
@@ -127,7 +132,6 @@ class Helpers
 
     }
 
-
     public static function isAdmin()
     {
         if( !isset($_SESSION['admin'])) {
@@ -135,6 +139,7 @@ class Helpers
             exit();
         }
     }
+
 
     public static function deleteSession( string $name )
     {
