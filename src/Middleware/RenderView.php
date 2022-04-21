@@ -89,4 +89,11 @@ class RenderView
         require_once __DIR__. '/../../src/Views/layouts/footer.phtml';
         exit();
     }
+
+    public static function renderMaintenance() {
+        require_once __DIR__ . '/../../src/Views/User/layouts/header.phtml';
+        require_once __DIR__.'/../Views/User/maintenance.phtml';
+        require_once __DIR__. '/../../src/Views/layouts/footer.phtml';
+        exit();
+    }
 }

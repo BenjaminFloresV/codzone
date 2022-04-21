@@ -48,7 +48,16 @@ class AdminController
 
         $view = __DIR__ . '/../../src/Views/Admin/administration.php';
         $data = Helpers::retrieveObjectData($action, Game::getInstance(), $id, true);
-        RenderView::render($view,true, $action,$data, $viewExtras, $selectsOptions);
+
+        if( is_array($data) ){
+            RenderView::render($view,true, $action,$data, $viewExtras, $selectsOptions);
+        }else if ( !$data ) {
+            $_SESSION['error-message'] = "No existe el juego con el id: $id";
+            Helpers::manageRedirect('juegos');
+        }else {
+            RenderView::render($view,true, $action,$data, $viewExtras, $selectsOptions);
+        }
+
     }
 
     public function manageCompanies($action = null, $id = null) // Al establecer una valor para el método, se soluciono el tema del parametro GET recibido
@@ -64,7 +73,15 @@ class AdminController
 
         $view = __DIR__ . '/../../src/Views/Admin/administration.php';
         $data = Helpers::retrieveObjectData($action, DeveloperCompany::getInstance(), $id, false);
-        RenderView::render($view, true, $action, $data , $viewExtras, '');
+
+        if( is_array( $data ) ){
+            RenderView::render($view, true, $action, $data , $viewExtras, '');
+        }else if( !$data ) {
+            $_SESSION['error-message'] = "No existe la compañía con id: $id";
+            Helpers::manageRedirect('desarrolladoras');
+        }else {
+            RenderView::render($view, true, $action, $data , $viewExtras, '');
+        }
 
         //al establecer un parametro por defecto en el método, este tomarlos valores de la url que debería enviar datos
         // GET pero no lo hace, al paracer con GET no es igual que POST, el controlador detecta el POST pero no el GET  como ejemplifica
@@ -87,12 +104,25 @@ class AdminController
         if( Helpers::verifySelects( $action ) ){
             $selectObjects = array(WeaponCategory::getInstance(), Game::getInstance());
             $selectsOptions = Helpers::retrieveSelectsData($selectObjects);
-
+        }else {
+            if( $action == 'read'){
+                $selectObjects = array(Game::getInstance(), WeaponCategory::getInstance());
+                $selectsOptions = Helpers::retrieveSelectsData($selectObjects);
+            }
         }
 
         $view = __DIR__ . '/../../src/Views/Admin/administration.php';
         $data = Helpers::retrieveObjectData($action, Weapon::getInstance(), $id, true);
-        RenderView::render($view, true, $action,$data, $viewExtras, $selectsOptions);
+
+        if( is_array($data) ){
+            RenderView::render($view, true, $action,$data, $viewExtras, $selectsOptions);
+        }else if( !$data ){
+            $_SESSION['error-message'] = "No existe el arma con id: $id";
+            Helpers::manageRedirect('armas');
+        }else {
+            RenderView::render($view, true, $action,$data, $viewExtras, $selectsOptions);
+        }
+
 
     }
 
@@ -109,7 +139,16 @@ class AdminController
 
         $view = __DIR__ . '/../../src/Views/Admin/administration.php';
         $data = Helpers::retrieveObjectData($action, WeaponCategory::getInstance(), $id, false);
-        RenderView::render($view, true, $action,$data, $viewExtras, '');
+
+        if( is_array($data) ){
+            RenderView::render($view, true, $action,$data, $viewExtras, '');
+        }else if( !$data ){
+            $_SESSION['error-message'] = "No existe la categoría de arma con id: $id";
+            Helpers::manageRedirect('categorias-armas');
+        }else {
+            RenderView::render($view, true, $action,$data, $viewExtras, '');
+        }
+
 
     }
 
@@ -145,7 +184,16 @@ class AdminController
 
         $view = __DIR__ . '/../../src/Views/Admin/administration.php';
         $data = Helpers::retrieveObjectData( $action, Loadout::getInstance(), $id, true);
-        RenderView::render($view,true, $action,$data, $viewExtras, $selectOptions);
+
+        if( is_array($data) ) {
+            RenderView::render($view,true, $action,$data, $viewExtras, $selectOptions);
+        }else if( !$data ){
+            $_SESSION['error-message'] = "No existe la clase con id: $id";
+            Helpers::manageRedirect('clases');
+         }else {
+            RenderView::render($view,true, $action,$data, $viewExtras, $selectOptions);
+        }
+
 
     }
 
@@ -173,8 +221,18 @@ class AdminController
         }
 
         $view = __DIR__ . '/../../src/Views/Admin/administration.php';
+
         $data = Helpers::retrieveObjectData( $action, News::getInstance(), $id, true); //Datos del objeto
-        RenderView::render($view,true, $action,$data, $viewExtras, $selectOptions);
+
+        if( is_array($data) ){
+            RenderView::render($view,true, $action,$data, $viewExtras, $selectOptions);
+        }else if( !$data ){
+            $_SESSION['error-message'] = "No existe la noticia con id: $id";
+            Helpers::manageRedirect('noticias');
+        }else {
+            RenderView::render($view,true, $action,$data, $viewExtras, $selectOptions);
+        }
+
 
     }
 
@@ -194,7 +252,17 @@ class AdminController
 
         $view = __DIR__ . '/../../src/Views/Admin/administration.php';
         $data = Helpers::retrieveObjectData( $action, News::getInstance(), $id, false, true); //Datos de la vista read
-        RenderView::render($view,true, $action,$data, $viewExtras, '');
+
+        if( is_array($data) ){
+            RenderView::render($view,true, $action,$data, $viewExtras, '');
+        }else if( !$data ){
+            $_SESSION['error-message'] = "No existe la categoría con id: $id";
+            Helpers::manageRedirect('categorias');
+        }else {
+            RenderView::render($view,true, $action,$data, $viewExtras, '');
+        }
+
+
 
     }
 
@@ -223,8 +291,15 @@ class AdminController
 
         $data = Helpers::retrieveObjectData( $action, Tutorial::getInstance(), $id, true, false); //Datos de la vista read
         $view = __DIR__ . '/../../src/Views/Admin/administration.php';
-        RenderView::render($view,true, $action,$data, $viewExtras, $selectOptions);
 
+        if( is_array($data) ){
+            RenderView::render($view,true, $action,$data, $viewExtras, $selectOptions);
+        }else if( !$data ){
+            $_SESSION['error-message'] = "No existe el tutorial con id: $id";
+            Helpers::manageRedirect('tutoriales');
+        }else {
+            RenderView::render($view,true, $action,$data, $viewExtras, $selectOptions);
+        }
     }
 
 

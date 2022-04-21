@@ -10,7 +10,8 @@ $wpcategories = $selects['WeaponCategory'];
 <div class="section p-0 has-background-white-ter">
     <div class="container is-0-widescreen rounded-corners dark-corners p-5">
         <h1 class="title has-text-centered">Actualizar Arma</h1>
-        <form  class="" runat="server" method="post" action="/admin/editar/arma" enctype="multipart/form-data" >
+        <form  class="" runat="server" method="post" action="<?=BASE_URL?>/admin/editar/arma" enctype="multipart/form-data" >
+            <?php include __DIR__."/../session-messages/success-error.phtml"?>
             <input type="hidden" name="weapon_id" value="<?=$allData['weapon_id']?>">
             <div class="columns">
                 <div class="column">
@@ -85,13 +86,13 @@ $wpcategories = $selects['WeaponCategory'];
                     </div>
                 </div>
             </div>
-            <?php include __DIR__."/../session-messages/success-error.phtml"?>
+
             <div class="field is-grouped is-grouped-centered">
                 <div class="control">
                     <input type="submit" class="button is-dark" value="Editar">
                 </div>
                 <div class="control">
-                    <a href="/admin/armas" class="button is-link is-light">Cancel</a>
+                    <a href="<?=BASE_URL?>/admin/armas" class="button is-link is-light">Cancel</a>
                 </div>
             </div>
 

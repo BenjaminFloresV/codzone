@@ -2,6 +2,8 @@
 
 namespace CMS\Controllers;
 
+use CMS\Helpers\DataConverter;
+use CMS\Helpers\FormVerifier;
 use CMS\Helpers\Helpers;
 use CMS\Helpers\ImageManager;
 use CMS\Helpers\NewLogger;
@@ -16,9 +18,11 @@ class DevCompanyController
         Helpers::isAdmin();
         $log = NewLogger::newLogger('DEVCOMP_CONTROLLER','FirePHPHandler');
         $log->info('Insert Method was executing...');
-        if(!empty($_POST)){
+        if(!empty($_POST) && FormVerifier::verifyInputs($_POST)){
 
+            //str_replace('-', '/', $data);
             try{
+                $_POST = DataConverter::dateFormatter( $_POST );
                 $company = DeveloperCompany::getInstance();
                 if ( !$company::verifyConnection() ) Helpers::manageRedirect();
                 $company->storeFormValues($_POST);
@@ -38,6 +42,9 @@ class DevCompanyController
                     }else {
                         $_SESSION['error-message'] = 'No se pudo crear la Compañía';
                     }
+                } else {
+                    $_SESSION['error-message'] = 'No has subido ninguna imagen';
+                    Helpers::manageRedirect('desarrolladoras/crear');
                 }
 
 
@@ -45,6 +52,9 @@ class DevCompanyController
                 $log->error('Something went wrong, cannot create Company', array('exception' => $exception));
             }
 
+        } else {
+            $_SESSION['error-message'] = 'Todos los campos son requeridos';
+            Helpers::manageRedirect('desarrolladoras/crear');
         }
         Helpers::manageRedirect('desarrolladoras');
 
@@ -93,10 +103,10 @@ class DevCompanyController
         Helpers::isAdmin();
         $log = NewLogger::newLogger('GAME_CONTROLLER','FirePHPHandler');
         $log->info('Update Method was executing...');
-        if (!empty($_POST)){
+        if (!empty($_POST) && FormVerifier::verifyInputs($_POST)){
 
             try{
-
+                $_POST = DataConverter::dateFormatter( $_POST );
                 $company = DeveloperCompany::getInstance();
                 if ( !$company::verifyConnection() ) Helpers::manageRedirect();
                 $company->storeFormValues($_POST);
@@ -116,6 +126,8 @@ class DevCompanyController
                         $_SESSION['error-message'] = 'Compañía actualizada con éxito';
                     }
 
+                }else {
+                    $_SESSION['error-message'] = 'No se pudo actualizar la imagen';
                 }
 
 
@@ -124,6 +136,8 @@ class DevCompanyController
             }
 
 
+        } else {
+            $_SESSION['error-message'] = 'Todos los campos son requeridos';
         }
 
         Helpers::manageRedirect('desarrolladoras/editar/'.$_POST['company_id']);

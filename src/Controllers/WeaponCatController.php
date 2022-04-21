@@ -2,6 +2,7 @@
 
 namespace CMS\Controllers;
 
+use CMS\Helpers\FormVerifier;
 use CMS\Helpers\Helpers;
 use CMS\Helpers\ImageManager;
 use CMS\Helpers\NewLogger;
@@ -16,7 +17,7 @@ class WeaponCatController
         Helpers::isAdmin();
         $log = NewLogger::newLogger('WPCAT_CONTROLLER','FirePHPHandler');
         $log->info('Insert Method was executing...');
-        if(!empty($_POST)){
+        if(!empty($_POST) && FormVerifier::verifyInputs($_POST)){
 
             try{
                 $wpcategory = WeaponCategory::getInstance();
@@ -27,7 +28,6 @@ class WeaponCatController
                 $log->info('Image saved.');
 
                 if ( $saveImg ){
-
                     $save = $wpcategory->insert();
 
                     if ($save){
@@ -36,14 +36,18 @@ class WeaponCatController
                     }else {
                         $_SESSION['error-message'] = 'No se pudo crear la categoría de arma';
                     }
+                }else {
+                    $_SESSION['error-message'] = 'No se pudo guardar la imagen';
+                    Helpers::manageRedirect('categorias-armas/crear');
                 }
 
 
             }catch (Exception $exception){
                 $log->error('Something went wrong, cannot create Company', array('exception' => $exception));
             }
-
-
+        }else {
+            $_SESSION['error-message'] = 'Todos los campos son necesarios';
+            Helpers::manageRedirect('categorias-armas/crear');
         }
 
         Helpers::manageRedirect('categorias-armas/');
@@ -55,7 +59,7 @@ class WeaponCatController
         $log = NewLogger::newLogger('WPCAT_CONTROLLER','FirePHPHandler');
         $log->info('Update Method was executing...');
 
-        if (!empty($_POST)){
+        if (!empty($_POST) && FormVerifier::verifyInputs($_POST)){
 
             try{
 
@@ -78,6 +82,8 @@ class WeaponCatController
                         $_SESSION['error-message'] = 'No se pudo actualizar la categoría de arma';
                     }
 
+                }else {
+                    $_SESSION['error-message'] = 'No se pudo guardar la imagen';
                 }
 
 
@@ -85,9 +91,11 @@ class WeaponCatController
                 $log->error('Something went wrong', array( 'exception' => $exception ));
 
             }
-
-            Helpers::manageRedirect('categorias-armas/editar/'.$_POST['wpcategory_id']);
+        }else {
+            $_SESSION['error-message'] = 'Todos los campos son necesarios';
         }
+
+        Helpers::manageRedirect('categorias-armas/editar/'.$_POST['wpcategory_id']);
 
     }
 

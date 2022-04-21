@@ -27,7 +27,7 @@
         <button class="modal-close is-large" aria-label="close"></button>
     </div>
     <div class="is-block">
-        <form class="is-flex is-justify-content-end pt-3 pr-3" method="GET" action="http://localhost:8001/admin/tutoriales">
+        <form class="is-flex is-justify-content-end pt-3 pr-3" method="GET" action="<?=BASE_URL?>/admin/tutoriales">
             <div class="field is-flex">
                 <label class="label is-align-self-center" for="weaponcat">Categoría:</label>
                 <div class="control ml-3">
@@ -72,7 +72,7 @@
                 <td><?=$data['title']?></td>
                 <td><?=$data['creation_date']?></td>
                 <td>
-                    <a href="/admin/tutoriales/editar/<?=$data['tutorial_id']?>" class="button is-warning">Editar</a>
+                    <a href="<?=BASE_URL?>/admin/tutoriales/editar/<?=$data['tutorial_id']?>" class="button is-warning">Editar</a>
                     <button class="button is-danger js-modal-trigger delete-tutorial" data-target="modal-js-example">Eliminar</button>
                 </td>
             </tr>

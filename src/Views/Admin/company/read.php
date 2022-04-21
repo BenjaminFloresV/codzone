@@ -52,7 +52,7 @@
                 </figure>
             </td>
             <td>
-                <a href="/admin/desarrolladoras/editar/<?=$data['company_id']?>" class="button is-warning">Editar</a>
+                <a href="<?=BASE_URL?>/admin/desarrolladoras/editar/<?=$data['company_id']?>" class="button is-warning">Editar</a>
                 <button class="button is-danger js-modal-trigger delete-company" data-target="modal-js-example">Eliminar</button>
             </td>
         </tr>

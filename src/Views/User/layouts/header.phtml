@@ -15,10 +15,11 @@
     <link rel="shortcut icon" type="image/png" href="/uploads/favicon.png">
     <link rel="stylesheet" type="text/css" href="/css/mystyles"><link>
     <script src="https://kit.fontawesome.com/81bf225702.js" crossorigin="anonymous" defer></script>
+    <?php if( !isset($_SESSION['maintenance']) ):?>
     <script src="/js/search" defer></script>
-
     <script src="/js/navigation" defer></script>
     <script type="text/javascript" src="/js/main-scroll" defer></script>
+    <?php endif;?>
 
 </head>
 <body>
@@ -55,21 +56,25 @@
             <i class="fas fa-regular fa-xmark is-align-self-center is-size-3 mt-1 ml-2"></i>
         </div>
     </div>
+
     <ul class="menu-list categories has-text-white mt-3">
         <li><a href="/clases/">Clases <i class="fa-solid fa-angle-right is-pulled-right is-vcentered is-size-3 mr-6"></i></li></a>
         <li><a href="/tutoriales" >Tutoriales<i class="fa-solid fa-angle-right is-pulled-right is-vcentered is-size-3 mr-6"></i></a></li>
         <li><a href="/noticias/">Noticias<i class="fa-solid fa-angle-right is-pulled-right is-vcentered is-size-3 mr-6"></i></a></li>
     </ul>
+
 </nav>
 <header id="header" class="is-block is-fullwidth" role="navigation" aria-label="main navigation">
     <div class="columns pt-2 pb-2 is-flex  is-fullwidth">
         <div class="column pb-2 pt-2">
+            <?php if( !isset($_SESSION['maintenance']) ):?>
             <div  id="burguer" class="is-flex pl-4 has-text-centered has-text-black is-text is-100-height">
                 <a id="open-nav" class="is-align-self-center is-link-hoverable-white">
                     <i class="fas fa-regular fa-bars is-size-5 is-align-self-center"></i>
                     <span class="ml-2 is-text is-size-5 is-align-self-center burguer-text">MENÚ</span>
                 </a>
             </div>
+            <?php endif;?>
         </div>
         <div class="column pb-2 pt-2">
             <a href="/">
@@ -83,9 +88,11 @@
                 <a id="youtube-logo" class="is-align-self-center is-link-hoverable-white" href="#">
                     <i class="fa-brands fa-youtube is-size-3 is-align-self-center mr-4 is-pointer"></i>
                 </a>
+                <?php if( !isset($_SESSION['maintenance']) ):?>
                 <a id="open-search" class="is-align-self-center is-link-hoverable-white">
                     <i class="fas fa-regular fa-magnifying-glass is-size-3 is-align-self-center is-pointer"></i>
                 </a>
+                <?php endif; ?>
             </div>
         </div>
     </div>

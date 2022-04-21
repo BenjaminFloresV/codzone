@@ -8,7 +8,7 @@ $settings = $selects['Settings'];
     <iframe id="home-iframe" src="http://localhost:8001" allowfullscreen="" aria-hidden="false"tabindex="0"></iframe>
     <?php include __DIR__."/../session-messages/success-error.phtml"?>
     <div class="is-block p-4">
-        <form method="POST" action="/admin/clases/home-settings">
+        <form method="POST" action="<?=BASE_URL?>/admin/clases/home-settings">
             <input type="hidden" value="<?=$settings['lastHomeLoadouts']['setting_id']?>" name="settingId">
             <div class="columns">
                 <div class="field column has-text-centered">

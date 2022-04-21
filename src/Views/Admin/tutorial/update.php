@@ -10,7 +10,8 @@ $categoires = $selects['Tutorial'];
 <div class="section p-0 has-background-white-ter">
     <div class="container is-0-widescreen rounded-corners dark-corners p-5">
         <h1 class="title has-text-centered">Actualizar Tutorial</h1>
-        <form  class="" runat="server" method="post" action="/admin/editar/tutorial" enctype="multipart/form-data" >
+        <form  class="" runat="server" method="post" action="<?=BASE_URL?>/admin/editar/tutorial" enctype="multipart/form-data" >
+            <?php include __DIR__."/../session-messages/success-error.phtml"?>
             <input type="hidden" value="<?=$allData['tutorial_id']?>" name="tutorial_id">
             <input type="hidden" value="<?=$allData['images_id']?>" name="images_id">
             <div class="columns">
@@ -186,13 +187,12 @@ $categoires = $selects['Tutorial'];
                     </div>
                 </div>
             </div>
-            <?php include __DIR__."/../session-messages/success-error.phtml"?>
             <div class="field is-grouped is-grouped-centered">
                 <div class="control">
                     <input type="submit" class="button is-dark" value="Editar">
                 </div>
                 <div class="control">
-                    <a href="/admin/tutoriales" class="button is-link is-light">Cancel</a>
+                    <a href="<?=BASE_URL?>/admin/tutoriales" class="button is-link is-light">Cancel</a>
                 </div>
             </div>
 

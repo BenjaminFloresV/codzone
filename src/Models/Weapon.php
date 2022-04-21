@@ -72,6 +72,54 @@ class Weapon extends Singleton
         return $result;
     }
 
+    public function getAllFiltered( array $data): bool|array
+    {
+        $result = false;
+        if ( !self::$conn ) return $result;
+        try{
+            $result = false;
+            $gameId = $data['game'];
+            $weaponCatId = $data['weaponcat'];
+
+            self::$log->info('Trying to collect Loadouts data...');
+
+            $sql = "SELECT w.*, g.name AS gameName, wp.name AS wpCatName FROM weapon w ";
+            $sql .= "INNER JOIN game g ON g.game_id = w.game_id ";
+            $sql .= "INNER JOIN weapon_category wp ON wp.wpcategory_id = w.wpcategory_id";
+
+            $conditions = array();
+            // real escape
+            if( !empty($gameId)) {
+                $gameId = self::$conn->quote($gameId);
+                $conditions[] = "g.game_id={$gameId}";
+            }
+            if( !empty($weaponCatId)) {
+                $weaponCatId = self::$conn->quote($weaponCatId);
+                $conditions[] = "wp.wpcategory_id={$weaponCatId}";
+            }
+
+
+            if( count($conditions) > 0 ) $sql.= " WHERE ".implode(' AND ', $conditions);
+
+            $sql.= " ORDER BY w.weapon_id DESC";
+
+            $st = self::$conn->prepare($sql);
+            $query = $st->execute();
+
+            if ( $query ){
+                $result = $st->fetchAll();
+                self::$log->info("Loadouts data has been collected successfully.", array( 'data' => $result ));
+
+            }
+
+
+        }catch (Exception $exception){
+            self::$log->error('Loadouts data could not be collected.', array( 'exception' => $exception ));
+        }
+
+        return $result;
+    }
+
 
     public static function getAll(bool $join = false): bool|array
     {

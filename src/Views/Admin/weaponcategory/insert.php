@@ -4,8 +4,8 @@
 <div class="section p-0 has-background-white-ter">
     <div class="container is-0-widescreen rounded-corners dark-corners p-5">
         <h1 class="title has-text-centered">Ingresar Categoria de Arma</h1>
-        <form  class="" runat="server" method="post" action="/admin/insertar/categoria-arma" enctype="multipart/form-data" >
-
+        <form  class="" runat="server" method="post" action="<?=BASE_URL?>/admin/insertar/categoria-arma" enctype="multipart/form-data" >
+            <?php include __DIR__."/../session-messages/success-error.phtml"?>
             <div class="field">
                 <label class="label">Nombre</label>
                 <div class="control">
@@ -44,7 +44,7 @@
                     <input type="submit" class="button is-dark" value="Crear">
                 </div>
                 <div class="control">
-                    <a href="/admin/categorias-armas" class="button is-link is-light">Cancel</a>
+                    <a href="<?=BASE_URL?>/admin/categorias-armas" class="button is-link is-light">Cancel</a>
                 </div>
             </div>
 

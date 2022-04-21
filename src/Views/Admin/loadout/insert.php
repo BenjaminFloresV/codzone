@@ -7,8 +7,8 @@ $weapons = $selects['Weapon'];
 <div class="section p-0 has-background-white-ter">
     <div class="container is-0-widescreen rounded-corners dark-corners p-5">
         <h1 class="title has-text-centered">Publicar Nueva Clase</h1>
-        <form  class="" runat="server" method="post" action="/admin/insertar/clase" enctype="multipart/form-data" >
-
+        <form  class="" runat="server" method="post" action="<?=BASE_URL?>/admin/insertar/clase" enctype="multipart/form-data" >
+            <?php include __DIR__."/../session-messages/success-error.phtml"?>
             <div class="columns">
                 <div class="column">
                     <div class="field">
@@ -144,7 +144,7 @@ $weapons = $selects['Weapon'];
                     <input type="submit" class="button is-dark" value="Publicar">
                 </div>
                 <div class="control">
-                    <a href="/admin/clases" class="button is-link is-light">Cancel</a>
+                    <a href="<?=BASE_URL?>/admin/clases" class="button is-link is-light">Cancel</a>
                 </div>
             </div>
 

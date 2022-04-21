@@ -6,7 +6,7 @@ $companies = $selects['DeveloperCompany'];
 <div class="section p-0 has-background-white-ter">
     <div class="container is-0-widescreen rounded-corners dark-corners p-5">
         <h1 class="title has-text-centered">Editar Juego</h1>
-        <form  class="" runat="server" method="post" action="/admin/editar/juego" enctype="multipart/form-data" >
+        <form  class="" runat="server" method="post" action="<?=BASE_URL?>/admin/editar/juego" enctype="multipart/form-data" >
             <input type="hidden" name="game_id" value="<?=$allData['game_id']?>">
             <div class="columns">
                 <div class="column">
@@ -91,7 +91,7 @@ $companies = $selects['DeveloperCompany'];
                     <input type="submit" class="button is-dark" value="Editar">
                 </div>
                 <div class="control">
-                    <a href="/admin/juegos" class="button is-link is-light">Cancel</a>
+                    <a href="<?=BASE_URL?>/admin/juegos" class="button is-link is-light">Cancel</a>
                 </div>
             </div>
 

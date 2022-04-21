@@ -41,7 +41,7 @@
                 <th><?=$data['category_id']?></th>
                 <td><?=$data['name']?></td>
                 <td>
-                    <a href="/admin/categorias/editar/<?=$data['category_id']?>" class="button is-warning">Editar</a>
+                    <a href="<?=BASE_URL?>/admin/categorias/editar/<?=$data['category_id']?>" class="button is-warning">Editar</a>
                     <button class="button is-danger js-modal-trigger delete-news-cat" data-target="modal-js-example">Eliminar</button>
                 </td>
             </tr>

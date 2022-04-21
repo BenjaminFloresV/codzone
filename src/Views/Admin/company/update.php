@@ -5,7 +5,7 @@
 <div class="section p-0 has-background-white-ter">
     <div class="container is-0-widescreen rounded-corners dark-corners p-5">
         <h1 class="title has-text-centered">Editar Datos de Compañía Desarrolladora</h1>
-        <form  class="" runat="server" method="post" action="http://localhost:8001/admin/editar/desarrolladora" enctype="multipart/form-data" >
+        <form  class="" runat="server" method="post" action="<?=BASE_URL?>/admin/editar/desarrolladora" enctype="multipart/form-data" >
             <input type="hidden" name="company_id" value="<?=$allData['company_id']?>">
             <div class="columns">
                 <div class="column">
@@ -86,7 +86,7 @@
                     <input type="submit" class="button is-dark" value="Editar">
                 </div>
                 <div class="control">
-                    <a href="/admin/desarrolladoras/" class="button is-link is-light">Cancel</a>
+                    <a href="<?=BASE_URL?>/admin/desarrolladoras/" class="button is-link is-light">Cancel</a>
                 </div>
             </div>
 

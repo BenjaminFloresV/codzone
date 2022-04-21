@@ -6,8 +6,8 @@ $companies = $selects['DeveloperCompany'];
 <div class="section p-0 has-background-white-ter">
     <div class="container is-0-widescreen rounded-corners dark-corners p-5">
         <h1 class="title has-text-centered">Ingresar Juego</h1>
-        <form  class="" runat="server" method="post" action="/admin/insertar/juego" enctype="multipart/form-data" >
-
+        <form  class="" runat="server" method="post" action="<?=BASE_URL?>/admin/insertar/juego" enctype="multipart/form-data" >
+            <?php include __DIR__."/../session-messages/success-error.phtml"?>
             <div class="columns">
                 <div class="column">
                     <div class="field">
@@ -89,12 +89,13 @@ $companies = $selects['DeveloperCompany'];
                     </div>
                 </div>
             </div>
+
             <div class="field is-grouped is-grouped-centered">
                 <div class="control">
                     <input type="submit" class="button is-dark" value="Crear">
                 </div>
                 <div class="control">
-                    <a href="/admin/juegos" class="button is-link is-light">Cancel</a>
+                    <a href="<?=BASE_URL?>/admin/juegos" class="button is-link is-light">Cancel</a>
                 </div>
             </div>
 

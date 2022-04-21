@@ -1,6 +1,7 @@
 <?php
 /* @var array $allData */
-//PENDIENTE DE TERMIANR
+/* @var array $selects */
+
 
 ?>
 
@@ -28,6 +29,46 @@
 
         <button class="modal-close is-large" aria-label="close"></button>
     </div>
+    <div class="is-block">
+        <form class="is-flex is-justify-content-end pt-3 pr-3" method="GET" action="<?=BASE_URL?>/admin/armas">
+            <div class="field is-flex">
+                <label class="label is-align-self-center" for="game">Juego:</label>
+                <div class="control ml-3 mr-3">
+                    <div class="select">
+                        <select name="game">
+                            <?php foreach ($selects['Game'] as $game): ?>
+                                <?php if( isset($_GET['game']) && $_GET['game'] == $game['game_id']):?>
+                                    <option value="<?=$game['game_id']?>" selected><?=$game['name']?></option>
+                                <?php else: ?>
+                                    <option value="<?=$game['game_id']?>"><?=$game['name']?></option>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="field is-flex">
+                <label class="label is-align-self-center" for="weaponcat">Categoría:</label>
+                <div class="control ml-3">
+                    <div class="select">
+                        <select name="weaponcat">
+                            <?php foreach ($selects['WeaponCategory'] as $weaponCat): ?>
+                                <?php if( isset($_GET['weaponcat']) && $_GET['weaponcat'] == $weaponCat['wpcategory_id']):?>
+                                    <option value="<?=$weaponCat['wpcategory_id']?>" selected><?=$weaponCat['name']?></option>
+                                <?php else: ?>
+                                    <option value="<?=$weaponCat['wpcategory_id']?>"><?=$weaponCat['name']?></option>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <?php if( isset($_GET['game']) || isset($_GET['weaponcat']) ):?>
+                <a href="/admin/armas" class="button ml-3">Ver Todo</a>
+            <?php endif; ?>
+            <input type="submit" class="button ml-3" value="Filtrar">
+        </form>
+    </div>
     <?php include __DIR__."/../session-messages/success-error.phtml"?>
     <table class="table is-fullwidth">
         <thead>
@@ -54,7 +95,7 @@
                     </figure>
                 </td>
                 <td>
-                    <a href="/admin/armas/editar/<?=$data['weapon_id']?>" class="button is-warning">Editar</a>
+                    <a href="<?=BASE_URL?>/admin/armas/editar/<?=$data['weapon_id']?>" class="button is-warning">Editar</a>
                     <button class="button is-danger js-modal-trigger delete-weapon" data-target="modal-js-example">Eliminar</button>
                 </td>
             </tr>

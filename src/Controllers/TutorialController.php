@@ -3,6 +3,7 @@
 namespace CMS\Controllers;
 
 use CMS\Helpers\DataConverter;
+use CMS\Helpers\FormVerifier;
 use CMS\Helpers\Helpers;
 use CMS\Helpers\ImageManager;
 use CMS\Helpers\NewLogger;
@@ -83,34 +84,42 @@ class TutorialController
         $log = NewLogger::newLogger('TUTORIAL_CONTROLLER', 'FirePHPHandler');
         $log->info('Insert Tutorial method is executing');
 
-        try {
+        if( !empty($_POST) && FormVerifier::verifyInputs($_POST) ){
+            try {
+                $_POST = DataConverter::dateFormatter($_POST);
+                $tutorial = Tutorial::getInstance();
+                if ( !$tutorial::verifyConnection() ) Helpers::manageRedirect();
+                $tutorial->storeFormValues($_POST);
+                $category = $tutorial::getCategoryById($_POST['category_id']);
 
-            $tutorial = Tutorial::getInstance();
-            if ( !$tutorial::verifyConnection() ) Helpers::manageRedirect();
-            $tutorial->storeFormValues($_POST);
-            $category = $tutorial::getCategoryById($_POST['category_id']);
+                $imgMethods = array('setImgTitle', 'setImgDesc','setImgFooter','setImgExtra');
 
-            $imgMethods = array('setImgTitle', 'setImgDesc','setImgFooter','setImgExtra');
+                $saveImg = ImageManager::saveImgUnix('tutorial', $category['name'],$tutorial, $imgMethods);
 
-            $saveImg = ImageManager::saveImgUnix('tutorial', $category['name'],$tutorial, $imgMethods);
+                if( $saveImg ){
 
-            if( $saveImg ){
+                    $saveNews = $tutorial->insert();
 
-                $saveNews = $tutorial->insert();
-
-                if( $saveNews ){
-                    $_SESSION['success-message'] = 'Tutorial creado con éxito';
+                    if( $saveNews ){
+                        $_SESSION['success-message'] = 'Tutorial creado con éxito';
+                    }else {
+                        $_SESSION['error-message'] = 'No se pudo crear el tutorial';
+                    }
                 }else {
-                    $_SESSION['error-message'] = 'No se pudo crear el tutorial';
+                    $_SESSION['error-message'] = 'No se pudo guardar la imagen';
+                    Helpers::manageRedirect('tutoriales/crear');
                 }
 
+            } catch ( Exception $exception ){
+                $log->error('Something went wrong while inserting News data.', array('exception'=>$exception));
+
             }
-
-        } catch ( Exception $exception ){
-            $log->error('Something went wrong while inserting News data.', array('exception'=>$exception));
-
+        }else {
+            $_SESSION['error-message'] = 'Todos los campos son requeridos';
+            Helpers::manageRedirect('tutoriales/crear');
         }
-        Helpers::manageRedirect('noticias');
+
+        Helpers::manageRedirect('tutoriales');
     }
 
     public function update()
@@ -119,40 +128,48 @@ class TutorialController
         $log = NewLogger::newLogger('TUTORIAL_CONTROLLER', 'FirePHPHandler');
         $log->info('Update Tutorial method is executing');
 
-        try {
+        if( !empty($_POST) && FormVerifier::verifyInputs($_POST)){
 
-            $tutorial = Tutorial::getInstance();
-            if ( !$tutorial::verifyConnection() ) Helpers::manageRedirect();
-            $lastTutorialInfo = $tutorial::getById($_POST['tutorial_id'], true);
+            try {
+                $_POST = DataConverter::dateFormatter($_POST);
+                $tutorial = Tutorial::getInstance();
+                if ( !$tutorial::verifyConnection() ) Helpers::manageRedirect();
+                $lastTutorialInfo = $tutorial::getById($_POST['tutorial_id'], true);
 
-            $tutorial->storeFormValues($lastTutorialInfo);
-            $tutorial->storeFormValues($_POST);
+                $tutorial->storeFormValues($lastTutorialInfo);
+                $tutorial->storeFormValues($_POST);
 
-            $imgMethods = array(
-                array('setImgTitle','getImgTitle',boolval($_POST['deleteTitleImg'])),
-                array('setImgDesc', 'getImgDesc',boolval($_POST['deleteDescImg'])),
-                array('setImgFooter', 'getImgFooter',boolval($_POST['deleteFooterImg'])),
-                array('setImgExtra', 'getImgExtra',boolval($_POST['deleteExtraImg']))
-            );
+                $imgMethods = array(
+                    array('setImgTitle','getImgTitle',boolval($_POST['deleteTitleImg'])),
+                    array('setImgDesc', 'getImgDesc',boolval($_POST['deleteDescImg'])),
+                    array('setImgFooter', 'getImgFooter',boolval($_POST['deleteFooterImg'])),
+                    array('setImgExtra', 'getImgExtra',boolval($_POST['deleteExtraImg']))
+                );
 
-            $category = $tutorial::getCategoryById($_POST['category_id']);
+                $category = $tutorial::getCategoryById($_POST['category_id']);
 
-            $saveImg = ImageManager::saveImgUnix('tutorial', $category['name'],$tutorial, $imgMethods, true);
+                $saveImg = ImageManager::saveImgUnix('tutorial', $category['name'],$tutorial, $imgMethods, true);
 
-            if( $saveImg ){
-                $update = $tutorial->update();
+                if( $saveImg ){
+                    $update = $tutorial->update();
 
-                if( $update ){
-                    $_SESSION['success-message'] = 'Tutorial actualizado con éxito';
+                    if( $update ){
+                        $_SESSION['success-message'] = 'Tutorial actualizado con éxito';
+                    }else {
+                        $_SESSION['error-message'] = 'El tutorial no se pudo actualizar';
+                    }
+
                 }else {
-                    $_SESSION['error-message'] = 'El tutorial no se pudo actualizar';
+                    $_SESSION['error-message'] = 'No se pudo guardar la imagen';
                 }
+
+            } catch (Exception $exception){
+                $log->error('Something went wrong while updating.', array('exception'=>$exception));
 
             }
 
-        } catch (Exception $exception){
-            $log->error('Something went wrong while updating.', array('exception'=>$exception));
-
+        }else {
+            $_SESSION['error-message'] = 'Todos los campos son requeridos';
         }
 
         Helpers::manageRedirect('tutoriales/editar/'.$_POST['tutorial_id']);

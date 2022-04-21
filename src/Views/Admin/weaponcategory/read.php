@@ -48,7 +48,7 @@
                     </figure>
                 </td>
                 <td>
-                    <a href="/admin/categorias-armas/editar/<?=$data['wpcategory_id']?>" class="button is-warning">Editar</a>
+                    <a href="<?=BASE_URL?>/admin/categorias-armas/editar/<?=$data['wpcategory_id']?>" class="button is-warning">Editar</a>
                     <button class="button is-danger js-modal-trigger delete-wp-category" data-target="modal-js-example">Eliminar</button>
                 </td>
             </tr>

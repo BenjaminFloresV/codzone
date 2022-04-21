@@ -2,6 +2,8 @@
 
 namespace CMS\Controllers;
 
+use CMS\Helpers\DataConverter;
+use CMS\Helpers\FormVerifier;
 use CMS\Helpers\Helpers;
 use CMS\Helpers\ImageManager;
 use CMS\Helpers\NewLogger;
@@ -16,10 +18,9 @@ class WeaponController
         $log = NewLogger::newLogger('WEAPON_CONTROLLER', 'FirePHPHandler');
         $log->info('Insert method is executing...');
 
-        try {
+        if( !empty($_POST) && FormVerifier::verifyInputs($_POST) ){
 
-            if ( !empty($_POST) ){
-
+            try {
 
                 $weapon = Weapon::getInstance();
                 if ( !$weapon::verifyConnection() ) Helpers::manageRedirect();
@@ -39,13 +40,18 @@ class WeaponController
                         $_SESSION['error-message'] = 'No se pudo crear el arma';
                     }
 
+                }else {
+                    $_SESSION['error-message'] = 'No se pudo guardar la imagen';
+                    Helpers::manageRedirect('armas/crear');
                 }
+
+            } catch ( Exception $exception ){
+                $log->error('Something went wrong while saving the Weapon', array( 'exception' => $exception ));
             }
 
-
-        } catch ( Exception $exception ){
-            $log->error('Something went wrong while saving the Weapon', array( 'exception' => $exception ));
-
+        }else {
+            $_SESSION['error-message'] = 'Todos los campos son requeridos';
+            Helpers::manageRedirect('armas/crear');
         }
 
         Helpers::manageRedirect('armas');
@@ -56,11 +62,9 @@ class WeaponController
         Helpers::isAdmin();
         $log = NewLogger::newLogger('WPCAT_CONTROLLER', 'FirePHPHandler');
         $log->info('Update method is executing...');
+        if( !empty($_POST) && FormVerifier::verifyInputs($_POST) ) {
 
-        try {
-
-            if ( !empty($_POST) ){
-
+            try {
                 $weapon = Weapon::getInstance();
                 if ( !$weapon::verifyConnection() ) Helpers::manageRedirect();
                 $weapon->storeFormValues($_POST);
@@ -81,18 +85,20 @@ class WeaponController
                         $log->warning('Weapon image could not be updated');
                         $_SESSION['error-message'] = 'No se pudo actualizar el arma';
                     }
-
+                }else {
+                    $_SESSION['error-message'] = 'No se pudo guardar la imagen';
                 }
+
+            } catch ( Exception $exception){
+                $log->error("Something went wrong... ", array( 'exception' => $exception ));
 
             }
 
-            Helpers::manageRedirect('armas/editar/'.$_POST['weapon_id']);
-
-        } catch ( Exception $exception){
-            $log->error("Something went wrong... ", array( 'exception' => $exception ));
-
+        }else {
+            $_SESSION['error-message'] = 'Todos los campos son requeridos';
         }
-        Helpers::manageRedirect('armas');
+
+        Helpers::manageRedirect('armas/editar/'.$_POST['weapon_id']);
 
 
     }

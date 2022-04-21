@@ -3,6 +3,7 @@
 namespace CMS\Controllers;
 
 use CMS\Helpers\DataConverter;
+use CMS\Helpers\FormVerifier;
 use CMS\Helpers\Helpers;
 use CMS\Helpers\ImageManager;
 use CMS\Helpers\NewLogger;
@@ -87,36 +88,46 @@ class NewsController
         $log = NewLogger::newLogger('NEWS_CONTROLLER', 'FirePHPHandler');
         $log->info('Insert News method is executing');
 
-        try {
+        if( !empty($_POST) && FormVerifier::verifyInputs($_POST) ) {
 
-            $news = News::getInstance();
-            if ( !$news::verifyConnection() ) Helpers::manageRedirect();
-            $news->storeFormValues($_POST);
+            try {
+                $_POST = DataConverter::dateFormatter($_POST);
+                $news = News::getInstance();
+                if ( !$news::verifyConnection() ) Helpers::manageRedirect();
+                $news->storeFormValues($_POST);
 
-            $category = $news::getCategoryById($_POST['category_id']);
+                $category = $news::getCategoryById($_POST['category_id']);
 
-            $imgMethods = array('setImgTitle', 'setImgDesc','setImgFooter','setImgExtra');
+                $imgMethods = array('setImgTitle', 'setImgDesc','setImgFooter','setImgExtra');
 
 
-            $saveImg = ImageManager::saveImgUnix('news', $category['name'],$news, $imgMethods);
+                $saveImg = ImageManager::saveImgUnix('news', $category['name'],$news, $imgMethods);
 
-            if( $saveImg ){
+                if( $saveImg ){
 
-                $saveNews = $news->insert();
+                    $saveNews = $news->insert();
 
-                if( $saveNews ){
-                    $_SESSION['success-message'] = 'Noticia creada con éxito';
+                    if( $saveNews ){
+                        $_SESSION['success-message'] = 'Noticia creada con éxito';
+
+                    }else {
+                        $_SESSION['error-message'] = 'No se pudo crear la noticia';
+                    }
 
                 }else {
-                    $_SESSION['error-message'] = 'No se pudo crear la noticia';
+                    $_SESSION['error-message'] = 'No se pudo guardar la imagen';
+                    Helpers::manageRedirect('noticias/crear');
                 }
+
+
+            } catch ( Exception $exception ){
+                $log->error('Something went wrong while inserting News data.', array('exception'=>$exception));
 
             }
 
-
-        } catch ( Exception $exception ){
-            $log->error('Something went wrong while inserting News data.', array('exception'=>$exception));
-
+        }else {
+            $_SESSION['error-message'] = 'Todos los campos son requeridos';
+            Helpers::manageRedirect('noticias/crear');
         }
 
         Helpers::manageRedirect('noticias');
@@ -130,47 +141,51 @@ class NewsController
         $log = NewLogger::newLogger('NEWS_CONTROLLER', 'FirePHPHandler');
         $log->info('Update News method is executing');
 
-        try {
 
-            $news = News::getInstance();
-            if ( !$news::verifyConnection() ) Helpers::manageRedirect();
-            $lastNewsInfo = $news::getById($_POST['news_id'], true);
+        if( !empty($_POST) && FormVerifier::verifyInputs( $_POST ) ){
+            try {
+                $_POST = DataConverter::dateFormatter($_POST);
+                $news = News::getInstance();
+                if ( !$news::verifyConnection() ) Helpers::manageRedirect();
+                $lastNewsInfo = $news::getById($_POST['news_id'], true);
 
-            $news->storeFormValues($lastNewsInfo);
-            $news->storeFormValues($_POST);
+                $news->storeFormValues($lastNewsInfo);
+                $news->storeFormValues($_POST);
 
-            $imgMethods = array(
-                array('setImgTitle','getImgTitle',boolval($_POST['deleteTitleImg'])),
-                array('setImgDesc', 'getImgDesc',boolval($_POST['deleteDescImg'])),
-                array('setImgFooter', 'getImgFooter',boolval($_POST['deleteFooterImg'])),
-                array('setImgExtra', 'getImgExtra',boolval($_POST['deleteExtraImg']))
-            );
+                $imgMethods = array(
+                    array('setImgTitle','getImgTitle',boolval($_POST['deleteTitleImg'])),
+                    array('setImgDesc', 'getImgDesc',boolval($_POST['deleteDescImg'])),
+                    array('setImgFooter', 'getImgFooter',boolval($_POST['deleteFooterImg'])),
+                    array('setImgExtra', 'getImgExtra',boolval($_POST['deleteExtraImg']))
+                );
 
-            $category = $news::getCategoryById($_POST['category_id']);
+                $category = $news::getCategoryById($_POST['category_id']);
 
 
-            $saveFiles = ImageManager::saveImgUnix('news', $category['name'],$news, $imgMethods, true);
+                $saveImg = ImageManager::saveImgUnix('news', $category['name'],$news, $imgMethods, true);
 
-            if( $saveFiles ){
-                $update = $news->update();
+                if( $saveImg ){
+                    $update = $news->update();
 
-                if( $update ){
+                    if( $update ){
 
-                    $_SESSION['success-message'] = 'Noticia actualizada con éxito';
-                } else {
-                    $_SESSION['error-message'] = 'No se pudo actualizar la noticia';
+                        $_SESSION['success-message'] = 'Noticia actualizada con éxito';
+                    } else {
+                        $_SESSION['error-message'] = 'No se pudo actualizar la noticia';
+                    }
+                }else {
+                    $_SESSION['error-message'] = 'No se pudo guardar la imagen';
                 }
 
+            } catch (Exception $exception){
+                $log->error('Something went wrong while updating.', array('exception'=>$exception));
+
             }
-
-
-        } catch (Exception $exception){
-            $log->error('Something went wrong while updating.', array('exception'=>$exception));
-
+        }else {
+            $_SESSION['error-message'] = 'Todos los campos son requeridos';
         }
 
-
-        Helpers::manageRedirect('noticias');
+        Helpers::manageRedirect('noticias/editar/'.$_POST['news_id']);
 
     }
 

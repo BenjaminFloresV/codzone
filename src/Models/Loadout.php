@@ -124,6 +124,7 @@ class Loadout extends Singleton
     public static function getAll($join = false, int $limit = null, bool $orderById = false, int $byGame = null, int $except = null ): bool|array
     {
         $result = false;
+
         if ( !self::$conn ) return $result;
         try{
             self::$log->info('Trying to collect Loadouts data...');

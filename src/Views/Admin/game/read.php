@@ -56,7 +56,7 @@
                 </figure>
             </td>
             <td class="is-vcentered">
-                <a href="/admin/juegos/editar/<?=$data['game_id']?>" class="button is-warning">Editar</a>
+                <a href="<?=BASE_URL?>/admin/juegos/editar/<?=$data['game_id']?>" class="button is-warning">Editar</a>
                 <button class="button is-danger js-modal-trigger delete-game" data-target="modal-js-example">Eliminar</button>
             </td>
         </tr>

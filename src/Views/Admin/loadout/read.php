@@ -30,7 +30,7 @@
         <button class="modal-close is-large" aria-label="close"></button>
     </div>
     <div class="is-block">
-        <form class="is-flex is-justify-content-end pt-3 pr-3" method="GET" action="http://localhost:8001/admin/clases">
+        <form class="is-flex is-justify-content-end pt-3 pr-3" method="GET" action="<?=BASE_URL?>/admin/clases">
             <div class="field is-flex">
                 <label class="label is-align-self-center" for="game">Juego:</label>
                 <div class="control ml-3 mr-3">
@@ -93,7 +93,7 @@
                 <td><?=$data['title']?></td>
                 <td><?=$data['creation_date']?></td>
                 <td>
-                    <a href="/admin/clases/editar/<?=$data['loadout_id']?>" class="button is-warning">Editar</a>
+                    <a href="<?=BASE_URL?>/admin/clases/editar/<?=$data['loadout_id']?>" class="button is-warning">Editar</a>
                     <button class="button is-danger js-modal-trigger delete-loadout" data-target="modal-js-example">Eliminar</button>
                 </td>
             </tr>

@@ -3,6 +3,7 @@
 namespace CMS\Controllers;
 
 use CMS\Helpers\DataConverter;
+use CMS\Helpers\FormVerifier;
 use CMS\Helpers\Helpers;
 use CMS\Helpers\ImageManager;
 use CMS\Helpers\NewLogger;
@@ -86,29 +87,38 @@ class LoadoutController
         $log = NewLogger::newLogger('LOADOUT_CONTROLLER', 'FirePHPHandler');
         $log->info('Insert method is executing');
 
-        try {
-            $loadout = Loadout::getInstance();
-            if ( !$loadout::verifyConnection() ) Helpers::manageRedirect();
-            $saveValues = $loadout->storeFormValues($_POST);
-            $saveImg = ImageManager::saveImage($loadout, 'loadout', true, $_POST['gameSubDirectory']);
+        if( !empty($_POST) && FormVerifier::verifyInputs($_POST) ){
+            try {
+                $_POST = DataConverter::dateFormatter($_POST);
+                $loadout = Loadout::getInstance();
+                if ( !$loadout::verifyConnection() ) Helpers::manageRedirect();
+                $saveValues = $loadout->storeFormValues($_POST);
+                $saveImg = ImageManager::saveImage($loadout, 'loadout', true, $_POST['gameSubDirectory']);
 
-            if( $saveImg ){
+                if( $saveImg ){
 
-                $log->info('Loadout Image saved');
-                $saveLoadout = $loadout->insert();
+                    $log->info('Loadout Image saved');
+                    $saveLoadout = $loadout->insert();
 
-                if( $saveLoadout){
-                    $log->info('The Loadout was created successfully');
-                    $_SESSION['success-message'] = 'Clase creada con éxito';
+                    if( $saveLoadout){
+                        $log->info('The Loadout was created successfully');
+                        $_SESSION['success-message'] = 'Clase creada con éxito';
+                    }else {
+                        $_SESSION['error-message'] = 'No se pudo crear la calse';
+                    }
                 }else {
-                    $_SESSION['error-message'] = 'No se pudo crear la calse';
+                    $_SESSION['error-message'] = 'No se pudo guardar la imagen';
+                    Helpers::manageRedirect('clases/crear');
                 }
+
+            } catch (Exception $exception){
+                $log->error('Something went wrong while saving the Loadout', array('exception' => $exception));
             }
 
-        } catch (Exception $exception){
-            $log->error('Something went wrong while saving the Loadout', array('exception' => $exception));
+        }else {
+            $_SESSION['error-message'] = 'Todos los campos son requeridos';
+            Helpers::manageRedirect('clases/crear');
         }
-
         Helpers::manageRedirect('clases');
     }
 
@@ -118,11 +128,10 @@ class LoadoutController
         $log = NewLogger::newLogger('LOADOUT_CONTROLLER', 'FirePHPHandler');
         $log->info('Update method is executing');
 
+        if( !empty($_POST) && FormVerifier::verifyInputs($_POST) ){
 
-        try {
-
-            if (!empty($_POST)) {
-
+            try {
+                $_POST = DataConverter::dateFormatter($_POST);
                 $loadout = Loadout::getInstance();
                 if ( !$loadout::verifyConnection() ) Helpers::manageRedirect();
                 $loadout->storeFormValues($_POST);
@@ -143,12 +152,16 @@ class LoadoutController
                         $log->warning('Loadout image could not be updated');
                         $_SESSION['error-message'] = 'No se pudo actualizar la clase';
                     }
-
+                }else {
+                    $_SESSION['error-message']= 'No se pudo guardar la imagen';
                 }
+
+            } catch (Exception $exception) {
+                $log->error('Something went wrong...', array('exception' => $exception));
             }
 
-        } catch (Exception $exception) {
-            $log->error('Something went wrong...', array('exception' => $exception));
+        }else {
+            $_SESSION['error-message'] = 'Todos los campos son requeridos';
         }
 
         Helpers::manageRedirect('clases/editar/'.$_POST['loadout_id']);

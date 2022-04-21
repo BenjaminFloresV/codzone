@@ -44,35 +44,40 @@ class Helpers
         };
     }
 
-    public static function retrieveObjectData(string $action, object $object, $id = '', $join = false, $getObjectCategories = false ): array
+    public static function retrieveObjectData(string $action, object $object, $id = '', $join = false, $getObjectCategories = false ): array|bool
     {
         $result = array();
 
-        if( !empty($_GET)){
+        if( !empty($_GET) && $action == 'read'){
             $result = $object->getAllFiltered($_GET);
-        }
+        }else {
 
-        if ($action == 'read') {
-            if( $getObjectCategories ){
+            if ($action == 'read') {
+                if( $getObjectCategories ){
 
-                $result = $object::getAllCategories();
-            } else {
+                    $result = $object::getAllCategories();
+                } else {
 
-                $result = $object::getAll($join);
-                if (empty($result)) {
-                    $result = $object::getAll();
+                    $result = $object::getAll($join);
+                    if (empty($result)) {
+                        $result = $object::getAll();
+                    }
+
                 }
 
-            }
+            } elseif ($action == 'update') {
 
-        } elseif ($action == 'update') {
-
-            if( $getObjectCategories ){
-                $result = $object::getCategoryById($id);
-            }else {
-                $result = $object::getById($id, true);
+                if( $getObjectCategories ){
+                    $result = $object::getCategoryById($id);
+                }else {
+                    $result = $object::getById($id, true);
+                }
+            } elseif( $action == 'insert') {
+                $result = true;
             }
         }
+
+
 
         return $result;
 

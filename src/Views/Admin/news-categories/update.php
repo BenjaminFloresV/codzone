@@ -23,7 +23,7 @@
                     <input type="submit" class="button is-dark" value="Editar">
                 </div>
                 <div class="control">
-                    <a href="/admin/categorias" class="button is-link is-light">Cancel</a>
+                    <a href="<?=BASE_URL?>/admin/categorias" class="button is-link is-light">Cancel</a>
                 </div>
             </div>
         </form>

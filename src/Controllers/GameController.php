@@ -3,6 +3,7 @@
 namespace CMS\Controllers;
 
 use CMS\Helpers\DataConverter;
+use CMS\Helpers\FormVerifier;
 use CMS\Helpers\Helpers;
 use CMS\Helpers\ImageManager;
 use CMS\Helpers\NewLogger;
@@ -64,9 +65,10 @@ class GameController
         Helpers::isAdmin();
         $log = NewLogger::newLogger('GAME_CONTROLLER','FirePHPHandler');
         $log->info('Insert Method is executing...');
-        if(!empty($_POST)){
+        if(!empty($_POST) && FormVerifier::verifyInputs( $_POST ) ){
 
             try{
+                $_POST = DataConverter::dateFormatter( $_POST );
                 $game = Game::getInstance();
                 if ( !$game::verifyConnection() ) Helpers::manageRedirect();
                 $game->storeFormValues($_POST);
@@ -84,12 +86,18 @@ class GameController
                     }else {
                         $_SESSION['error-message'] ='No se pudo crear el Juego';
                     }
+                }else {
+                    $_SESSION['error-message'] = 'Nos has subido ninguna imagen';
+                    Helpers::manageRedirect('juegos/crear');
                 }
 
             }catch (Exception $exception){
                 $log->error('Something went wrong, cannot create Loadout', array('exception' => $exception));
             }
 
+        }else {
+            $_SESSION['error-message'] = 'Todos los campos son requeridos';
+            Helpers::manageRedirect('juegos/crear');
         }
 
         Helpers::manageRedirect('juegos');
@@ -101,10 +109,10 @@ class GameController
         Helpers::isAdmin();
         $log = NewLogger::newLogger('GAME_CONTROLLER','FirePHPHandler');
         $log->info('Update Method was executing...');
-        if (!empty($_POST)){
+        if (!empty($_POST) && FormVerifier::verifyInputs( $_POST ) ){
 
             try{
-
+                $_POST = DataConverter::dateFormatter( $_POST );
                 $game = Game::getInstance();
                 if ( !$game::verifyConnection() ) Helpers::manageRedirect();
                 $game->storeFormValues($_POST);
@@ -131,6 +139,8 @@ class GameController
                     } else {
                         $_SESSION['error-message'] ='No se pudo actualizar el juego';
                     }
+                }else {
+                    $_SESSION['error-message'] = 'No se pudo actualizar la imagen';
                 }
 
 
@@ -139,9 +149,11 @@ class GameController
             }
 
 
+        }else {
+            $_SESSION['error-message'] = 'Todos los campos son requeridos';
         }
 
-        Helpers::manageRedirect("juegos/editar/".$id);
+        Helpers::manageRedirect("juegos/editar/".$_POST['game_id']);
 
 
     }

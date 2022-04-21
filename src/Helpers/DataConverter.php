@@ -7,6 +7,16 @@ use NumberFormatter;
 
 class DataConverter
 {
+    public static function dateFormatter( array $data )
+    {
+        foreach ( $data as $key=>$input) {
+            if( preg_match('/\d+-\d+-\d+/', $input ) ) {
+                $data[$key] = str_replace( '-', '/', $input);
+            }
+        }
+        return $data;
+    }
+
     public static function convertLoadoutInfoFormat( string $text, bool $isDescription = false )
     {
         if( !strpos($text, '/') ){
