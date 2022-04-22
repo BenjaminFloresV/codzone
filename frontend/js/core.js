@@ -142,7 +142,7 @@ const loopArticle = async ( data, container, className, categoryLeft = false ) =
 
         let divDesc = document.createElement('p'); divDesc.classList.add('is-block', 'posts-description');
 
-        let desc = document.createElement('p'); desc.classList.add('is-text', 'posts-description'); desc.innerHTML = formatDescription(`${e.description}`);
+        let desc = document.createElement('p'); desc.classList.add('is-text', 'posts-description', 'has-text-justified'); desc.innerHTML = formatDescription(`${e.description}`);
 
         let readMoreDiv = document.createElement('div'); readMoreDiv.classList.add('read-more');
 
