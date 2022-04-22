@@ -241,7 +241,7 @@ class News extends Category
     }
 
 
-    public static function getById( $id, bool $join = false )
+    public static function getById( int $id, bool $join = false )
     {
         $result = false;
         if( !self::$conn ) return $result; // Verify database connection

@@ -3,6 +3,7 @@
 namespace CMS\Controllers;
 
 use CMS\Helpers\DataConverter;
+use CMS\Helpers\ErrorsRedirecter;
 use CMS\Helpers\FormVerifier;
 use CMS\Helpers\Helpers;
 use CMS\Helpers\ImageManager;
@@ -30,10 +31,7 @@ class GameController
             $gameData = $game::getByShortName( $shortName );
 
 
-            if( !$gameData ){
-                header("Location:".BASE_URL."/404");
-                exit();
-            }
+            if( !$gameData ) ErrorsRedirecter::redirect404();
 
             $wpCat = WeaponCategory::getInstance();
             $wpCatData = $wpCat::getAll();

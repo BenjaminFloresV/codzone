@@ -3,82 +3,86 @@
 namespace CMS\Controllers;
 
 use CMS\Helpers\DataConverter;
+use CMS\Helpers\ErrorsRedirecter;
 use CMS\Helpers\FormVerifier;
 use CMS\Helpers\Helpers;
 use CMS\Helpers\ImageManager;
 use CMS\Helpers\NewLogger;
+use CMS\Helpers\UriVerifier;
 use CMS\Middleware\RenderView;
 use CMS\Models\News;
 use Exception;
 
 class NewsController
 {
-    public function index( string $category, int $id )
+    public function index( $category, $id )
     {
-
-
         Helpers::verifyUriRequest();
-        $breadcrumbs = DataConverter::getBreadcrumbs();
-        $news = News::getInstance();
+        try {
 
-        $newsData = $news::getById($id, true);
+            $breadcrumbs = DataConverter::getBreadcrumbs();
+            $news = News::getInstance();
 
-        if( !$newsData ){
-            header("Location:".BASE_URL."/404");
-            exit();
+            if( !is_numeric( $id ) ) ErrorsRedirecter::redirect404();
+            $newsData = $news::getById($id, true);
+
+            if( !$newsData ) ErrorsRedirecter::redirect404();
+            if( $newsData['categoryName'] !== DataConverter::uriToString($category) ) ErrorsRedirecter::redirect404();
+            $uri = DataConverter::stringToUri($newsData['title']);
+            UriVerifier::verifyLastUriString($uri);
+
+            $newsData['description'] = DataConverter::explodeContent($newsData['description']);
+            $recommendedNews = $news::getAll(true, 3, true, $category, false, $id);
+
+            foreach ( $recommendedNews as $key=>$news ){
+                $news['lowerCatName'] = DataConverter::stringToUri($news['categoryName']);
+                $news['uriTitle'] = DataConverter::stringToUri( $news['title'] );
+
+                $recommendedNews[$key] = $news;
+            }
+
+            Helpers::deleteSession('maintenance');
+            $view = __DIR__.'/../Views/News/news.phtml';
+            RenderView::renderUser($view, $recommendedNews, $_SERVER['REQUEST_URI'], null, $newsData, $breadcrumbs, $newsData['title'], $newsData['description'][0]['partZero']);
+
+        } catch ( Exception $exception){
+            $_SESSION['maintenance'] = true;
+            RenderView::renderMaintenance();
         }
-
-        //Procesar Descripcion
-        $newsData['description'] = DataConverter::explodeContent($newsData['description']);
-
-
-        $recommendedNews = $news::getAll(true, 3, true, $category, false, $id);
-
-        foreach ( $recommendedNews as $key=>$news ){
-            $news['lowerCatName'] = DataConverter::stringToUri($news['categoryName']);
-            $news['uriTitle'] = DataConverter::stringToUri( $news['title'] );
-
-            $recommendedNews[$key] = $news;
-        }
-
-
-        $uri = DataConverter::stringToUri($newsData['title']);
-
-        if( !strpos($_SERVER['REQUEST_URI'], $uri) ){
-            header("Location:".BASE_URL."/404");
-            exit();
-        }
-
-        $view = __DIR__.'/../Views/News/news.phtml';
-        RenderView::renderUser($view, $recommendedNews, $_SERVER['REQUEST_URI'], null, $newsData, $breadcrumbs, $newsData['title'], $newsData['description'][0]['partZero']);
-
     }
 
 
     public function allNews( string $category = null)
     {
-        Helpers::verifyUriRequest();
-        $breadcrumbs = DataConverter::getBreadcrumbs();
-        $news = News::getInstance();
+        try {
 
-        if( !is_null($category) ){
-            $allNews = DataConverter::subjectToLower($news::getAll(true, 1, true, $category, true), 'categoryName', 'lowerCatName');
-        }else{
-            $allNews = DataConverter::subjectToLower($news::getAll(true, 1, false, null, true), 'categoryName', 'lowerCatName');
+            Helpers::verifyUriRequest();
+            $breadcrumbs = DataConverter::getBreadcrumbs();
+            $news = News::getInstance();
+
+            if( !is_null($category) ){
+                $allNews = DataConverter::subjectToLower($news::getAll(true, 1, true, $category, true), 'categoryName', 'lowerCatName');
+            }else{
+                $allNews = DataConverter::subjectToLower($news::getAll(true, 1, false, null, true), 'categoryName', 'lowerCatName');
+            }
+
+
+            $allCategories = DataConverter::subjectToLower($news::getAllCategories(), 'name', 'lowerName');
+
+            foreach ( $allNews as $key=>$news ){
+                $news['uriTitle'] = DataConverter::stringToUri( $news['title'] );
+                $allNews[$key] = $news;
+            }
+
+            Helpers::deleteSession('maintenance');
+            $view = __DIR__.'/../Views/News/all-news.phtml';
+            RenderView::renderUser($view, $allNews, $_SERVER['REQUEST_URI'], $allCategories, null, $breadcrumbs, trim("Cod Zone: Noticias $category"), ALL_NEWS_META_DESCRIPTION );
+
+
+        } catch ( Exception $exception) {
+            $_SESSION['maintenance'] = true;
+            RenderView::renderMaintenance();
         }
-
-
-        $allCategories = DataConverter::subjectToLower($news::getAllCategories(), 'name', 'lowerName');
-
-        foreach ( $allNews as $key=>$news ){
-            $news['uriTitle'] = DataConverter::stringToUri( $news['title'] );
-            $allNews[$key] = $news;
-        }
-
-
-        $view = __DIR__.'/../Views/News/all-news.phtml';
-        RenderView::renderUser($view, $allNews, $_SERVER['REQUEST_URI'], $allCategories, null, $breadcrumbs, trim("Cod Zone: Noticias $category"), ALL_NEWS_META_DESCRIPTION );
-
     }
 
 

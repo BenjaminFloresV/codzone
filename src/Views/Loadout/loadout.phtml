@@ -34,20 +34,20 @@
                 </figure>
                 <div class="is-flex is-flex-direction-column loadout-headers">
 
-                    <p class="is-size-4"><?=$objectData['description'][0]['partZero']?></p>
+                    <p class="is-size-4 has-text-justified"><?=$objectData['description'][0]['partZero']?></p>
                     <h2 class="title">Accesorios</h2>
-                    <ul class="is-size-4">
+                    <ul class="is-size-4 attachment-list">
                         <?php foreach ( $objectData['attachments'] as $attachment ): ?>
-                            <li> <strong class="is-block" ><?=$attachment['partZero']?></strong><span class="is-block pt-2 pb-2" ><?=$attachment['partOne']?></span></li>
+                            <li> <strong class="is-block" ><?=$attachment['partZero']?></strong><span class="is-block pt-2 pb-2 has-text-justified" ><?=$attachment['partOne']?></span></li>
                         <?php endforeach; ?>
                     </ul>
                     <h2 class="">Ventajas Recomendadas</h2>
-                    <ul class="is-size-4">
+                    <ul class="is-size-4 attachment-list">
                         <?php foreach ( $objectData['perks'] as $perk ): ?>
-                            <li> <strong class="is-block" ><?=$perk['partZero']?></strong><span class="is-block pt-2 pb-2" ><?=$perk['partOne']?></span></li>
+                            <li> <strong class="is-block" ><?=$perk['partZero']?></strong><span class="is-block pt-2 pb-2 has-text-justified" ><?=$perk['partOne']?></span></li>
                         <?php endforeach; ?>
                     </ul>
-                    <p class="is-size-4"><?=$objectData['description'][0]['partOne']?></p>
+                    <p class="is-size-4 has-text-justified"><?=$objectData['description'][0]['partOne']?></p>
                     <?php //$objectData['description']?>
 
                 </div>

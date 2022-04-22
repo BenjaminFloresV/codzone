@@ -3,10 +3,12 @@
 namespace CMS\Controllers;
 
 use CMS\Helpers\DataConverter;
+use CMS\Helpers\ErrorsRedirecter;
 use CMS\Helpers\FormVerifier;
 use CMS\Helpers\Helpers;
 use CMS\Helpers\ImageManager;
 use CMS\Helpers\NewLogger;
+use CMS\Helpers\UriVerifier;
 use CMS\Middleware\RenderView;
 use CMS\Models\Game;
 use CMS\Models\Loadout;
@@ -16,68 +18,71 @@ use Exception;
 class LoadoutController
 {
 
-    public function index(string $game, int $id)
+    public function index( $game, $id)
     {
         Helpers::verifyUriRequest();
-        $breadcrumbs = DataConverter::getBreadcrumbs();
+        try {
 
-        $loadout = Loadout::getInstance();
+            $breadcrumbs = DataConverter::getBreadcrumbs();
+            $loadout = Loadout::getInstance();
 
-        $loadoutData = $loadout::getById($id, true);
-        $loadout->storeFormValues($loadoutData);
+            if( !is_numeric( $id ) ) ErrorsRedirecter::redirect404();
+            $loadoutData = $loadout::getById($id, true);
 
+            if( !$loadoutData ) ErrorsRedirecter::redirect404();
+            if( $loadoutData['shortName'] != DataConverter::uriToString($game) ) ErrorsRedirecter::redirect404();
+            $uri = DataConverter::stringToUri($loadoutData['title']);
+            UriVerifier::verifyLastUriString($uri);
 
-        if( !$loadoutData ){
-            header("Location:".BASE_URL."/404");
-            exit();
+            $loadout->storeFormValues($loadoutData);
+            $recommendedLoadouts = $loadout::getAll(true, 3, false, $loadout->getGameId(), $id);
+
+            foreach ( $recommendedLoadouts as $key=>$item ){
+                $item['uriShortName'] = DataConverter::stringToUri($item['shortName']);
+                $item['uriTitle'] = DataConverter::stringToUri( $item['title'] );
+
+                $recommendedLoadouts[$key] = $item;
+            }
+
+            $loadoutData['attachments'] = DataConverter::explodeContent($loadoutData['attachments']);
+            $loadoutData['perks'] = DataConverter::explodeContent($loadoutData['perks']);
+            $loadoutData['description'] = DataConverter::explodeContent($loadoutData['description']);
+
+            Helpers::deleteSession('maintenance');
+            $view = __DIR__.'/../Views/Loadout/loadout.phtml';
+            RenderView::renderUser($view, $recommendedLoadouts, $_SERVER['REQUEST_URI'], null, $loadoutData, $breadcrumbs, $loadoutData['title'], $loadoutData['description'][0]['partZero']);
+
+        } catch (Exception $exception) {
+            // This session variable is set because in case of an exception, we don't want to show
+            // navigaiton options to the user
+            $_SESSION['maintenance'] = true;
+            RenderView::renderMaintenance();
         }
-
-        $recommendedLoadouts = $loadout::getAll(true, 3, false, $loadout->getGameId(), $id);
-
-        foreach ( $recommendedLoadouts as $key=>$item ){
-            $item['uriShortName'] = DataConverter::stringToUri($item['shortName']);
-            $item['uriTitle'] = DataConverter::stringToUri( $item['title'] );
-
-            $recommendedLoadouts[$key] = $item;
-        }
-
-
-
-        //Procesar Accesorios y Ventajas
-        $loadoutData['attachments'] = DataConverter::explodeContent($loadoutData['attachments']);
-        $loadoutData['perks'] = DataConverter::explodeContent($loadoutData['perks']);
-        $loadoutData['description'] = DataConverter::explodeContent($loadoutData['description']);
-
-        $uri = DataConverter::stringToUri($loadoutData['title']);
-
-        if( !strpos($_SERVER['REQUEST_URI'], $uri) ){
-            header("Location:".BASE_URL."/404");
-            exit();
-        }
-
-        $view = __DIR__.'/../Views/Loadout/loadout.phtml';
-        RenderView::renderUser($view, $recommendedLoadouts, $_SERVER['REQUEST_URI'], null, $loadoutData, $breadcrumbs, $loadoutData['title'], $loadoutData['description'][0]['partZero']);
-
     }
 
     public function allLoadouts()
     {
         Helpers::verifyUriRequest();
-        $breadcrumbs = DataConverter::getBreadcrumbs();
+        try {
+            $breadcrumbs = DataConverter::getBreadcrumbs();
 
-        $game = Game::getInstance();
+            $game = Game::getInstance();
 
-        $allGames = $game::getAll();
+            $allGames = $game::getAll();
 
-        foreach ($allGames as $key=>$game){
-            $game['gameUri'] = DataConverter::stringToUri($game['short_name']);
-            $allGames[$key] = $game;
+            foreach ($allGames as $key=>$game){
+                $game['gameUri'] = DataConverter::stringToUri($game['short_name']);
+                $allGames[$key] = $game;
+            }
+
+            Helpers::deleteSession('maintenance');
+            $view = __DIR__.'/../Views/Loadout/all-loadouts.phtml';
+            RenderView::renderUser($view, $allGames, $_SERVER['REQUEST_URI'], null, null, $breadcrumbs, 'Cod Zone: Clases Call of Duty', ALL_LOADOUTS_META_DESCRIPTION );
+
+        } catch (Exception $exception) {
+            $_SESSION['maintenance'] = true;
+            Helpers::deleteSession('maintenance');
         }
-
-        $view = __DIR__.'/../Views/Loadout/all-loadouts.phtml';
-        RenderView::renderUser($view, $allGames, $_SERVER['REQUEST_URI'], null, null, $breadcrumbs, 'Cod Zone: Clases Call of Duty', ALL_LOADOUTS_META_DESCRIPTION );
-
-
     }
 
 

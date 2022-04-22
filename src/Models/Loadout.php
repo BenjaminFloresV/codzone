@@ -169,7 +169,7 @@ class Loadout extends Singleton
 
             self::$log->info("Trying to collect loadout data with id: $id");
             if ( $join ){
-                $sql = "SELECT l.*, UNIX_TIMESTAMP(l.creation_date) AS creationDate, UNIX_TIMESTAMP(l.date_update) AS dateUpdate, g.name AS gameName, wp.name AS weaponName FROM loadout l ";
+                $sql = "SELECT l.*, UNIX_TIMESTAMP(l.creation_date) AS creationDate, UNIX_TIMESTAMP(l.date_update) AS dateUpdate, g.name AS gameName, g.short_name AS shortName,  wp.name AS weaponName FROM loadout l ";
                 $sql .= "INNER JOIN game g ON l.game_id = g.game_id ";
                 $sql .= "INNER JOIN weapon wp ON l.weapon_id=wp.weapon_id ";
                 $sql .= "WHERE loadout_id = :loadout_id";
@@ -188,6 +188,7 @@ class Loadout extends Singleton
 
         }catch (Exception $exception){
             self::$log->error("Loadout data could not be collected", array('exception' => $exception));
+
         }
         return $result;
     }

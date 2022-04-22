@@ -3,80 +3,84 @@
 namespace CMS\Controllers;
 
 use CMS\Helpers\DataConverter;
+use CMS\Helpers\ErrorsRedirecter;
 use CMS\Helpers\FormVerifier;
 use CMS\Helpers\Helpers;
 use CMS\Helpers\ImageManager;
 use CMS\Helpers\NewLogger;
+use CMS\Helpers\UriVerifier;
 use CMS\Middleware\RenderView;
 use CMS\Models\Tutorial;
 use Exception;
 
 class TutorialController
 {
-    public function index( string $category, int $id )
+    public function index( $category, $id )
     {
-
         Helpers::verifyUriRequest();
-        $breadcrumbs = DataConverter::getBreadcrumbs();
-        $tutorial = Tutorial::getInstance();
+        try {
+
+            $breadcrumbs = DataConverter::getBreadcrumbs();
+            $tutorial = Tutorial::getInstance();
+
+            if( !is_numeric( $id ) ) ErrorsRedirecter::redirect404();
+            $tutorialData = $tutorial::getById($id, true);
+
+            if( !$tutorialData ) ErrorsRedirecter::redirect404();
+            if( $tutorialData['categoryName'] !== DataConverter::uriToString( $category ) ) ErrorsRedirecter::redirect404();
+            $uri = DataConverter::stringToUri($tutorialData['title']);
+            UriVerifier::verifyLastUriString($uri);
+
+            $tutorialData['description'] = DataConverter::explodeContent($tutorialData['description']);
+
+            $recommendedTutorials = $tutorial::getAll(true, 3, true, $category, false, $id);
+
+            foreach ( $recommendedTutorials as $key=>$tutorial ){
+                $tutorial['lowerCatName'] = DataConverter::stringToUri($tutorial['categoryName']);
+                $tutorial['uriTitle'] = DataConverter::stringToUri( $tutorial['title'] );
+
+                $recommendedTutorials[$key] = $tutorial;
+            }
+
+            Helpers::deleteSession('maintenance');
+            $view = __DIR__.'/../Views/Tutorial/tutorial.phtml';
+            RenderView::renderUser($view, $recommendedTutorials, $_SERVER['REQUEST_URI'], null, $tutorialData, $breadcrumbs, $tutorialData['title'], $tutorialData['description'][0]['partZero']);
 
 
-        $tutorialData = $tutorial::getById($id, true);
-
-        if( !$tutorialData ){
-            header("Location:".BASE_URL."/404");
-            exit();
+        } catch (Exception $exception) {
+            $_SESSION['maintenance'] = true;
+            RenderView::renderMaintenance();
         }
-
-        //Procesar Descripcion
-        $tutorialData['description'] = DataConverter::explodeContent($tutorialData['description']);
-
-        $recommendedTutorials = $tutorial::getAll(true, 3, true, $category, false, $id);
-
-        foreach ( $recommendedTutorials as $key=>$tutorial ){
-            $tutorial['lowerCatName'] = DataConverter::stringToUri($tutorial['categoryName']);
-            $tutorial['uriTitle'] = DataConverter::stringToUri( $tutorial['title'] );
-
-            $recommendedTutorials[$key] = $tutorial;
-        }
-
-        $uri = DataConverter::stringToUri($tutorialData['title']);
-
-        if( !strpos($_SERVER['REQUEST_URI'], $uri) ){
-            header("Location:".BASE_URL."/404");
-            exit();
-        }
-
-        $view = __DIR__.'/../Views/Tutorial/tutorial.phtml';
-        RenderView::renderUser($view, $recommendedTutorials, $_SERVER['REQUEST_URI'], null, $tutorialData, $breadcrumbs, $tutorialData['title'], $tutorialData['description'][0]['partZero']);
-
     }
 
     public function allTutorials( string $category = null )
     {
-
         Helpers::verifyUriRequest();
-        $breadcrumbs = DataConverter::getBreadcrumbs();
-        $tutorial = Tutorial::getInstance();
+        try {
+            $breadcrumbs = DataConverter::getBreadcrumbs();
+            $tutorial = Tutorial::getInstance();
 
-        if( !is_null($category) ){
-            $allNews = DataConverter::subjectToLower($tutorial::getAll(true, 1, true, $category, true), 'categoryName', 'lowerCatName');
-        }else{
-            $allNews = DataConverter::subjectToLower($tutorial::getAll(true, 1, false, null, true), 'categoryName', 'lowerCatName');
+            if( !is_null($category) ){
+                $allNews = DataConverter::subjectToLower($tutorial::getAll(true, 1, true, $category, true), 'categoryName', 'lowerCatName');
+            }else{
+                $allNews = DataConverter::subjectToLower($tutorial::getAll(true, 1, false, null, true), 'categoryName', 'lowerCatName');
+            }
+
+            $allCategories = DataConverter::subjectToLower($tutorial::getAllCategories(), 'name', 'lowerName');
+
+            foreach ( $allNews as $key=>$tutorial ){
+                $tutorial['uriTitle'] = DataConverter::stringToUri( $tutorial['title'] );
+                $allNews[$key] = $tutorial;
+            }
+
+            Helpers::deleteSession('maintenance');
+            $view = __DIR__.'/../Views/Tutorial/all-tutorials.phtml';
+            RenderView::renderUser($view, $allNews, $_SERVER['REQUEST_URI'], $allCategories, null, $breadcrumbs, trim("Cod Zone: Tutoriales $category"), ALL_TUTORIALS_META_DESCRIPTION );
+
+        } catch (Exception $exception) {
+            $_SESSION['maintenance'] = true;
+            RenderView::renderMaintenance();
         }
-
-
-        $allCategories = DataConverter::subjectToLower($tutorial::getAllCategories(), 'name', 'lowerName');
-
-        foreach ( $allNews as $key=>$tutorial ){
-            $tutorial['uriTitle'] = DataConverter::stringToUri( $tutorial['title'] );
-            $allNews[$key] = $tutorial;
-        }
-
-
-        $view = __DIR__.'/../Views/Tutorial/all-tutorials.phtml';
-        RenderView::renderUser($view, $allNews, $_SERVER['REQUEST_URI'], $allCategories, null, $breadcrumbs, trim("Cod Zone: Tutoriales $category"), ALL_TUTORIALS_META_DESCRIPTION );
-
     }
 
     public function insert()
