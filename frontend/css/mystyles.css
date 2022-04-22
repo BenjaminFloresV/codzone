@@ -8547,7 +8547,9 @@ html, body {
   .loadout-image img {
     width: 100% !important; }
   #loadout-container {
-    padding-left: 0 !important; } }
+    padding-left: 0 !important; }
+  .attachment-list {
+    margin-left: 1em !important; } }
 
 #loader-container {
   display: block;

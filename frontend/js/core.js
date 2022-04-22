@@ -27,8 +27,8 @@ const stringToUri = ( string ) => {
 const formatDescription = ( description ) => {
 
     let descriptionParts = description.split('_');
-
-    return descriptionParts[0];
+    let initialDesc = descriptionParts[0].substring(0, 30);
+    return initialDesc;
 
 }
 
