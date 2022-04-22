@@ -61,12 +61,13 @@ class GameController
     public function insert()
     {
         Helpers::isAdmin();
+        Helpers::isAdmin();
         $log = NewLogger::newLogger('GAME_CONTROLLER','FirePHPHandler');
         $log->info('Insert Method is executing...');
         if(!empty($_POST) && FormVerifier::verifyInputs( $_POST ) ){
 
             try{
-                $_POST = DataConverter::dateFormatter( $_POST );
+                $_POST = DataConverter::sanitizeData($_POST);
                 $game = Game::getInstance();
                 if ( !$game::verifyConnection() ) Helpers::manageRedirect();
                 $game->storeFormValues($_POST);

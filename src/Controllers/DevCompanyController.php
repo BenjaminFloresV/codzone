@@ -22,7 +22,7 @@ class DevCompanyController
 
             //str_replace('-', '/', $data);
             try{
-                $_POST = DataConverter::dateFormatter( $_POST );
+                $_POST = DataConverter::sanitizeData($_POST);
                 $company = DeveloperCompany::getInstance();
                 if ( !$company::verifyConnection() ) Helpers::manageRedirect();
                 $company->storeFormValues($_POST);

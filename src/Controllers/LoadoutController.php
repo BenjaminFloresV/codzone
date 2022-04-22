@@ -94,7 +94,7 @@ class LoadoutController
 
         if( !empty($_POST) && FormVerifier::verifyInputs($_POST) ){
             try {
-                $_POST = DataConverter::dateFormatter($_POST);
+                $_POST = DataConverter::sanitizeData($_POST);
                 $loadout = Loadout::getInstance();
                 if ( !$loadout::verifyConnection() ) Helpers::manageRedirect();
                 $saveValues = $loadout->storeFormValues($_POST);

@@ -90,7 +90,7 @@ class TutorialController
 
         if( !empty($_POST) && FormVerifier::verifyInputs($_POST) ){
             try {
-                $_POST = DataConverter::dateFormatter($_POST);
+                $_POST = DataConverter::sanitizeData($_POST);
                 $tutorial = Tutorial::getInstance();
                 if ( !$tutorial::verifyConnection() ) Helpers::manageRedirect();
                 $tutorial->storeFormValues($_POST);

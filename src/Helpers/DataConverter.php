@@ -18,13 +18,28 @@ class DataConverter
         return $data;
     }
 
+    public static function trimString( array $data ): array
+    {
+        foreach ( $data as $key=>$input ){
+            $data[$key] = trim($input);
+        }
+
+        return $data;
+    }
+
+    public static function sanitizeData( array $data ): array
+    {
+        $data = self::dateFormatter($data);
+        return self::trimString($data);
+    }
+
     // We use this method to explode data if it is necessary to specific usage on Views
     public static function explodeContent(string $text ): array
     {
-        if( !strpos($text, '/') ){
+        if( !strpos($text, '//') ){
             $objects = array( $text );
         }else{
-            $objects = explode('/', $text);
+            $objects = explode('//', $text);
         }
 
         $formatter = new NumberFormatter('en', NumberFormatter::SPELLOUT);

@@ -95,7 +95,7 @@ class NewsController
         if( !empty($_POST) && FormVerifier::verifyInputs($_POST) ) {
 
             try {
-                $_POST = DataConverter::dateFormatter($_POST);
+                $_POST = DataConverter::sanitizeData($_POST);
                 $news = News::getInstance();
                 if ( !$news::verifyConnection() ) Helpers::manageRedirect();
                 $news->storeFormValues($_POST);

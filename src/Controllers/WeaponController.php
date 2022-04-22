@@ -21,7 +21,7 @@ class WeaponController
         if( !empty($_POST) && FormVerifier::verifyInputs($_POST) ){
 
             try {
-
+                $_POST = DataConverter::trimString($_POST);
                 $weapon = Weapon::getInstance();
                 if ( !$weapon::verifyConnection() ) Helpers::manageRedirect();
                 $weapon->storeFormValues($_POST);

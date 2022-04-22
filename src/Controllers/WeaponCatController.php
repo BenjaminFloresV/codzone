@@ -2,6 +2,7 @@
 
 namespace CMS\Controllers;
 
+use CMS\Helpers\DataConverter;
 use CMS\Helpers\FormVerifier;
 use CMS\Helpers\Helpers;
 use CMS\Helpers\ImageManager;
@@ -20,6 +21,7 @@ class WeaponCatController
         if(!empty($_POST) && FormVerifier::verifyInputs($_POST)){
 
             try{
+                $_POST = DataConverter::trimString($_POST);
                 $wpcategory = WeaponCategory::getInstance();
                 if ( !$wpcategory::verifyConnection() ) Helpers::manageRedirect();
                 $wpcategory->storeFormValues($_POST);
