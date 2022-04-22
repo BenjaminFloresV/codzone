@@ -27,8 +27,8 @@ const stringToUri = ( string ) => {
 const formatDescription = ( description ) => {
 
     let descriptionParts = description.split('_');
-    let initialDesc = descriptionParts[0].substring(0, 30);
-    return initialDesc;
+
+    return descriptionParts[0].substring(0,100) + '...';
 
 }
 
@@ -140,7 +140,7 @@ const loopArticle = async ( data, container, className, categoryLeft = false ) =
 
         let authorText = document.createTextNode(' SudoKiss');
 
-        let divDesc = document.createElement('p'); divDesc.classList.add('is-block', 'posts-description');
+        let divDesc = document.createElement('div'); divDesc.classList.add('is-block', 'posts-description');
 
         let desc = document.createElement('p'); desc.classList.add('is-text', 'posts-description', 'has-text-justified'); desc.innerHTML = formatDescription(`${e.description}`);
 
