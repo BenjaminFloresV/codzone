@@ -174,7 +174,7 @@ class Game extends Singleton
         if( !self::$conn ) return $result; // Verify database connection
         try{
             self::$log->info('Trying to save data...');
-            $sql = "INSERT INTO game ( game_id, company_id, name, short_name, release_date, description, image ) VALUES(NULL, :company_id, :game_name, :short_name , FROM_UNIXTIME(:releaseDate), :description, :image )";
+            $sql = "INSERT INTO game ( game_id, company_id, name, short_name, release_date, description, image ) VALUES(NULL, :company_id, :game_name, :short_name , FROM_UNIXTIME(:releaseDate) + INTERVAL 1 HOUR, :description, :image )";
             $st = self::$conn->prepare($sql);
             $st->bindValue(":company_id", $this->company_id, PDO::PARAM_INT );
             $st->bindValue(":game_name", $this->name, PDO::PARAM_STR);
@@ -200,7 +200,7 @@ class Game extends Singleton
         if( !self::$conn ) return $result; // Verify database connection
         try{
             self::$log->info('Trying to update game data...');
-            $sql = "UPDATE game SET  company_id = :company_id, name = :name, release_date = FROM_UNIXTIME(:releaseDate), description = :description, image = :image WHERE game_id = :game_id";
+            $sql = "UPDATE game SET  company_id = :company_id, name = :name, release_date = FROM_UNIXTIME(:releaseDate) + INTERVAL 1 HOUR , description = :description, image = :image WHERE game_id = :game_id";
             $st = self::$conn->prepare( $sql );
             $st->bindValue( ':game_id', $this->game_id, PDO::PARAM_INT );
             $st->bindValue(':company_id', $this->company_id, PDO::PARAM_INT);

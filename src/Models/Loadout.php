@@ -288,7 +288,7 @@ class Loadout extends Singleton
         if ( !self::$conn ) return $result;
         try{
             self::$log->info("Trying to insert Loadout data...");
-            $sql = "INSERT INTO loadout VALUES( NULL, :game_id, :weapon_id, :wpcategory_id, :title, :description, :attachments, :perks, FROM_UNIXTIME(:creation_date), FROM_UNIXTIME(:date_update), :image, :is_warzone )";
+            $sql = "INSERT INTO loadout VALUES( NULL, :game_id, :weapon_id, :wpcategory_id, :title, :description, :attachments, :perks, FROM_UNIXTIME(:creation_date) + INTERVAL 1 HOUR, FROM_UNIXTIME(:date_update) + INTERVAL 1 HOUR, :image, :is_warzone )";
             $st = self::$conn->prepare($sql);
             $st->bindValue(':game_id', $this->game_id, PDO::PARAM_INT);
             $st->bindValue(':weapon_id', $this->weapon_id, PDO::PARAM_INT);
@@ -319,7 +319,7 @@ class Loadout extends Singleton
         if ( !self::$conn ) return $result;
         try{
             self::$log->info("Trying to update Loadout data...");
-            $sql = "UPDATE loadout SET game_id = :game_id, weapon_id = :weapon_id, wpcategory_id = :wpcategory_id, title = :title, description = :description, attachments = :attachments, perks = :perks, date_update = FROM_UNIXTIME(:date_update), image = :image WHERE loadout_id = :loadout_id";
+            $sql = "UPDATE loadout SET game_id = :game_id, weapon_id = :weapon_id, wpcategory_id = :wpcategory_id, title = :title, description = :description, attachments = :attachments, perks = :perks, date_update = FROM_UNIXTIME(:date_update) + INTERVAL 1 HOUR, image = :image WHERE loadout_id = :loadout_id";
             $st = self::$conn->prepare($sql);
             $st->bindValue(':loadout_id', $this->loadout_id, PDO::PARAM_INT);
             $st->bindValue(':game_id', $this->game_id, PDO::PARAM_INT);

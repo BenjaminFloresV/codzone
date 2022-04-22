@@ -312,7 +312,7 @@ class News extends Category
             self::$log->info("Trying to insert News data...");
 
             $firstSql = "INSERT INTO news_images VALUES( NULL, :images_title, :images_desc, :images_footer, :images_extra )";
-            $secondSql = "INSERT INTO news VALUES(NULL, :category_id, :images_id, :title, :description, FROM_UNIXTIME(:creation_date))";
+            $secondSql = "INSERT INTO news VALUES(NULL, :category_id, :images_id, :title, :description, FROM_UNIXTIME(:creation_date) + INTERVAL 1 HOUR)";
 
             $db = self::$conn;
             $db->setAttribute(PDO::ATTR_EMULATE_PREPARES,0);

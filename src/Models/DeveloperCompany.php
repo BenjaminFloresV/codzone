@@ -152,7 +152,7 @@ class DeveloperCompany extends Singleton
         if( !self::$conn ) return $result; // Verify database connection
         try{
             self::$log->info('Trying to save data...');
-            $sql = "INSERT INTO company ( company_id, name, employees, foundation, description, image ) VALUES(NULL, :company_name, :employees, FROM_UNIXTIME(:foundation), :description, :image )";
+            $sql = "INSERT INTO company ( company_id, name, employees, foundation, description, image ) VALUES(NULL, :company_name, :employees, FROM_UNIXTIME(:foundation) + INTERVAL 1 HOUR, :description, :image )";
             $st = self::$conn->prepare($sql);
             $st->bindValue(":company_name", $this->name, PDO::PARAM_STR );
             $st->bindValue(":employees", $this->employees, PDO::PARAM_INT);
@@ -176,7 +176,7 @@ class DeveloperCompany extends Singleton
         if( !self::$conn ) return $result; // Verify database connection
         self::$log->info("Company data with id {$this->company_id} is updating...");
         try{
-            $sql = "UPDATE company SET name = :company_name, employees = :employees, foundation = FROM_UNIXTIME(:foundation), description = :description, image = :image WHERE company_id = :company_id";
+            $sql = "UPDATE company SET name = :company_name, employees = :employees, foundation = FROM_UNIXTIME(:foundation) + INTERVAL 1 HOUR, description = :description, image = :image WHERE company_id = :company_id";
             $st = self::$conn->prepare( $sql );
             $st->bindValue( ':company_id', $this->company_id, PDO::PARAM_INT );
             $st->bindValue(':company_name', $this->name, PDO::PARAM_STR);

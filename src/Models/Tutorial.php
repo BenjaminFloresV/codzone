@@ -299,7 +299,7 @@ class Tutorial extends Category
             self::$log->info("Trying to insert Tutorial data...");
 
             $firstSql = "INSERT INTO tutorial_images VALUES( NULL, :images_title, :images_desc, :images_footer, :images_extra )";
-            $secondSql = "INSERT INTO tutorial VALUES(NULL, :category_id, :images_id, :title, :description, FROM_UNIXTIME(:creation_date))";
+            $secondSql = "INSERT INTO tutorial VALUES(NULL, :category_id, :images_id, :title, :description, FROM_UNIXTIME(:creation_date) + INTERVAL 1 HOUR )";
 
             $db = self::$conn;
             $db->setAttribute(PDO::ATTR_EMULATE_PREPARES,0);
